@@ -1,0 +1,61 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "Thanks. DOT_PATH is more problematic.. ",
+    "ClosedDate": "2010-05-24T20:57:16.723-07:00",
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "My linux box doesn't have a C: drive, so doxygen refused to work.\n \nDoxygen can use relative paths, which is probably better here. A tiny patch to get doxygen going is attached.",
+    "LastUpdatedDate": "2013-05-16T02:40:25.853-07:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "Low",
+      "Severity": 50,
+      "Id": 1
+    },
+    "ProjectName": "pstsdk",
+    "ReportedDate": "2010-05-24T19:26:17.263-07:00",
+    "Status": {
+      "Name": "Closed",
+      "Id": 4
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "Enable doxygen to work in different locations",
+    "Type": {
+      "Name": "Issue",
+      "Id": 3
+    },
+    "VoteCount": 1,
+    "Id": 6723
+  },
+  "FileAttachments": [
+    {
+      "FileId": 2200,
+      "FileName": "fairport-doxy-2010-05-25.patch",
+      "DownloadUrl": ".\\2200"
+    }
+  ],
+  "Comments": [
+    {
+      "Message": "I plan to look at DOT_PATH as part of a larger build system activity (probably cmake).",
+      "PostedDate": "2010-05-24T21:59:35.55-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-02-14T13:08:35.023-08:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-05-16T02:40:25.853-07:00",
+      "Id": -2147483648
+    }
+  ]
+}

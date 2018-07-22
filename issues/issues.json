@@ -1,0 +1,70 @@
+[
+  {
+    "Id": 5048,
+    "Title": "Build write semantics into the library"
+  },
+  {
+    "Id": 6721,
+    "Title": "Error in get_subject() when PR_SUBJECT is empty or missing"
+  },
+  {
+    "Id": 6723,
+    "Title": "Enable doxygen to work in different locations"
+  },
+  {
+    "Id": 6727,
+    "Title": "Unhandled exceptions walking a PST"
+  },
+  {
+    "Id": 6739,
+    "Title": "Support for ANSI PST files"
+  },
+  {
+    "Id": 6750,
+    "Title": "pstsdk test fail to compile with gcc 4.3 on Linux"
+  },
+  {
+    "Id": 6827,
+    "Title": "Test"
+  },
+  {
+    "Id": 7304,
+    "Title": "hashtable.h build error"
+  },
+  {
+    "Id": 7890,
+    "Title": "message.get_html_body is not a wide string.."
+  },
+  {
+    "Id": 8227,
+    "Title": "message::attachment_begin throws exception when message contains no attachments"
+  },
+  {
+    "Id": 8601,
+    "Title": "boost::bind conflicts w/ pstsdk"
+  },
+  {
+    "Id": 8839,
+    "Title": "Unable to compile w/ gcc 4.6 in C++11 mode"
+  },
+  {
+    "Id": 10442,
+    "Title": "Extract Emails in MSG format"
+  },
+  {
+    "Id": 10451,
+    "Title": "UNICODE in PST file path"
+  },
+  {
+    "Id": 10468,
+    "Title": "when do we get the write capability please?"
+  },
+  {
+    "Id": 10489,
+    "Title": "Problem with apostrophes in message body"
+  },
+  {
+    "Id": 10751,
+    "Title": "Problem in open Outlook 2010 PST file"
+  }
+]

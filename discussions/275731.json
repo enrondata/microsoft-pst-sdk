@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "683631",
+    "ThreadId": "275731",
+    "Html": "\r\n<p>Hi, is it possible to extract the rtf or HTML body from an Embeded Message content /rfc822 with the PST Library?</p>\r\n<p>I tried pstsdk to do this but i only get the plain text version.</p>\r\n<p>&nbsp;</p>\r\n<p>Thanks for help.</p>\r\n",
+    "PostedDate": "2011-10-13T05:15:21.18-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

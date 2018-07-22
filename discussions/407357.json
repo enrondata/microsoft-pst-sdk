@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "958553",
+    "ThreadId": "407357",
+    "Html": "\r\n<p>Hello, guys! How can I find folders like Inbox/Outbox/Drafts... in Outlook PST file? It seems that &quot;Inbox&quot; folder has constant ID = 0x8082, but other folders has different IDs in different PST files. So, how can I find them?</p>\r\n",
+    "PostedDate": "2012-12-19T09:13:26.807-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

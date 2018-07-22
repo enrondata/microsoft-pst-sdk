@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "585517",
+    "ThreadId": "250969",
+    "Html": "\r\n<p>When reading the ole object which is include in RTF mail，it <span id=\"x_result_box\" lang=\"en\">\r\n<span title=\"点击可显示其他翻译\">Can only read the</span> <span title=\"点击可显示其他翻译\">first 8 bytes.</span></span></p>\r\n<p>.</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2011-03-24T00:12:37.603-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "585917",
+    "ThreadId": "250969",
+    "Html": "<p>Yes, objects are stored in a specific format in the PST. Support is available in the SDK only to decode embedded \"message\" objects - the SDK won't know how to decode generic OLE objects, obviously. If you look at the implementation for opening a attachment as a message, you should see how to interpret those 8 bytes, and how to access the actual stream by opening the correct subnode.</p>",
+    "PostedDate": "2011-03-24T11:30:11.367-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

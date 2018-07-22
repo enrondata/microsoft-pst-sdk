@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "1323729",
+    "ThreadId": "572491",
+    "Html": "Hi, \r<br />\n<br />\nI am writing a code to extract emails from PST files, I have the following code to get the total number of messages in the PST file:<br />\n<pre><code>for(pstsdk::pst::folder_iterator iter = pPst-&gt;folder_begin() ; iter != pPst-&gt;folder_end() ; iter++)\n      nMsgCount += (int)iter-&gt;get_message_count();</code></pre>\n\nand I have a PST file that has one single message in the junk Mail folder. I noticed that the message count returned is 2 while I'm expecting 1. while iterating over these messages I noticed the additional message has subject &quot;LocalFreebusy&quot;, I used a viewer other than MS-Outlook and I noticed it is a message object located in a folder called &quot;FreeBusy Data&quot; and is considered as a message object but it has no body(neither RTF nor HTML nor Plain text).\r<br />\n<br />\nMy question is, how to exclude this item from count? I tried a trivial solution to exclude it by subject comparing, but I may have a real email subjected with the same name in other folders!!\r<br />\ndoes this item has a special type or some special property ??\r<br />\n<br />\nThanks in advance.<br />\n",
+    "PostedDate": "2014-11-19T02:54:16.083-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "653467",
+    "ThreadId": "267986",
+    "Html": "\r\n<p>Another question about folders...</p>\r\n<p>Is there a way that I can store all the folder objects that I have obtained<br>\r\nby iterating the folder hierarchy, and re-use them?&nbsp; The purpose would<br>\r\nbe to make a simple UI that presents a list of folders, allows selection<br>\r\nof one by the user, then the program accesses all the messages in that folder.</p>\r\n<p>I have tried something like this (with a lot of code omitted):</p>\r\n<p><br>\r\npstsdk::folder *global_folder_id[100];<br>\r\n...<br>\r\nglobal_folder_id[n] = &amp;folder_id; // where folder_id is valid folder object</p>\r\n<p><br>\r\nAlthough the stored folder object works fine right away, on the next<br>\r\niteration the stored folder object is no longer valid.&nbsp; I guess I need a<br>\r\nway to copy it, not store the pointer, &nbsp;but I can't figure&nbsp;out how to code it.</p>\r\n<p>Thanks for&nbsp; any help.</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2011-08-05T16:08:30.377-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "653479",
+    "ThreadId": "267986",
+    "Html": "<p>folder objects are copyable, so try:</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<div style=\"color: black; background-color: white;\">\r\n<pre>std::vector&lt;pstsdk::folder&gt; folderlist; <span style=\"color: green;\">// note, no pointer</span>\r\n\r\n....\r\n\r\nfolderlist.push_back(folder);</pre>\r\n</div>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-08-05T16:50:58.237-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

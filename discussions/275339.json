@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "682163",
+    "ThreadId": "275339",
+    "Html": "\r\n<p>I have noticed an oddity when doing work with named properties.&nbsp; I have<br>\r\ncode that looks something like this:</p>\r\n<p>pstsdk::name_id_map *gNamedProps;</p>\r\n<p>if (gNamedProps-&gt;prop_id_exists(nprop))<br>\r\n&nbsp; newprop = gNamedProps-&gt;lookup(PS_CONTACTS, nprop);</p>\r\n<p>mstr = bag.read_prop&lt;wstring&gt;(newprop);</p>\r\n<p><br>\r\nThe problem is that sometimes gNamedProps-&gt;prop_id_exists() returns <br>\r\nFALSE even though the named property ID does in fact exist.&nbsp; An example<br>\r\nwould be ID x8208 (location) in a calendar object.&nbsp; This is supposed to<br>\r\nmap to property x8021, and in fact, if I just skip over prop_id_exist()<br>\r\nand go right to the lookup, I do get back 8021.&nbsp; In another test,<br>\r\nIf I try ID x8083 (Email1Address) in the contacts object, this *does* return<br>\r\nTRUE for prop_id_exists().&nbsp; I do need to to a validity check on the ID<br>\r\nvalue that I pass into lookup() in order to avoid a crash.&nbsp; I have managed to<br>\r\nwork around the problem by putting the lookup() call inside try/catch.&nbsp; But<br>\r\ncan you comment on whether I am doing something wrong or is this a bug in<br>\r\nthe SDK?</p>\r\n<p>&nbsp;</p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">&nbsp;</span></span></p>\r\n",
+    "PostedDate": "2011-10-10T09:26:27.133-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "682952",
+    "ThreadId": "275339",
+    "Html": "<p>The parameter to prop_id_exists is a prop_id (the thing that a named prop maps to). If you look at the implementation of this function in nameid.h, you'll see it's pretty simple - because the PST assigns prop_ids sequentially.&nbsp;</p>\r\n<p>You're passing in the an id for a named prop (half of a name_id pair, the other half being a GUID - PS_CONTACTS).&nbsp;</p>\r\n<p>So, you're using the same value two different ways. prop_id_exists takes the \"value\" part of it. Lookup takes the \"key\".</p>",
+    "PostedDate": "2011-10-11T22:00:43.917-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

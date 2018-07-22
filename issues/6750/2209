@@ -1,0 +1,1056 @@
+Index: test/btreetest.cpp
+===================================================================
+--- test/btreetest.cpp	(revision 46110)
++++ test/btreetest.cpp	(working copy)
+@@ -14,11 +14,11 @@
+     leaf(int k1, string v1, int k2, string v2, int k3, string v3);
+     ~leaf() { }
+ 
+-    const string& get_value(uint pos) const 
++    const string& get_value(pstsdk::uint pos) const 
+         { return values[pos]; }
+-    const int& get_key(uint pos) const 
++    const int& get_key(pstsdk::uint pos) const 
+         { return keys[pos]; }
+-    uint num_values() const 
++    pstsdk::uint num_values() const 
+         { return 3; }
+ 
+ private:
+@@ -32,13 +32,13 @@
+     non_leaf(int k1, leaf* l1, int k2, leaf* l2, int k3, leaf* l3);
+     ~non_leaf() { }
+ 
+-    const int& get_key(uint pos) const 
++    const int& get_key(pstsdk::uint pos) const 
+         { return keys[pos]; }
+-    btree_node<int,string>* get_child(uint i)
++    btree_node<int,string>* get_child(pstsdk::uint i)
+         { return leafs[i]; }
+-    const btree_node<int,string>* get_child(uint i) const 
++    const btree_node<int,string>* get_child(pstsdk::uint i) const 
+         { return leafs[i]; }
+-    uint num_values() const 
++    pstsdk::uint num_values() const 
+         { return 3; }
+ 
+ private:
+Index: test/databasetest.cpp
+===================================================================
+--- test/databasetest.cpp	(revision 46110)
++++ test/databasetest.cpp	(working copy)
+@@ -108,18 +108,18 @@
+ 
+     if(expected > 0)
+     {
+-        uint expected_page_count = expected / disk::external_block<T>::max_size;
++        pstsdk::uint expected_page_count = expected / disk::external_block<T>::max_size;
+         if(expected % disk::external_block<T>::max_size != 0)
+             expected_page_count++;
+ 
+-        uint actual_page_count = n.get_page_count();
++        pstsdk::uint actual_page_count = n.get_page_count();
+         assert(expected_page_count == actual_page_count);
+ 
+-        uint test_value = 0xdeadbeef;
++        pstsdk::uint test_value = 0xdeadbeef;
+         size_t offset = expected-sizeof(test_value);
+         n.write(test_value, offset);
+ 
+-        uint read_test_value = n.read<uint>(offset);
++        pstsdk::uint read_test_value = n.read<pstsdk::uint>(offset);
+ 
+         assert(test_value == read_test_value);
+     }
+@@ -196,8 +196,8 @@
+     using namespace std::tr1;
+     using namespace pstsdk;
+     bool caught_invalid_format = false;
+-    uint node = 0;
+-    uint block = 0;
++    pstsdk::uint node = 0;
++    pstsdk::uint block = 0;
+ 
+     try
+     {
+@@ -228,7 +228,7 @@
+     shared_db_ptr db_3 = open_database(L"test_ansi.pst");
+ 
+     node = 0;
+-    shared_ptr<const nbt_page> nbt_root = db_2->read_nbt_root();
++    std::tr1::shared_ptr<const nbt_page> nbt_root = db_2->read_nbt_root();
+     for(const_nodeinfo_iterator iter = nbt_root->begin();
+                     iter != nbt_root->end();
+                     ++iter, ++node)
+@@ -242,7 +242,7 @@
+     test_node_stream<ulonglong>(db_2->lookup_node(nid_message_store));
+ 
+     block = 0;
+-    shared_ptr<const bbt_page> bbt_root = db_2->read_bbt_root();
++    std::tr1::shared_ptr<const bbt_page> bbt_root = db_2->read_bbt_root();
+     for(const_blockinfo_iterator iter = bbt_root->begin();
+                     iter != bbt_root->end();
+                     ++iter, ++block)
+@@ -253,7 +253,7 @@
+     }
+   
+     node = 0;
+-    shared_ptr<const nbt_page> nbt_root2 = db_3->read_nbt_root();
++    std::tr1::shared_ptr<const nbt_page> nbt_root2 = db_3->read_nbt_root();
+     for(const_nodeinfo_iterator iter = nbt_root2->begin();
+                     iter != nbt_root2->end();
+                     ++iter, ++node)
+@@ -263,11 +263,11 @@
+         pstsdk::node n(db_3, *iter);
+         process_node(n);
+     }
+-    test_node_resize<ulong>(db_3->lookup_node(nid_message_store));
+-    test_node_stream<ulong>(db_2->lookup_node(nid_message_store));
++    test_node_resize<pstsdk::ulong>(db_3->lookup_node(nid_message_store));
++    test_node_stream<pstsdk::ulong>(db_2->lookup_node(nid_message_store));
+ 
+     block = 0;
+-    shared_ptr<const bbt_page> bbt_root2 = db_3->read_bbt_root();
++    std::tr1::shared_ptr<const bbt_page> bbt_root2 = db_3->read_bbt_root();
+     for(const_blockinfo_iterator iter = bbt_root2->begin();
+                     iter != bbt_root2->end();
+                     ++iter, ++block)
+Index: test/highlevel.cpp
+===================================================================
+--- test/highlevel.cpp	(revision 46110)
++++ test/highlevel.cpp	(working copy)
+@@ -56,7 +56,7 @@
+ void test_prop_stream(pstsdk::const_property_object& obj, pstsdk::prop_id id)
+ {
+     pstsdk::prop_stream stream(obj.open_prop_stream(id));
+-    std::vector<pstsdk::byte> contents = obj.read_prop<std::vector<pstsdk::byte>>(id);
++    std::vector<pstsdk::byte> contents = obj.read_prop<std::vector<pstsdk::byte> >(id);
+     pstsdk::byte b;
+     size_t pos = 0;
+ 
+@@ -72,18 +72,18 @@
+ 
+     wcout << "Properties on this table (" << tc.size() << "): " << endl;
+     std::vector<prop_id> prop_list = tc.get_prop_list();
+-    for(uint i = 0; i < prop_list.size(); ++i)
++    for(pstsdk::uint i = 0; i < prop_list.size(); ++i)
+         wcout << hex << prop_list[i] << " ";
+     wcout << endl;
+ 
+-    for(uint i = 0; i < tc.size(); ++i)
++    for(pstsdk::uint i = 0; i < tc.size(); ++i)
+     {
+         wcout << "RowID: " << tc[i].get_row_id() << endl;
+         wstring display_name;
+         wstring subject;
+ 
+-         std::vector<ushort> proplist(tc[i].get_prop_list());
+-        for(uint j = 0; j < proplist.size(); ++j)
++         std::vector<pstsdk::ushort> proplist(tc[i].get_prop_list());
++        for(pstsdk::uint j = 0; j < proplist.size(); ++j)
+         {
+             try {
+                 if(tc[i].get_prop_type(proplist[j]) == prop_type_wstring)
+@@ -118,14 +118,14 @@
+ {
+     using namespace std;
+     using namespace pstsdk;
+-    for(uint i = 0; i < tc.size(); ++i)
++    for(pstsdk::uint i = 0; i < tc.size(); ++i)
+     {
+         node attach = message.lookup(tc[i].get_row_id());
+         
+         wcout << "Attachment " << i << endl;
+         property_bag pc(attach);
+-            std::vector<ushort> proplist(pc.get_prop_list());
+-            for(uint i = 0; i < proplist.size(); ++i)
++            std::vector<pstsdk::ushort> proplist(pc.get_prop_list());
++            for(pstsdk::uint i = 0; i < proplist.size(); ++i)
+             {
+                 if(pc.get_prop_type(proplist[i]) == prop_type_wstring)
+                 {
+@@ -157,7 +157,7 @@
+     using namespace std;
+     using namespace std::tr1;
+     using namespace pstsdk;
+-    shared_ptr<const nbt_page> nbt_root = pdb->read_nbt_root();
++    std::tr1::shared_ptr<const nbt_page> nbt_root = pdb->read_nbt_root();
+     for(const_nodeinfo_iterator iter = nbt_root->begin();
+             iter != nbt_root->end();
+             ++iter)
+@@ -169,10 +169,10 @@
+         try
+         {
+             property_bag bag(n);
+-            std::vector<ushort> proplist(bag.get_prop_list());
++            std::vector<pstsdk::ushort> proplist(bag.get_prop_list());
+ 
+             // look for mv props
+-            for(uint i = 0; i < proplist.size(); ++i)
++            for(pstsdk::uint i = 0; i < proplist.size(); ++i)
+             {
+                 switch(bag.get_prop_type(proplist[i]))
+                 {
+@@ -194,7 +194,7 @@
+                     break;
+                 case prop_type_mv_binary:
+                     {
+-                    vector<vector<byte>> bins = bag.read_prop_array<vector<byte>>(proplist[i]);
++                    vector<vector<byte> > bins = bag.read_prop_array<vector<byte> >(proplist[i]);
+                     cout << "prop_type_mv_wstring" << endl;
+                     }
+                     break;
+@@ -212,8 +212,8 @@
+         {
+             
+             property_bag pc(n);
+-            std::vector<ushort> proplist(pc.get_prop_list());
+-            for(uint i = 0; i < proplist.size(); ++i)
++            std::vector<pstsdk::ushort> proplist(pc.get_prop_list());
++            for(pstsdk::uint i = 0; i < proplist.size(); ++i)
+             {
+                 if(pc.get_prop_type(proplist[i]) == prop_type_wstring)
+                 {
+@@ -251,7 +251,7 @@
+         
+         try{
+             heap h(n);
+-            std::unique_ptr<bth_node<ushort, disk::prop_entry>> bth = h.open_bth<ushort, disk::prop_entry>(h.get_root_id());
++            std::tr1::unique_ptr<bth_node<pstsdk::ushort, disk::prop_entry> > bth = h.open_bth<pstsdk::ushort, disk::prop_entry>(h.get_root_id());
+          }
+         catch(exception&)
+         {
+Index: test/disktest.cpp
+===================================================================
+--- test/disktest.cpp	(revision 46110)
++++ test/disktest.cpp	(working copy)
+@@ -93,8 +93,8 @@
+     file uni(L"test_unicode.pst");
+     file ansi(L"test_ansi.pst");
+ 
+-    assert(offsetof(disk::header<unsigned long long>, dwCRCFull) == 524);
++    assert(offsetof(disk::header<pstsdk::ulonglong>, dwCRCFull) == 524);
+ 
+-    test_disk_structures<unsigned long long>(uni);
+-    test_disk_structures<unsigned long>(ansi);
++    test_disk_structures<pstsdk::ulonglong>(uni);
++    test_disk_structures<pstsdk::ulong>(ansi);
+ }
+Index: pstsdk/ltp/propbag.h
+===================================================================
+--- pstsdk/ltp/propbag.h	(revision 46110)
++++ pstsdk/ltp/propbag.h	(working copy)
+@@ -91,7 +91,7 @@
+     std::vector<byte> get_value_variable(prop_id id) const;
+     void get_prop_list_impl(std::vector<prop_id>& proplist, const pc_bth_node* pbth_node) const;
+ 
+-    std::unique_ptr<pc_bth_node> m_pbth;
++    std::tr1::unique_ptr<pc_bth_node> m_pbth;
+ };
+ 
+ } // end pstsdk namespace
+Index: pstsdk/ltp/heap.h
+===================================================================
+--- pstsdk/ltp/heap.h	(revision 46110)
++++ pstsdk/ltp/heap.h	(working copy)
+@@ -19,6 +19,10 @@
+ #pragma warning(pop)
+ #endif
+ 
++#if __GNUC__
++#include <tr1/memory>
++#endif
++
+ #include "pstsdk/util/primitives.h"
+ 
+ #include "pstsdk/disk/disk.h"
+@@ -157,7 +161,7 @@
+     //! \param[in] root The root allocation of this BTH
+     //! \returns The BTH object
+     template<typename K, typename V>
+-    std::unique_ptr<bth_node<K,V>> open_bth(heap_id root);
++    std::tr1::unique_ptr<bth_node<K,V> > open_bth(heap_id root);
+ 
+     friend class heap;
+ 
+@@ -257,7 +261,7 @@
+     
+     //! \copydoc heap_impl::open_bth()
+     template<typename K, typename V>
+-    std::unique_ptr<bth_node<K,V>> open_bth(heap_id root)
++    std::tr1::unique_ptr<bth_node<K,V> > open_bth(heap_id root)
+         { return m_pheap->open_bth<K,V>(root); }
+ 
+ private:
+@@ -297,16 +301,16 @@
+     //! \throws logic_error If the specified key/value type sizes do not match what is in the BTH header
+     //! \param[in] h The heap to open out of
+     //! \param[in] bth_root The allocation containing the bth header
+-    static std::unique_ptr<bth_node<K,V>> open_root(const heap_ptr& h, heap_id bth_root);
++    static std::tr1::unique_ptr<bth_node<K,V> > open_root(const heap_ptr& h, heap_id bth_root);
+     //! \brief Open a non-leaf BTH node
+     //! \param[in] h The heap to open out of
+     //! \param[in] id The id to interpret as a non-leaf BTH node
+     //! \param[in] level The level of this non-leaf node (must be non-zero)
+-    static std::unique_ptr<bth_nonleaf_node<K,V>> open_nonleaf(const heap_ptr& h, heap_id id, ushort level);
++    static std::tr1::unique_ptr<bth_nonleaf_node<K,V> > open_nonleaf(const heap_ptr& h, heap_id id, ushort level);
+     //! \brief Open a leaf BTH node
+     //! \param[in] h The heap to open out of
+     //! \param[in] id The id to interpret as a leaf BTH node   
+-    static std::unique_ptr<bth_leaf_node<K,V>> open_leaf(const heap_ptr& h, heap_id id);
++    static std::tr1::unique_ptr<bth_leaf_node<K,V> > open_leaf(const heap_ptr& h, heap_id id);
+ 
+     //! \brief Construct a bth_node object
+     //! \param[in] h The heap to open out of
+@@ -368,10 +372,10 @@
+     //! \param[in] level The level of this bth_nonleaf_node (non-zero)
+     //! \param[in] bth_info The info about child bth_node allocations
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-    bth_nonleaf_node(const heap_ptr& h, heap_id id, ushort level, std::vector<std::pair<K, heap_id>> bth_info)
++    bth_nonleaf_node(const heap_ptr& h, heap_id id, ushort level, std::vector<std::pair<K, heap_id> > bth_info)
+         : bth_node<K,V>(h, id, level), m_bth_info(std::move(bth_info)), m_child_nodes(m_bth_info.size()) { }
+ #else
+-    bth_nonleaf_node(const heap_ptr& h, heap_id id, ushort level, const std::vector<std::pair<K, heap_id>>& bth_info)
++    bth_nonleaf_node(const heap_ptr& h, heap_id id, ushort level, const std::vector<std::pair<K, heap_id> >& bth_info)
+         : bth_node<K,V>(h, id, level), m_bth_info(bth_info), m_child_nodes(m_bth_info.size()) { }
+ #endif
+     // btree_node_nonleaf implementation
+@@ -381,8 +385,8 @@
+     uint num_values() const { return m_child_nodes.size(); }
+ 
+ private:
+-    std::vector<std::pair<K, heap_id>> m_bth_info;
+-    mutable std::vector<std::tr1::shared_ptr<bth_node<K,V>>> m_child_nodes;
++    std::vector<std::pair<K, heap_id> > m_bth_info;
++    mutable std::vector<std::tr1::shared_ptr<bth_node<K,V> > > m_child_nodes;
+ };
+ 
+ //! \brief Contains the actual key value pairs of the BTH
+@@ -401,10 +405,10 @@
+     //! \param[in] id The id to interpret as a non-leaf BTH node
+     //! \param[in] data The key/value pairs stored in this leaf
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-    bth_leaf_node(const heap_ptr& h, heap_id id, std::vector<std::pair<K,V>> data)
++    bth_leaf_node(const heap_ptr& h, heap_id id, std::vector<std::pair<K,V> > data)
+         : bth_node<K,V>(h, id, 0), m_bth_data(std::move(data)) { }
+ #else
+-    bth_leaf_node(const heap_ptr& h, heap_id id, const std::vector<std::pair<K,V>>& data)
++    bth_leaf_node(const heap_ptr& h, heap_id id, const std::vector<std::pair<K,V> >& data)
+         : bth_node<K,V>(h, id, 0), m_bth_data(data) { }
+ #endif
+ 
+@@ -419,13 +423,13 @@
+         { return m_bth_data.size(); }
+ 
+ private:
+-    std::vector<std::pair<K,V>> m_bth_data;
++    std::vector<std::pair<K,V> > m_bth_data;
+ };
+ 
+ } // end pstsdk namespace
+ 
+ template<typename K, typename V>
+-inline std::unique_ptr<pstsdk::bth_node<K,V>> pstsdk::bth_node<K,V>::open_root(const heap_ptr& h, heap_id bth_root)
++inline std::tr1::unique_ptr<pstsdk::bth_node<K,V> > pstsdk::bth_node<K,V>::open_root(const heap_ptr& h, heap_id bth_root)
+ {
+     disk::bth_header* pheader;
+     std::vector<byte> buffer(sizeof(disk::bth_header));
+@@ -451,12 +455,12 @@
+ }
+ 
+ template<typename K, typename V>
+-inline std::unique_ptr<pstsdk::bth_nonleaf_node<K,V>> pstsdk::bth_node<K,V>::open_nonleaf(const heap_ptr& h, heap_id id, ushort level)
++inline std::tr1::unique_ptr<pstsdk::bth_nonleaf_node<K,V> > pstsdk::bth_node<K,V>::open_nonleaf(const heap_ptr& h, heap_id id, ushort level)
+ {
+     uint num_entries = h->size(id) / sizeof(disk::bth_nonleaf_entry<K>);
+     std::vector<byte> buffer(h->size(id));
+     disk::bth_nonleaf_node<K>* pbth_nonleaf_node = (disk::bth_nonleaf_node<K>*)&buffer[0];
+-    std::vector<std::pair<K, heap_id>> child_nodes;
++    std::vector<std::pair<K, heap_id> > child_nodes;
+ 
+     h->read(buffer, id, 0);
+ 
+@@ -468,16 +472,16 @@
+     }
+ 
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-    return std::unique_ptr<bth_nonleaf_node<K,V>>(new bth_nonleaf_node<K,V>(h, id, level, std::move(child_nodes)));
++    return std::tr1::unique_ptr<bth_nonleaf_node<K,V> >(new bth_nonleaf_node<K,V>(h, id, level, std::move(child_nodes)));
+ #else
+-    return std::unique_ptr<bth_nonleaf_node<K,V>>(new bth_nonleaf_node<K,V>(h, id, level, child_nodes));
++    return std::tr1::unique_ptr<bth_nonleaf_node<K,V> >(new bth_nonleaf_node<K,V>(h, id, level, child_nodes));
+ #endif
+ }
+     
+ template<typename K, typename V>
+-inline std::unique_ptr<pstsdk::bth_leaf_node<K,V>> pstsdk::bth_node<K,V>::open_leaf(const heap_ptr& h, heap_id id)
++inline std::tr1::unique_ptr<pstsdk::bth_leaf_node<K,V> > pstsdk::bth_node<K,V>::open_leaf(const heap_ptr& h, heap_id id)
+ {
+-    std::vector<std::pair<K, V>> entries; 
++    std::vector<std::pair<K, V> > entries; 
+ 
+     if(id)
+     {
+@@ -494,15 +498,15 @@
+             entries.push_back(std::make_pair(pbth_leaf_node->entries[i].key, pbth_leaf_node->entries[i].value));
+         }
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-        return std::unique_ptr<bth_leaf_node<K,V>>(new bth_leaf_node<K,V>(h, id, std::move(entries)));
++        return std::tr1::unique_ptr<bth_leaf_node<K,V> >(new bth_leaf_node<K,V>(h, id, std::move(entries)));
+ #else
+-        return std::unique_ptr<bth_leaf_node<K,V>>(new bth_leaf_node<K,V>(h, id, entries));
++        return std::tr1::unique_ptr<bth_leaf_node<K,V> >(new bth_leaf_node<K,V>(h, id, entries));
+ #endif
+     }
+     else
+     {
+         // id == 0 means an empty tree
+-        return std::unique_ptr<bth_leaf_node<K,V>>(new bth_leaf_node<K,V>(h, id, entries));
++        return std::tr1::unique_ptr<bth_leaf_node<K,V> >(new bth_leaf_node<K,V>(h, id, entries));
+     }
+ }
+ 
+@@ -697,7 +701,7 @@
+ }
+ 
+ template<typename K, typename V>
+-inline std::unique_ptr<pstsdk::bth_node<K,V>> pstsdk::heap_impl::open_bth(heap_id root)
++inline std::tr1::unique_ptr<pstsdk::bth_node<K,V> > pstsdk::heap_impl::open_bth(heap_id root)
+ { 
+     return bth_node<K,V>::open_root(shared_from_this(), root); 
+ }
+Index: pstsdk/ltp/object.h
+===================================================================
+--- pstsdk/ltp/object.h	(revision 46110)
++++ pstsdk/ltp/object.h	(working copy)
+@@ -13,8 +13,13 @@
+ #ifndef PSTSDK_LTP_OBJECT_H
+ #define PSTSDK_LTP_OBJECT_H
+ 
++#include <functional>
++#ifdef __GNUC__
++#include <tr1/type_traits>
++#include <tr1/functional>
++#else
+ #include <type_traits>
+-#include <functional>
++#endif
+ #include <algorithm>
+ #include <boost/iostreams/concepts.hpp>
+ #ifdef _MSC_VER
+@@ -276,13 +281,13 @@
+ }
+ 
+ template<>
+-inline std::vector<byte> const_property_object::read_prop<std::vector<byte>>(prop_id id) const
++inline std::vector<byte> const_property_object::read_prop<std::vector<byte> >(prop_id id) const
+ {
+     return get_value_variable(id); 
+ }
+ 
+ template<>
+-inline std::vector<std::vector<byte>> const_property_object::read_prop_array<std::vector<byte>>(prop_id id) const
++inline std::vector<std::vector<byte> > const_property_object::read_prop_array<std::vector<byte> >(prop_id id) const
+ {
+     std::vector<byte> buffer = get_value_variable(id);
+ #ifdef PSTSDK_VALIDATION_LEVEL_WEAK
+@@ -290,7 +295,7 @@
+         throw std::length_error("mv prop too short");
+ #endif
+     disk::mv_toc* ptoc = reinterpret_cast<disk::mv_toc*>(&buffer[0]);
+-    std::vector<std::vector<byte>> results;
++    std::vector<std::vector<byte> > results;
+ 
+ #ifdef PSTSDK_VALIDATION_LEVEL_WEAK
+     if(buffer.size() < (sizeof(ulong) + ptoc->count * sizeof(ulong)))
+@@ -333,7 +338,7 @@
+ template<>
+ inline std::vector<std::wstring> const_property_object::read_prop_array<std::wstring>(prop_id id) const
+ {
+-    std::vector<std::vector<byte>> buffer = read_prop_array<std::vector<byte>>(id);
++    std::vector<std::vector<byte> > buffer = read_prop_array<std::vector<byte> >(id);
+     std::vector<std::wstring> results;
+ 
+     for(size_t i = 0; i < buffer.size(); ++i)
+@@ -378,7 +383,7 @@
+ template<>
+ inline std::vector<std::string> const_property_object::read_prop_array<std::string>(prop_id id) const
+ {
+-    std::vector<std::vector<byte>> buffer = read_prop_array<std::vector<byte>>(id);
++    std::vector<std::vector<byte> > buffer = read_prop_array<std::vector<byte> >(id);
+     std::vector<std::string> results;
+ 
+     for(size_t i = 0; i < buffer.size(); ++i)
+Index: pstsdk/ltp/table.h
+===================================================================
+--- pstsdk/ltp/table.h	(revision 46110)
++++ pstsdk/ltp/table.h	(working copy)
+@@ -7,7 +7,11 @@
+ #define PSTSDK_LTP_TABLE_H
+ 
+ #include <vector>
+-#include <unordered_map>
++#if __GNUC__
++# include <tr1/unordered_map>
++#else
++# include <unordered_map>
++#endif
+ #include <boost/iterator/iterator_facade.hpp>
+ 
+ #include "pstsdk/util/primitives.h"
+@@ -247,11 +251,11 @@
+     basic_table(const node& n);
+     basic_table(const node& n, alias_tag);
+ 
+-    std::unique_ptr<bth_node<row_id, T>> m_prows;
++    std::tr1::unique_ptr<bth_node<row_id, T> > m_prows;
+ 
+     // only one of the following two items is valid
+     std::vector<byte> m_vec_rowarray;
+-    std::unique_ptr<node> m_pnode_rowarray;
++    std::tr1::unique_ptr<node> m_pnode_rowarray;
+ 
+     std::tr1::unordered_map<prop_id, disk::column_description> m_columns; 
+     typedef std::tr1::unordered_map<prop_id, disk::column_description>::iterator column_iter;
+Index: pstsdk/ndb/database_iface.h
+===================================================================
+--- pstsdk/ndb/database_iface.h	(revision 46110)
++++ pstsdk/ndb/database_iface.h	(working copy)
+@@ -10,6 +10,9 @@
+ #define PSTSDK_NDB_DATABASE_IFACE_H
+ 
+ #include <memory>
++#ifdef __GNUC__
++#include <tr1/memory>
++#endif
+ 
+ #include "pstsdk/util/util.h"
+ #include "pstsdk/util/primitives.h"
+Index: pstsdk/ndb/page.h
+===================================================================
+--- pstsdk/ndb/page.h	(revision 46110)
++++ pstsdk/ndb/page.h	(working copy)
+@@ -119,7 +119,7 @@
+ class bt_nonleaf_page : 
+     public bt_page<K,V>, 
+     public btree_node_nonleaf<K,V>, 
+-    public std::tr1::enable_shared_from_this<bt_nonleaf_page<K,V>>
++    public std::tr1::enable_shared_from_this<bt_nonleaf_page<K,V> >
+ {
+ public:
+     //! \brief Construct a bt_nonleaf_page from disk
+@@ -128,10 +128,10 @@
+     //! \param[in] level Distance from leaf
+     //! \param[in] subpi Information about the child pages
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-    bt_nonleaf_page(const shared_db_ptr& db, const page_info& pi, ushort level, std::vector<std::pair<K, page_info>> subpi)
++    bt_nonleaf_page(const shared_db_ptr& db, const page_info& pi, ushort level, std::vector<std::pair<K, page_info> > subpi)
+         : bt_page<K,V>(db, pi, level), m_page_info(std::move(subpi)), m_child_pages(m_page_info.size()) { }
+ #else
+-    bt_nonleaf_page(const shared_db_ptr& db, const page_info& pi, ushort level, const std::vector<std::pair<K, page_info>>& subpi)
++    bt_nonleaf_page(const shared_db_ptr& db, const page_info& pi, ushort level, const std::vector<std::pair<K, page_info> >& subpi)
+         : bt_page<K,V>(db, pi, level), m_page_info(subpi), m_child_pages(m_page_info.size()) { }
+ #endif
+ 
+@@ -142,8 +142,8 @@
+     uint num_values() const { return m_child_pages.size(); }
+ 
+ private:
+-    std::vector<std::pair<K, page_info>> m_page_info;   //!< Information about the child pages
+-    mutable std::vector<std::tr1::shared_ptr<bt_page<K,V>>> m_child_pages; //!< Cached child pages
++    std::vector<std::pair<K, page_info> > m_page_info;   //!< Information about the child pages
++    mutable std::vector<std::tr1::shared_ptr<bt_page<K,V> > > m_child_pages; //!< Cached child pages
+ };
+ 
+ //! \brief Contains the actual key value pairs of the btree
+@@ -154,7 +154,7 @@
+ class bt_leaf_page : 
+     public bt_page<K,V>, 
+     public btree_node_leaf<K,V>, 
+-    public std::tr1::enable_shared_from_this<bt_leaf_page<K,V>>
++    public std::tr1::enable_shared_from_this<bt_leaf_page<K,V> >
+ {
+ public:
+     //! \brief Construct a leaf page from disk
+@@ -162,10 +162,10 @@
+     //! \param[in] pi Information about this page
+     //! \param[in] data The key/value pairs on this leaf page
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-    bt_leaf_page(const shared_db_ptr& db, const page_info& pi, std::vector<std::pair<K,V>> data)
++    bt_leaf_page(const shared_db_ptr& db, const page_info& pi, std::vector<std::pair<K,V> > data)
+         : bt_page<K,V>(db, pi, 0), m_page_data(std::move(data)) { }
+ #else
+-    bt_leaf_page(const shared_db_ptr& db, const page_info& pi, const std::vector<std::pair<K,V>>& data)
++    bt_leaf_page(const shared_db_ptr& db, const page_info& pi, const std::vector<std::pair<K,V> >& data)
+         : bt_page<K,V>(db, pi, 0), m_page_data(data) { }
+ #endif
+ 
+@@ -178,7 +178,7 @@
+         { return m_page_data.size(); }
+ 
+ private:
+-    std::vector<std::pair<K,V>> m_page_data; //!< The key/value pairs on this leaf page
++    std::vector<std::pair<K,V> > m_page_data; //!< The key/value pairs on this leaf page
+ };
+ //! \cond dont_show_these_member_function_specializations
+ template<>
+Index: pstsdk/ndb/database.h
+===================================================================
+--- pstsdk/ndb/database.h	(revision 46110)
++++ pstsdk/ndb/database.h	(working copy)
+@@ -160,7 +160,7 @@
+     std::tr1::shared_ptr<bbt_leaf_page> read_bbt_leaf_page(const page_info& pi, disk::bbt_leaf_page<T>& the_page);
+ 
+     template<typename K, typename V>
+-    std::tr1::shared_ptr<bt_nonleaf_page<K,V>> read_bt_nonleaf_page(const page_info& pi, disk::bt_page<T, disk::bt_entry<T>>& the_page);
++    std::tr1::shared_ptr<bt_nonleaf_page<K,V> > read_bt_nonleaf_page(const page_info& pi, disk::bt_page<T, disk::bt_entry<T> >& the_page);
+ 
+     std::tr1::shared_ptr<subnode_leaf_block> read_subnode_leaf_block(const shared_db_ptr& parent, const block_info& bi, disk::sub_leaf_block<T>& sub_block);
+     std::tr1::shared_ptr<subnode_nonleaf_block> read_subnode_nonleaf_block(const shared_db_ptr& parent, const block_info& bi, disk::sub_nonleaf_block<T>& sub_block);
+@@ -371,7 +371,7 @@
+ inline std::tr1::shared_ptr<pstsdk::nbt_leaf_page> pstsdk::database_impl<T>::read_nbt_leaf_page(const page_info& pi, disk::nbt_leaf_page<T>& the_page)
+ {
+     node_info ni;
+-    std::vector<std::pair<node_id, node_info>> nodes;
++    std::vector<std::pair<node_id, node_info> > nodes;
+ 
+     for(int i = 0; i < the_page.num_entries; ++i)
+     {
+@@ -411,7 +411,7 @@
+ inline std::tr1::shared_ptr<pstsdk::bbt_leaf_page> pstsdk::database_impl<T>::read_bbt_leaf_page(const page_info& pi, disk::bbt_leaf_page<T>& the_page)
+ {
+     block_info bi;
+-    std::vector<std::pair<block_id, block_info>> blocks;
++    std::vector<std::pair<block_id, block_info> > blocks;
+     
+     for(int i = 0; i < the_page.num_entries; ++i)
+     {
+@@ -449,9 +449,9 @@
+ 
+ template<typename T>
+ template<typename K, typename V>
+-inline std::tr1::shared_ptr<pstsdk::bt_nonleaf_page<K,V>> pstsdk::database_impl<T>::read_bt_nonleaf_page(const page_info& pi, pstsdk::disk::bt_page<T, disk::bt_entry<T>>& the_page)
++inline std::tr1::shared_ptr<pstsdk::bt_nonleaf_page<K,V> > pstsdk::database_impl<T>::read_bt_nonleaf_page(const page_info& pi, pstsdk::disk::bt_page<T, disk::bt_entry<T> >& the_page)
+ {
+-    std::vector<std::pair<K, page_info>> nodes;
++    std::vector<std::pair<K, page_info> > nodes;
+     
+     for(int i = 0; i < the_page.num_entries; ++i)
+     {
+@@ -460,9 +460,9 @@
+     }
+ 
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-    return std::tr1::shared_ptr<bt_nonleaf_page<K,V>>(new bt_nonleaf_page<K,V>(shared_from_this(), pi, the_page.level, std::move(nodes)));
++    return std::tr1::shared_ptr<bt_nonleaf_page<K,V> >(new bt_nonleaf_page<K,V>(shared_from_this(), pi, the_page.level, std::move(nodes)));
+ #else
+-    return std::tr1::shared_ptr<bt_nonleaf_page<K,V>>(new bt_nonleaf_page<K,V>(shared_from_this(), pi, the_page.level, nodes));
++    return std::tr1::shared_ptr<bt_nonleaf_page<K,V> >(new bt_nonleaf_page<K,V>(shared_from_this(), pi, the_page.level, nodes));
+ #endif
+ }
+ 
+@@ -633,7 +633,7 @@
+ template<typename T>
+ inline std::tr1::shared_ptr<pstsdk::extended_block> pstsdk::database_impl<T>::create_extended_block(const shared_db_ptr& parent, std::tr1::shared_ptr<external_block>& pchild_block)
+ {
+-    std::vector<std::tr1::shared_ptr<data_block>> child_blocks;
++    std::vector<std::tr1::shared_ptr<data_block> > child_blocks;
+     child_blocks.push_back(pchild_block);
+ 
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+@@ -646,7 +646,7 @@
+ template<typename T>
+ inline std::tr1::shared_ptr<pstsdk::extended_block> pstsdk::database_impl<T>::create_extended_block(const shared_db_ptr& parent, std::tr1::shared_ptr<extended_block>& pchild_block)
+ {
+-    std::vector<std::tr1::shared_ptr<data_block>> child_blocks;
++    std::vector<std::tr1::shared_ptr<data_block> > child_blocks;
+     child_blocks.push_back(pchild_block);
+ 
+     assert(pchild_block->get_level() == 1);
+@@ -712,7 +712,7 @@
+ {
+     if(bi.id == 0)
+     {
+-        return std::tr1::shared_ptr<subnode_block>(new subnode_leaf_block(parent, bi, std::vector<std::pair<node_id, subnode_info>>()));
++        return std::tr1::shared_ptr<subnode_block>(new subnode_leaf_block(parent, bi, std::vector<std::pair<node_id, subnode_info> >()));
+     }
+     
+     std::vector<byte> buffer = read_block_data(bi);
+@@ -773,7 +773,7 @@
+ inline std::tr1::shared_ptr<pstsdk::subnode_leaf_block> pstsdk::database_impl<T>::read_subnode_leaf_block(const shared_db_ptr& parent, const block_info& bi, disk::sub_leaf_block<T>& sub_block)
+ {
+     subnode_info ni;
+-    std::vector<std::pair<node_id, subnode_info>> subnodes;
++    std::vector<std::pair<node_id, subnode_info> > subnodes;
+ 
+     for(int i = 0; i < sub_block.count; ++i)
+     {
+@@ -794,7 +794,7 @@
+ template<typename T>
+ inline std::tr1::shared_ptr<pstsdk::subnode_nonleaf_block> pstsdk::database_impl<T>::read_subnode_nonleaf_block(const shared_db_ptr& parent, const block_info& bi, disk::sub_nonleaf_block<T>& sub_block)
+ {
+-    std::vector<std::pair<node_id, block_id>> subnodes;
++    std::vector<std::pair<node_id, block_id> > subnodes;
+ 
+     for(int i = 0; i < sub_block.count; ++i)
+     {
+Index: pstsdk/ndb/node.h
+===================================================================
+--- pstsdk/ndb/node.h	(revision 46110)
++++ pstsdk/ndb/node.h	(working copy)
+@@ -650,11 +650,11 @@
+ //! \cond write_api
+     // new block constructors
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-    extended_block(const shared_db_ptr& db, ushort level, size_t total_size, size_t child_max_total_size, ulong page_max_count, ulong child_page_max_count, std::vector<std::tr1::shared_ptr<data_block>> child_blocks)
++    extended_block(const shared_db_ptr& db, ushort level, size_t total_size, size_t child_max_total_size, ulong page_max_count, ulong child_page_max_count, std::vector<std::tr1::shared_ptr<data_block> > child_blocks)
+         : data_block(db, block_info(), total_size), m_child_max_total_size(child_max_total_size), m_child_max_page_count(child_page_max_count), m_max_page_count(page_max_count), m_level(level), m_child_blocks(std::move(child_blocks))
+         { m_block_info.resize(m_child_blocks.size()); touch(); }
+ #else
+-    extended_block(const shared_db_ptr& db, ushort level, size_t total_size, size_t child_max_total_size, ulong page_max_count, ulong child_page_max_count, const std::vector<std::tr1::shared_ptr<data_block>>& child_blocks)
++    extended_block(const shared_db_ptr& db, ushort level, size_t total_size, size_t child_max_total_size, ulong page_max_count, ulong child_page_max_count, const std::vector<std::tr1::shared_ptr<data_block> >& child_blocks)
+         : data_block(db, block_info(), total_size), m_child_max_total_size(child_max_total_size), m_child_max_page_count(child_page_max_count), m_max_page_count(page_max_count), m_level(level), m_child_blocks(child_blocks)
+         { m_block_info.resize(m_child_blocks.size()); touch(); }
+ #endif
+@@ -694,7 +694,7 @@
+ 
+     const ushort m_level;                   //!< The level of this block
+     std::vector<block_id> m_block_info;     //!< block_ids of the child blocks in this tree
+-    mutable std::vector<std::tr1::shared_ptr<data_block>> m_child_blocks; //!< Cached child blocks
++    mutable std::vector<std::tr1::shared_ptr<data_block> > m_child_blocks; //!< Cached child blocks
+ };
+ 
+ //! \brief Contains actual data
+@@ -810,10 +810,10 @@
+     //! \param[in] info Information about this block
+     //! \param[in] subblocks Information about the child blocks
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-    subnode_nonleaf_block(const shared_db_ptr& db, const block_info& info, std::vector<std::pair<node_id, block_id>> subblocks)
++    subnode_nonleaf_block(const shared_db_ptr& db, const block_info& info, std::vector<std::pair<node_id, block_id> > subblocks)
+         : subnode_block(db, info, 1), m_subnode_info(std::move(subblocks)) { }
+ #else
+-    subnode_nonleaf_block(const shared_db_ptr& db, const block_info& info, const std::vector<std::pair<node_id, block_id>>& subblocks)
++    subnode_nonleaf_block(const shared_db_ptr& db, const block_info& info, const std::vector<std::pair<node_id, block_id> >& subblocks)
+         : subnode_block(db, info, 1), m_subnode_info(subblocks) { }
+ #endif
+ 
+@@ -825,8 +825,8 @@
+     uint num_values() const { return m_subnode_info.size(); }
+     
+ private:
+-    std::vector<std::pair<node_id, block_id>> m_subnode_info;           //!< Info about the sub-blocks
+-    mutable std::vector<std::tr1::shared_ptr<subnode_block>> m_child_blocks; //!< Cached sub-blocks (leafs)
++    std::vector<std::pair<node_id, block_id> > m_subnode_info;           //!< Info about the sub-blocks
++    mutable std::vector<std::tr1::shared_ptr<subnode_block> > m_child_blocks; //!< Cached sub-blocks (leafs)
+ };
+ 
+ //! \brief Contains the actual subnode information
+@@ -847,10 +847,10 @@
+     //! \param[in] info Information about this block
+     //! \param[in] subnodes Information about the subnodes
+ #ifndef BOOST_NO_RVALUE_REFERENCES
+-    subnode_leaf_block(const shared_db_ptr& db, const block_info& info, std::vector<std::pair<node_id, subnode_info>> subnodes)
++    subnode_leaf_block(const shared_db_ptr& db, const block_info& info, std::vector<std::pair<node_id, subnode_info> > subnodes)
+         : subnode_block(db, info, 0), m_subnodes(std::move(subnodes)) { }
+ #else
+-    subnode_leaf_block(const shared_db_ptr& db, const block_info& info, const std::vector<std::pair<node_id, subnode_info>>& subnodes)
++    subnode_leaf_block(const shared_db_ptr& db, const block_info& info, const std::vector<std::pair<node_id, subnode_info> >& subnodes)
+         : subnode_block(db, info, 0), m_subnodes(subnodes) { }
+ #endif
+ 
+@@ -863,7 +863,7 @@
+         { return m_subnodes.size(); }
+ 
+ private:
+-    std::vector<std::pair<node_id, subnode_info>> m_subnodes;   //!< The actual subnode information
++    std::vector<std::pair<node_id, subnode_info> > m_subnodes;   //!< The actual subnode information
+ };
+ 
+ } // end pstsdk namespace
+Index: pstsdk/pst/folder.h
+===================================================================
+--- pstsdk/pst/folder.h	(revision 46110)
++++ pstsdk/pst/folder.h	(working copy)
+@@ -119,7 +119,7 @@
+ private:
+     shared_db_ptr m_db;
+     property_bag m_bag;
+-    mutable std::unique_ptr<table> m_contents_table;
++    mutable std::tr1::unique_ptr<table> m_contents_table;
+ };
+ 
+ //! \brief Defines a transform from a row of a hierarchy table to a search_folder
+@@ -210,20 +210,20 @@
+     //! \brief Get an iterator to the first folder in this folder
+     //! \returns an iterator positioned on the first folder in this folder
+     folder_iterator sub_folder_begin() const
+-        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_folder>>(get_hierarchy_table().begin(), get_hierarchy_table().end()), folder_transform_row(m_db)); }
++        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_folder> >(get_hierarchy_table().begin(), get_hierarchy_table().end()), folder_transform_row(m_db)); }
+     //! \brief Get the end folder iterator
+     //! \returns an iterator at the end position
+     folder_iterator sub_folder_end() const
+-        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_folder>>(get_hierarchy_table().end(), get_hierarchy_table().end()), folder_transform_row(m_db)); }
++        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_folder> >(get_hierarchy_table().end(), get_hierarchy_table().end()), folder_transform_row(m_db)); }
+ 
+     //! \brief Get an iterator to the first search folder in this folder
+     //! \returns an iterator positioned on the first search folder in this folder
+     search_folder_iterator sub_search_folder_begin() const
+-        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_search_folder>>(get_hierarchy_table().begin(), get_hierarchy_table().end()), search_folder_transform_row(m_db)); }
++        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_search_folder> >(get_hierarchy_table().begin(), get_hierarchy_table().end()), search_folder_transform_row(m_db)); }
+     //! \brief Get the end search folder iterator
+     //! \returns an iterator at the end position
+     search_folder_iterator sub_search_folder_end() const
+-        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_search_folder>>(get_hierarchy_table().begin(), get_hierarchy_table().end()), search_folder_transform_row(m_db)); }
++        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_search_folder> >(get_hierarchy_table().begin(), get_hierarchy_table().end()), search_folder_transform_row(m_db)); }
+ 
+     //! \brief Open a specific subfolder in this folder, not recursive
+     //! \param[in] name The name of the folder to open
+@@ -292,9 +292,9 @@
+ private:
+     shared_db_ptr m_db;
+     property_bag m_bag;
+-    mutable std::unique_ptr<table> m_contents_table;
+-    mutable std::unique_ptr<table> m_associated_contents_table;
+-    mutable std::unique_ptr<table> m_hierarchy_table;
++    mutable std::tr1::unique_ptr<table> m_contents_table;
++    mutable std::tr1::unique_ptr<table> m_associated_contents_table;
++    mutable std::tr1::unique_ptr<table> m_hierarchy_table;
+ };
+ 
+ //! \brief Defines a transform from a node_info to a folder
+Index: pstsdk/pst/message.h
+===================================================================
+--- pstsdk/pst/message.h	(revision 46110)
++++ pstsdk/pst/message.h	(working copy)
+@@ -44,7 +44,7 @@
+     //! is too large for your tastes.
+     //! \returns A vector of bytes
+     std::vector<byte> get_bytes() const
+-        { return m_bag.read_prop<std::vector<byte>>(0x3701); }
++        { return m_bag.read_prop<std::vector<byte> >(0x3701); }
+     //! \brief Open a stream of the attachment data
+     //! 
+     //! The returned stream device can be used to construct a proper stream:
+@@ -307,8 +307,8 @@
+     message& operator=(const message&); // = delete
+ 
+     property_bag m_bag;
+-    mutable std::unique_ptr<table> m_attachment_table;
+-    mutable std::unique_ptr<table> m_recipient_table;
++    mutable std::tr1::unique_ptr<table> m_attachment_table;
++    mutable std::tr1::unique_ptr<table> m_recipient_table;
+ };
+ 
+ class message_transform_row : public std::unary_function<const_table_row, message>
+Index: pstsdk/pst/pst.h
+===================================================================
+--- pstsdk/pst/pst.h	(revision 46110)
++++ pstsdk/pst/pst.h	(working copy)
+@@ -71,20 +71,20 @@
+     //! \brief Get an iterator to the first folder in the PST file
+     //! \returns an iterator positioned on the first folder in this PST file
+     folder_iterator folder_begin() const
+-        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_folder>>(m_db->read_nbt_root()->begin(), m_db->read_nbt_root()->end()), folder_transform_info(m_db) ); }
++        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_folder> >(m_db->read_nbt_root()->begin(), m_db->read_nbt_root()->end()), folder_transform_info(m_db) ); }
+     //! \brief Get the end folder iterator
+     //! \returns an iterator at the end position
+     folder_iterator folder_end() const
+-        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_folder>>(m_db->read_nbt_root()->end(), m_db->read_nbt_root()->end()), folder_transform_info(m_db) ); }
++        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_folder> >(m_db->read_nbt_root()->end(), m_db->read_nbt_root()->end()), folder_transform_info(m_db) ); }
+ 
+     //! \brief Get an iterator to the first message in the PST file
+     //! \returns an iterator positioned on the first message in this PST file
+     message_iterator message_begin() const
+-        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_message>>(m_db->read_nbt_root()->begin(), m_db->read_nbt_root()->end()), message_transform_info(m_db) ); }
++        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_message> >(m_db->read_nbt_root()->begin(), m_db->read_nbt_root()->end()), message_transform_info(m_db) ); }
+     //! \brief Get the end message iterator
+     //! \returns an iterator at the end position
+     message_iterator message_end() const
+-        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_message>>(m_db->read_nbt_root()->end(), m_db->read_nbt_root()->end()), message_transform_info(m_db) ); }
++        { return boost::make_transform_iterator(boost::make_filter_iterator<is_nid_type<nid_type_message> >(m_db->read_nbt_root()->end(), m_db->read_nbt_root()->end()), message_transform_info(m_db) ); }
+ 
+     //! \brief Opens the root folder of this file
+     //! \note This is specific to PST files, as an OST file has a different root folder
+@@ -145,8 +145,8 @@
+ 
+ private:
+     shared_db_ptr m_db;                             //!< The official shared_db_ptr used by this store
+-    mutable std::unique_ptr<property_bag> m_bag;    //!< The official property bag of this store object
+-    mutable std::unique_ptr<name_id_map> m_map;     //!< The official named property map of this store object
++    mutable std::tr1::unique_ptr<property_bag> m_bag;    //!< The official property bag of this store object
++    mutable std::tr1::unique_ptr<name_id_map> m_map;     //!< The official named property map of this store object
+ };
+ 
+ } // end pstsdk namespace
+Index: pstsdk/disk/disk.h
+===================================================================
+--- pstsdk/disk/disk.h	(revision 46110)
++++ pstsdk/disk/disk.h	(working copy)
+@@ -802,7 +802,7 @@
+ //! \sa [MS-PST] 2.2.2.7.7.1
+ //! \ingroup disk_pagerelated
+ template<typename T>
+-struct nbt_nonleaf_page : public bt_page<T, bt_entry<T>>
++struct nbt_nonleaf_page : public bt_page<T, bt_entry<T> >
+ {
+ };
+ //! \cond static_asserts
+@@ -818,7 +818,7 @@
+ //! \sa [MS-PST] 2.2.2.7.7.1
+ //! \ingroup disk_pagerelated
+ template<typename T>
+-struct bbt_nonleaf_page : public bt_page<T, bt_entry<T>>
++struct bbt_nonleaf_page : public bt_page<T, bt_entry<T> >
+ {
+ };
+ //! \cond static_asserts
+@@ -834,7 +834,7 @@
+ //! \sa [MS-PST] 2.2.2.7.7.1
+ //! \ingroup disk_pagerelated
+ template<typename T>
+-struct nbt_leaf_page : public bt_page<T, nbt_leaf_entry<T>>
++struct nbt_leaf_page : public bt_page<T, nbt_leaf_entry<T> >
+ {
+ };
+ //! \cond static_asserts
+@@ -850,7 +850,7 @@
+ //! \sa [MS-PST] 2.2.2.7.7.1
+ //! \ingroup disk_pagerelated
+ template<typename T>
+-struct bbt_leaf_page : public bt_page<T, bbt_leaf_entry<T>>
++struct bbt_leaf_page : public bt_page<T, bbt_leaf_entry<T> >
+ {
+ };
+ //! \cond static_asserts
+@@ -1102,7 +1102,7 @@
+ //! \sa [MS-PST] 2.2.2.8.3.3.2.2
+ //! \ingroup disk_blockrelated
+ template<typename T>
+-struct sub_nonleaf_block : public sub_block<T, sub_nonleaf_entry<T>>
++struct sub_nonleaf_block : public sub_block<T, sub_nonleaf_entry<T> >
+ {
+ };
+ 
+@@ -1114,7 +1114,7 @@
+ //! \sa [MS-PST] 2.2.2.8.3.3.1.2
+ //! \ingroup disk_blockrelated
+ template<typename T>
+-struct sub_leaf_block : public sub_block<T, sub_leaf_entry<T>>
++struct sub_leaf_block : public sub_block<T, sub_leaf_entry<T> >
+ {
+ };
+ 
+@@ -1303,7 +1303,7 @@
+ //! \sa [MS-PST] 2.3.2.3
+ //! \ingroup disk_bthrelated
+ template<typename K, typename V>
+-struct bth_leaf_node : bth_node<bth_leaf_entry<K,V>>
++struct bth_leaf_node : bth_node<bth_leaf_entry<K,V> >
+ {
+ };
+ 
+@@ -1315,7 +1315,7 @@
+ //! \sa [MS-PST] 2.3.2.2
+ //! \ingroup disk_bthrelated
+ template<typename K>
+-struct bth_nonleaf_node : bth_node<bth_nonleaf_entry<K>>
++struct bth_nonleaf_node : bth_node<bth_nonleaf_entry<K> >
+ {
+ };
+ 
+Index: pstsdk/util/primitives.h
+===================================================================
+--- pstsdk/util/primitives.h	(revision 46110)
++++ pstsdk/util/primitives.h	(working copy)
+@@ -11,10 +11,19 @@
+ #ifndef PSTSDK_UTIL_PRIMITIVES_H
+ #define PSTSDK_UTIL_PRIMITIVES_H
+ 
++#include <boost/cstdint.hpp>
++
+ //
+ // Global compiler hacks
+ //
+ 
++#ifdef __GNUC__
++# ifndef BOOST_NO_LAMBDAS
++#  define BOOST_NO_LAMBDAS
++# endif
++# define SUPPRESS_CPLUSPLUS0X_MESSAGES
++#endif
++
+ #ifdef BOOST_NO_LAMBDAS
+ #ifndef SUPPRESS_CPLUSPLUS0X_MESSAGES
+ #pragma message("C++0x lambdas not supported; consider updating your compiler")
+@@ -25,10 +34,17 @@
+ #ifndef SUPPRESS_CPLUSPLUS0X_MESSAGES
+ #pragma message("C++0x rvalue references not supported; consider updating your compiler")
+ #endif
+-// I'll assume a compiler supports unique_ptr iff it supports rvalue references
++// I'll assume a compiler might supports unique_ptr iff it supports rvalue references
+ // huge hack
+-#define unique_ptr tr1::shared_ptr
++#define unique_ptr shared_ptr
++#else
++#if defined(__GNUC__)
++// unique_ptr is available in gcc 4.4
++#if __GNUC__ < 4 || (__GNUC__ == 4 && (__GNUC_MINOR__ < 4))
++#define unique_ptr shared_ptr
+ #endif
++#endif
++#endif
+ 
+ #ifdef BOOST_NO_STATIC_ASSERT
+ #ifndef SUPPRESS_CPLUSPLUS0X_MESSAGES
+@@ -62,12 +78,12 @@
+ /*! \addtogroup primitive
+  * @{
+  */
+-typedef unsigned int uint;
+-typedef unsigned long ulong;
+-typedef unsigned long long ulonglong;
+-typedef long long longlong;
+-typedef unsigned char byte;
+-typedef unsigned short ushort;
++typedef boost::uint32_t uint;
++typedef boost::uint32_t ulong;
++typedef boost::uint64_t ulonglong;
++typedef boost::int64_t longlong;
++typedef boost::uint8_t byte;
++typedef boost::uint16_t ushort;
+ /*! @} */
+ 
+ //! \cond static_asserts
+Index: pstsdk/util/btree.h
+===================================================================
+--- pstsdk/util/btree.h	(revision 46110)
++++ pstsdk/util/btree.h	(working copy)
+@@ -210,8 +210,8 @@
+     btree_node_leaf<K,V>* m_leaf;   //!< The current leaf btree node this iterator is pointing to
+     uint m_leaf_pos;                //!< The current position on that leaf
+ 
+-    std::vector<std::pair<btree_node_nonleaf<K,V>*, uint>> m_path; //!< The "path" to this leaf, starting at the root of the btree
+-    typedef typename std::vector<std::pair<btree_node_nonleaf<K,V>*, uint>>::iterator path_iter;
++    std::vector<std::pair<btree_node_nonleaf<K,V>*, uint> > m_path; //!< The "path" to this leaf, starting at the root of the btree
++    typedef typename std::vector<std::pair<btree_node_nonleaf<K,V>*, uint> >::iterator path_iter;
+ };
+ 
+ //! \brief The actual iterator type used by the btree_node class hierarchy
+@@ -309,7 +309,7 @@
+     {
+         if(iter.m_path.size() > 0)
+         {
+-            for(btree_iter_impl<K,V>::path_iter piter = iter.m_path.begin();
++            for(typename btree_iter_impl<K,V>::path_iter piter = iter.m_path.begin();
+                 piter != iter.m_path.end(); 
+                 ++piter)
+             {
+@@ -333,7 +333,7 @@
+     {
+         if(iter.m_path.size() > 0)
+         {
+-            for(btree_iter_impl<K,V>::path_iter piter = iter.m_path.begin();
++            for(typename btree_iter_impl<K,V>::path_iter piter = iter.m_path.begin();
+                 piter != iter.m_path.end();
+                 ++piter)
+             {

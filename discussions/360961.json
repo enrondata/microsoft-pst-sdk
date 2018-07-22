@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "853732",
+    "ThreadId": "360961",
+    "Html": "\r\n<p>Hi folks,</p>\r\n<p>While I appreciate that the PST SDK ignores PST passwords, is it currently possible to programatically alter the existing password (assuming that the current password is known), or indeed remove it?</p>\r\n<p>Actually, to take it one step further .. if the password for a PST is known, is there ANY mechanism to either reset it programatically?&nbsp; I ave read a lot of posts on the internet stating that it is not possible, but they are all quite dated.</p>\r\n<p>Thanks in advance.</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2012-06-26T04:43:03.44-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

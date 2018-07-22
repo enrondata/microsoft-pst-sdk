@@ -1,0 +1,66 @@
+[
+  {
+    "Id": "542594",
+    "ThreadId": "240118",
+    "Html": "\r\n<p>I haven't fully investigated this one yet (it's New Year's Eve and it's 4PM), but was wondering if there was any other report of this...</p>\r\n<p>Trying to use trunk pstsdk 0_3_0 with the EID update to parse a large (800MB to 1.5GB) PST file, and it's blowing out when I call</p>\r\n<p>&nbsp;</p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre>    std::ofstream imgFile(newfn, std::ios::out | std::ios::binary);\r\n    imgFile &lt;&lt; attch;\r\n</pre>\r\n</div>\r\n<p>&nbsp;</p>\r\n<p>I'm iterating through the attachments with&nbsp;</p>\r\n<p></p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre>    <span style=\"color:blue\">if</span>(msg.get_attachment_count() &gt; 0)\r\n    {\r\n        <span style=\"color:blue\">for</span>(pstsdk::message::attachment_iterator iter = msg.attachment_begin(); iter != msg.attachment_end(); &#43;&#43;iter)\r\n        {\r\n            saveAttachment(foldername, messageID, wEid, *iter);\r\n        }\r\n    }\r\n</pre>\r\n</div>\r\n<p></p>\r\n<p>where &quot;attch&quot; in the snippet above is the parameter which &quot;*iter&quot; becomes.</p>\r\n<p>Looking into the code, it appears that what is happening is we are using the ofstream write method to write a vector&lt;pstsdk::byte&gt;, but the vector is empty, so trying to write attch.length() bytes from it fails falling off the end of the vector. I\r\n don't think it's a problem with my code, because it only happens on some attachments, not on all, and not on all PST files; but it happens repeatably on the PST files where it does fail.</p>\r\n<p>I expect it'll be Wednesday before I get back to look at this, but I thought I should at least throw the floor open to suggestions...</p>\r\n",
+    "PostedDate": "2010-12-31T16:16:13.36-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "542613",
+    "ThreadId": "240118",
+    "Html": "\r\n<p>Looks like the attachment streaming code assumes that all attachments are at least 1 byte. This seems (seemed?) like a pretty safe assumption to make.. Do the other properties on the attachment indicate it's zero sized? What is this attachment exactly?</p>\r\n<p>By design pstsdk doesn't work around invalid data, but if it turns out that zero length attachments are valid it should handle it properly. Is there any chance I could have a PST with just one message demonstrating this behavior?</p>\r\n",
+    "PostedDate": "2010-12-31T20:17:46.717-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "542616",
+    "ThreadId": "240118",
+    "Html": "\r\n<p>What it looks like is that either the allocation for the vector failed, or the copy that is supposed to fill the vector from the attachment failed silently. The attachment size is valid (several hundred K in one case); the attachment in one failing PST file\r\n is an Excel spreadsheet, in another is an unknown DAT file.</p>\r\n<p>I won't be able to get to the code again until Wednesday, likely, so I won't be able to give you many more details; I do know that it happens a few hundred messages in if it's going to happen at all, and there are, unfortunately, constraints on who I can\r\n ship these PST files to.</p>\r\n",
+    "PostedDate": "2010-12-31T20:54:56.267-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "544522",
+    "ThreadId": "240118",
+    "Html": "\r\n<p>Here's what I'm seeing - line 202 of propbag.h:</p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre><span style=\"color:blue\">inline</span> std::vector&lt;pstsdk::byte&gt; pstsdk::property_bag::get_value_variable(prop_id id) <span style=\"color:blue\">const</span>\r\n{\r\n    heapnode_id h_id = (heapnode_id)get_value_4(id);\r\n    std::vector&lt;byte&gt; buffer;\r\n\r\n    <span style=\"color:blue\">if</span>(is_subnode_id(h_id))\r\n    {\r\n        node sub(m_pbth-&gt;get_node().lookup(h_id));\r\n        buffer.resize(sub.size());\r\n        sub.read(buffer, 0);\r\n    }\r\n    <span style=\"color:blue\">else</span>\r\n    {\r\n        buffer = m_pbth-&gt;get_heap_ptr()-&gt;read(h_id);\r\n    }\r\n\r\n    <span style=\"color:blue\">return</span> buffer;\r\n}\r\n</pre>\r\n</div>\r\n<p>id is 14081 (0x3701). h_id is 0. (!) Because is_subnode_id() returns false, we drop to the get_heap_ptr()-&gt;read call, which fails because h_id is 0.</p>\r\n<p>So it looks like we have an attachment that is completely valid except for its content pointer...</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2011-01-05T13:17:03.117-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "544660",
+    "ThreadId": "240118",
+    "Html": "\r\n<p>Yes, as you may have guessed 0 is a special value meaning there is a zero length allocation.</p>\r\n<p>Is there anything else unique about this attachment? Try iterating over all of it's properties and compare them to a &quot;normal&quot; attachment. Is there any other&nbsp;distinguishing&nbsp;factor common to all of the &quot;failed&quot; attachments versus normal ones?</p>\r\n",
+    "PostedDate": "2011-01-05T22:21:27.95-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "545163",
+    "ThreadId": "240118",
+    "Html": "\r\n<p>All of the properties of the failing attachment seem to be normal, except its length, which is 0.</p>\r\n<p>I wrote code based on the property bag iterator in another message, and came up with this for a good attachment:</p>\r\n<p></p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre>MAPI0e20_0003:372\r\nMAPI3701_0102:Attachment body, length 96\r\nMAPI3704_001f:ucGIF_12.20e\r\nMAPI3705_0003:1\r\nMAPI3707_001f:uc.GIF_1.20&amp;economi&amp;economi&amp;noscript\r\nMAPI370a_0102:192 bytes: 2A 86 48 86 F7 14 03 0A 04 \r\nMAPI370b_0003:-1\r\nMAPI370e_001f:application/octet-stream\r\nMAPI3710_0003:13\r\nMAPI3713_001f:http:<span style=\"color:green\">//stats.surfaid.ihost.com/crc/images/uc.GIF?1.20&amp;economi&amp;economi&amp;noscript</span>\r\nMAPI3714_0003:1\r\n\r\n</pre>\r\n</div>\r\nAnd this for one that fails.\r\n<p></p>\r\n<p></p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre>MAPI0e20_0003:225\r\nMAPI3701_0102:Attachment body, length 0\r\nMAPI3704_001f:_pixid99.dat\r\nMAPI3705_0003:1\r\nMAPI3707_001f:_pixid=99002077.dat\r\nMAPI370a_0102:160 bytes: 2A 86 48 86 F7 14 03 0A 04 \r\nMAPI370b_0003:-1\r\nMAPI370e_001f:application/octet-stream\r\nMAPI3710_0003:14\r\nMAPI3713_001f:http:<span style=\"color:green\">//bp.specificclick.net/?pixid=99002077</span>\r\nMAPI3714_0003:1\r\n\r\n</pre>\r\n</div>\r\nNot a lot of difference... The property name is MAPI, then property ID in hex, then property type in hex. Except for 3701, the attachment itself, the string following the colon is the value.\r\n<p></p>\r\n",
+    "PostedDate": "2011-01-06T17:27:08.837-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "564804",
+    "ThreadId": "240118",
+    "Html": "<p>Sounds like the PST layer should handle zero length attachments. In the meantime as a work around it sounds like you need to explicitly check the attachment length before trying to open a stream on it.</p>",
+    "PostedDate": "2011-02-11T10:48:09.5-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "564837",
+    "ThreadId": "240118",
+    "Html": "<p>I have managed to get it running by doing that. That PST is somewhat mangled anyway; I find that there is a message in it with invalid (truncated) compressed RTF as well. That one is particularly annoying as the RTF seems to have been truncated, then compressed, so length and CRC are correct but the resulting RTF is invalid.</p>",
+    "PostedDate": "2011-02-11T11:49:10.227-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

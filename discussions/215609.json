@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "454013",
+    "ThreadId": "215609",
+    "Html": "<p>Is there a plan to implement an assignment operator for the folder class? In my code I need to find the folder inside the PST and default assignment operator causes the compiler error. Below is my method with the line causing the error.</p>\r\n<p>&nbsp;folder CPstLib::getFolder(pst *pstData, vector&lt;wstring&gt;pathToFolder) {<br>&nbsp;&nbsp;folder ret = pstData-&gt;open_root_folder();<br>&nbsp;&nbsp;<br>&nbsp;&nbsp;for(vector&lt;wstring&gt;::const_iterator it = pathToFolder.begin(); it != pathToFolder.end(); ++it)<br>&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;folder tmp = folder::folder(ret);</p>\r\n<p>&nbsp;&nbsp; //the line below causes compiler error: Error&nbsp;1&nbsp;error C2248: 'pstsdk::property_bag::operator =' : cannot access private member declared in class 'pstsdk::property_bag'&nbsp;c:\\Projects\\pstsdk\\pstsdk\\pst\\folder.h&nbsp;298&nbsp;PstLib<br><br>&nbsp;&nbsp;&nbsp;ret = tmp.open_sub_folder(*it);&nbsp;&nbsp;<br>&nbsp;&nbsp;}<br>&nbsp;&nbsp;return ret;<br>&nbsp;}</p>",
+    "PostedDate": "2010-06-10T07:53:41.577-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "454035",
+    "ThreadId": "215609",
+    "Html": "<p>This is intentional. Generally objects at the lower layers are not assignable, but they are copy&nbsp;constructible. The reason is that the semantics of assignment are&nbsp;ambiguous. &nbsp;If I assign node a to node b, does that mean I just changed the contents of node a on disk to be equal to the contents of node b, or that i just changed the in memory object node a to refer to node b as well (creating two node b's in memory)? Copy construction is unambiguous, so that is implemented. This bubbles up through the SDK.&nbsp;</p>\r\n<p>I'm not opposed to revisiting this design decision if a design comes up that makes sense; but generally it's pretty common for in memory representations of disk resources to be non-assignable, unless assignment is implemented as a quasi-write operation on that resource.</p>",
+    "PostedDate": "2010-06-10T08:33:57.83-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "454041",
+    "ThreadId": "215609",
+    "Html": "<p>Is there a way to get around the lack of&nbsp;&nbsp;assignment operator for foldes and messages? It seems to me that without it them some functionality (like the task I am trying to solve above) will be very difficult if not impossible to implement.</p>",
+    "PostedDate": "2010-06-10T08:39:36.433-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "454044",
+    "ThreadId": "215609",
+    "Html": "You could take advantage of the fact that the objects are copyable, or just use pointers to the objects (since the pointers will be copyable). There are a lot of techniques you could use. In your example, the first thing that comes to mind actually is writing it as a tail-recursive function. ",
+    "PostedDate": "2010-06-10T08:44:01.673-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "454433",
+    "ThreadId": "215609",
+    "Html": "<p><span style=\"color:black;font-size:10pt\">Perhaps the lack of <span>assignment operator makes sense from architectural perspective, but it imposes limitations on coding techniques available and in some instances makes the code difficult to read.</span><br><span>The constructs like this (which I am pretty sure will be needed often) will not work:</span></span></p>\r\n<p><span><span style=\"color:black;font-size:10pt\">vector&lt;folder&gt; foldersList; </span></span><span style=\"color:black;font-size:10pt\"><br><span>folder root = pstData-&gt;open_root_folder();</span><br><span>folders.push_back(root); //fails because STL folder needs assignment operator</span></span></p>\r\n<p><span><span style=\"color:black;font-size:10pt\">working with the pointer makes code unwieldy and in some case will not work because the pointers have to point to real objects which have to be assigned somehow. Consider my case (I don&rsquo;t like using tail recursion since most of the compilers will convert it to iterator anyway). I just need to find a folder based on its location within the folder three.</span></span></p>\r\n<p><span style=\"color:#010001;font-size:10pt\">folder</span><span style=\"font-size:10pt\"> <span style=\"color:#010001\">CPstLib</span>::<span style=\"color:#010001\">getFolder</span>(<span style=\"color:blue\">const</span> <span style=\"color:#010001\">pst</span> *<span style=\"color:#010001\">pstData vector</span>&lt;<span style=\"color:#010001\">wstring</span>&gt;<span style=\"color:#010001\">path</span>) {<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style=\"color:#010001\">folder</span> <span style=\"color:#010001\">root</span> = <span style=\"color:#010001\">pstData</span>-&gt;<span style=\"color:#010001\">open_root_folder</span>();<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style=\"color:#010001\">folder</span> *<span style=\"color:#010001\">ret</span> = &amp;<span style=\"color:#010001\">root</span>;<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style=\"font-size:10pt\"><span style=\"color:blue\">for</span>(<span style=\"color:#010001\">vector</span>&lt;<span style=\"color:#010001\">wstring</span>&gt;::<span style=\"color:#010001\">const_iterator</span> <span style=\"color:#010001\">it</span> = <span style=\"color:#010001\">path</span>.<span style=\"color:#010001\">begin</span>(); <span style=\"color:#010001\">it</span> != <span style=\"color:#010001\">path</span>.<span style=\"color:#010001\">end</span>(); ++<span style=\"color:#010001\">it</span>)<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style=\"color:#010001\">folder</span> *<span style=\"color:#010001\">tmp</span> = <span style=\"color:#010001\">ret</span>;<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style=\"color:#010001\">folder</span> <span style=\"color:#010001\">current</span> = <span style=\"color:#010001\">tmp</span>-&gt;<span style=\"color:#010001\">open_sub_folder</span>(*<span style=\"color:#010001\">it</span>);<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style=\"color:#010001\">ret</span> = &amp;<span style=\"color:#010001\">current</span>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style=\"color:#010001\">folder</span> <span style=\"color:#010001\">returnedFolder</span> = <span style=\"color:#010001\">folder</span>::<span style=\"color:#010001\">folder</span>(*<span style=\"color:#010001\">ret</span>); // will not work because &ldquo;current&rdquo; is out of scope&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br></span><span style=\"font-size:10pt\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style=\"color:blue\">return</span> <span style=\"color:#010001\">returnedFolder</span>;<br></span><span style=\"font-size:10pt\">}</span></p>",
+    "PostedDate": "2010-06-11T07:40:28.043-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "Id": "649179",
+    "ThreadId": "266977",
+    "Html": "\r\n<p>When I retrieve properties from the property bag, there are a number of properties in the range 0x8000 upwards, which are in the &quot;User-defined name-to-ID mapped property&quot; range for MAPI tags. One example is 0x8017 which maps to OutlookInternalVersion; this\r\n is particularly vexing because it appears to be mapped to MAPI property 0x819d on an Outlook 10 (Office XP/2002) system. Can I count on these remaining static for all PST files? Or is there some way to associate tag names with these IDs?</p>\r\n",
+    "PostedDate": "2011-07-28T13:41:38.683-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "649194",
+    "ThreadId": "266977",
+    "Html": "<p>No, you definately can not count on them being static (although they tend to be because of creation order). <br /><br />Mapping back and forth is what the name_id_map class and the lookup_prop_id/lookup_name_prop helper methods on the PST are for.</p>",
+    "PostedDate": "2011-07-28T14:05:28.503-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "649777",
+    "ThreadId": "266977",
+    "Html": "<p>So I should be able to get the name as follows:</p>\n<p>&nbsp;</p>\n<div style=\"color: black; background-color: white;\">\n<pre>pstsdk::name_id_map *gNamedProps;\t<span style=\"color: green;\">// pointer to named properties table</span>\n\n<span style=\"color: green;\">// ... deletia ...</span>\n\n        pstsdk::pst myFile(lpstF);\n\t<span style=\"color: green;\">// have to get property mapping table for pst as well</span>\n\tgNamedProps = &amp; myFile.get_name_id_map();\n\n<span style=\"color: green;\">// ... deletia ...</span>\n<span style=\"color: blue;\">int</span> dump_property_bag (<span style=\"color: blue;\">const</span> pstsdk::property_bag &amp;bag)\n{\n\tstd::vector&lt;pstsdk::prop_id&gt; props = bag.get_prop_list();\n\t<span style=\"color: blue;\">wchar_t</span> wPropFmt[100];\n\n\t<span style=\"color: blue;\">for</span>(std::vector&lt;pstsdk::prop_id&gt;::iterator i = props.begin(); i != props.end(); ++i) {\n\n\t\t<span style=\"color: blue;\">bool</span> bHaveString = <span style=\"color: blue;\">false</span>;\n\t\t<span style=\"color: blue;\">if</span> (gNamedProps-&gt;prop_id_exists(*i))\t<span style=\"color: green;\">// Special handling: named properties</span>\n\t\t{\n\t\t\tpstsdk::named_prop pNamed = gNamedProps-&gt;lookup(*i);\n\t\t\t<span style=\"color: blue;\">if</span> (pNamed.is_string())\n\t\t\t{\n\t\t\t\t::StringCchCopyW(wPropFmt, 100, pNamed.get_name().c_str());\n\t\t\t\t::StringCchCatW(wPropFmt, 100, L<span style=\"color: #a31515;\">\":\"</span>);\n\t\t\t\tbHaveString = <span style=\"color: blue;\">true</span>;\n\t\t\t}\n\t\t}\n\n</pre>\n</div>\n<p>Because it looks at the moment as though every nominally named property is coming up is_string() == false...</p>",
+    "PostedDate": "2011-07-29T14:01:33.88-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "650071",
+    "ThreadId": "266977",
+    "Html": "<p>That looks about right. Check the nameid sample, as well.</p>\r\n<p>Named properties are more ID and guid based, rather than string based. So it doesn't surprise me that you're not finding many string ids. If you ran that on a message that came across SMTP into Outlook you should see a ton of string named properties - I think Outlook creates one for each MIME header (at least the header fields that don't directly translate to MAPI props, of which there are a ton I believe).</p>",
+    "PostedDate": "2011-07-30T15:41:27.343-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "652095",
+    "ThreadId": "266977",
+    "Html": "<p>Hmm.</p>\r\n<p>So I have a PST that was exported, using Outlook, from an Exchange mailbox. So I have a contact, say. I note that there is a property 0x812B, which by inspection I can see is Business Street Address. If I use another (non-MS) tool to inspect that same entry in the Exchange mailbox, I see that the tag is 0x80a6, BusinessAddressStreet, and&nbsp;the&nbsp;Named Property is id 0x8045, GUID {00062004-0000-0000-c000-000000000064}. Which seems to imply rather strongly that I can't rely on anything. There is nothing I can see that indicates how the MAPI property number gets back-translated to the name, and none of the IDs I have match up to anything else.</p>\r\n<p>Can you point me at a document which will shed some illumination? Because at this point I must confess that I find myself in&nbsp;the&nbsp;dark.</p>",
+    "PostedDate": "2011-08-03T17:52:32.583-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "652097",
+    "ThreadId": "266977",
+    "Html": "<p>Named properties are defined by an ID/GUID pair (or String/GUID pair). For any given store, an id/guid pairs maps to some arbitrary property id in the 0x8000 range. Mapping back and forth between id/guid and property id for a given store is a method on the store object. This mapping (which is a global map to the store) is what is visualized by the named prop sample in pstsdk.</p>\r\n<p>When a message is moved between stores (exported, etc), part of the exporting process reads all of the named properties off the message, calls GetIdsFromNames (in MAPI) on the destination store to change their proptag, and then sets those properties with the new property tag on the new store.</p>\r\n<p>So, in theory, any given named property can change the actually MAPI property id when moved between stores. However, Outlook deterministically creates a certain set of named properties everytime it creates a store. It also turns out that the named property creation code in the PST is deterministic - this is why, for a this set of properties, the property id appears to be fixed giving people the false impression that all named properties have a specific MAPI property id associated with them.</p>\r\n<p>Also causing confusion; the name id structure has an \"id\" field (or a string name field), and MAPI has a concept of basic property tag/ids. These are not the same thing. Perhaps that's whats tripping you up.</p>\r\n<p><a href=\"http://msdn.microsoft.com/en-us/library/cc765864.aspx\">See this link.</a></p>\r\n<p>Does that help?</p>",
+    "PostedDate": "2011-08-03T18:31:45.497-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "652646",
+    "ThreadId": "266977",
+    "Html": "<p>So I get an ID from the property bag that turns out to be a named property, and if it is a string I can use the string, but if it is not I have to base the property name on the named property's ID / GUID pair? So the MNID [id 0x8045, GUID {00062004-0000-0000-c000-000000000064}] will always be BusinessAddressStreet for all PSTs? The link that you gave me seems to suggest that. And do I need to compare against both parts of the MNID, or is the property name's ID sufficient -- will 0x8045 always be the ID of the name for the property BusinessAddressStreet?</p>",
+    "PostedDate": "2011-08-04T13:12:06.693-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "652674",
+    "ThreadId": "266977",
+    "Html": "<p>You always have to compare <em>both</em> the named ID (or string) and the name GUID. It's the pair that makes a unique named prop.</p>",
+    "PostedDate": "2011-08-04T14:13:18.143-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

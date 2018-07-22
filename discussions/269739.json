@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "660756",
+    "ThreadId": "269739",
+    "Html": "\r\n<p>I have a case where I am expected to handle PST files that have been protected with a password. Is there any way of handling a password-protected PST file,if the password is known?</p>\r\n",
+    "PostedDate": "2011-08-19T12:14:58.673-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "660838",
+    "ThreadId": "269739",
+    "Html": "<p>PSTSDK ignores passwords set on pst files.</p>",
+    "PostedDate": "2011-08-19T17:23:11.613-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "818000",
+    "ThreadId": "269739",
+    "Html": "<p><a href=\"http://www.recoverytoolbox.com/outlook_password.html\">recover pst password</a> lost or forgotten passwords of MS Outlook. Tool recovers passwords for password-protected Microsoft Outlook data, for POP3/IMAP/HTML mail servers. Software saves recovered password settings of mail accounts, including the settings of IMAP and HTML mail accounts into new file without changing source data.</p>",
+    "PostedDate": "2012-03-30T17:44:31.493-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

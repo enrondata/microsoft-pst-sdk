@@ -1,0 +1,24 @@
+<div class="wikidoc">This page contains a quick overview of the Util layer. For a more in depth description of what is contained, see the Util module in the documentation distributed with the library.
+<h1>Utilities Layer Overview</h1>
+The utilities layer contains a couple concepts and a ton of type definitions used by other layers. It is not in and of itself a free standing layer; you won&#39;t ever work with just the Utilities layer. However, as the lowest layer on the stack, it is useful to know what is contained here as you&#39;ll certainly come across at least a few of these concepts when working at the higher layers. <br />
+<ol><li><a href="#BTree">BTree</a></li>
+<li><a href="#Exceptions">Exceptions</a></li>
+<li><a href="#Primitives">Primitives</a>
+<ol><li><a href="#Basic Types">Basic Types</a></li>
+<li><a href="#MAPI Types">MAPI Types</a></li></ol></li>
+<li><a href="#Utility Classes and Functions">Utility Classes and Functions</a></li></ol>
+<br /><a name="BTree"></a>
+<h2>BTree Hierarchy</h2>The concept of a &quot;BTree&quot; shows up three different times in the PST file format - the NBT and BBT BTrees which form the heart of the NDB, the SBLOCK BTrees to describe the subnodes of a node, and in the BTH structure (or BTree on Heap). It made sense to design a generic BTree class hierarchy so code concerning item lookup and iteration can be reused, simplifying the implementation and use of the various BTree instances. That generic BTree class hierarchy lives in the Util layer in Btree.h. It provides base classes for a BTree node, a leaf node, and a non-leaf node, as well as the basics of item lookup and relationship between those node classes. It also defines and implements an iteration mechanism. Users of this class just need to inherit and implement a few virtual functions for each node type to have a fully working BTree hierarchy.<br /><br />The BTree Hierarchy is defined in <span class="codeInline">pstsdk/util/btree.h</span>.<br /><a name="Exceptions"></a>
+<h2>Exception Hierarchy</h2>The various exception types (all derived directly or indirectly from std::exception) are defined in the util layer in <span class="codeInline">pstsdk/util/errors.h</span>.<br /><a name="Primitives"></a>
+<h2>Primitive Types</h2>Some fundamental types used throughout the library are defined in <span class="codeInline">pstsdk/util/primitives.h</span>.<br /><a name="Basic Types"></a>
+<h3>Basic Types</h3>Basic types include things like:<br /><br /><pre>
+typedef boost::uint32_t uint;
+typedef boost::uint32_t ulong;
+typedef boost::uint64_t ulonglong;
+</pre><br />Or<br /><br /><pre>
+typedef ulong node_id;
+typedef ulonglong block_id;
+typedef block_id page_id;
+</pre><br /><a name="MAPI Types"></a>
+<h3>MAPI Types</h3>This includes types/enums specific to the PST as well as general MAPI definitions. Although the library tries to be as MAPI independant as possible, it&#39;s hard to avoid being aware of the different MAPI prop type definitions, or a few of the GUIDs defined for named properties.<br /><a name="Utility Classes and Functions"></a>
+<h2>Utility Classes and Functions</h2><span class="codeInline">C++03</span> lacks a portable way to address large files (&gt;4GB), so the <span class="codeInline">file</span> class in <span class="codeInline">pstsdk/util/util.h</span> of the utilities layer was born.<br /><br />Also located here are utility functions to convert between the differing time types.</div><div class="ClearBoth"></div>

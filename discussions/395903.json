@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "913968",
+    "ThreadId": "395903",
+    "Html": "\r\n<p>I want to convert pst to eml . And the embeded&nbsp; image in eml have a content-id (cid), but i don't know how to get it , with using pstsdk&nbsp; .</p>\r\n<p>Anyone know how to do?&nbsp;&nbsp;</p>\r\n",
+    "PostedDate": "2012-09-18T00:57:21.673-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "931443",
+    "ThreadId": "395903",
+    "Html": "<p>This is what i am trying to do. Have you had any luck? Currently i can get the property bag wstring vector info. I am working with const_property_objects to try and use the mapi properties in order to get them that way. Have you figured out how to get&nbsp;information?</p>",
+    "PostedDate": "2012-10-23T22:14:59.733-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

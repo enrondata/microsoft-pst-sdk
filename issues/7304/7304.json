@@ -1,0 +1,60 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "",
+    "ClosedDate": "2010-09-27T11:29:50.757-07:00",
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "Building on iOS, I get the following rather lengthy error:  \n \n/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator3.2.sdk/usr/include/c++/4.2.1/tr1/hashtable:1135: error: passing 'const std::tr1::hashtable\n<short unsigned int, \nstd::pair<const short unsigned int, pstsdk::disk::column_description>, \nstd::allocator<std::pair<const short unsigned int, pstsdk::disk::column_description> >, \nInternal::extract1st<std::pair<const short unsigned int, pstsdk::disk::column_description> >, \nstd::equal_to<short unsigned int>, \nstd::tr1::hash<short unsigned int>, \nInternal::mod_range_hashing, \nInternal::default_ranged_hash, \nInternal::prime_rehash_policy, \nfalse, \ntrue, \ntrue>'\nas 'this' argument of 'typename std::tr1::hashtable<Key, Value, Allocator, ExtractKey, Equal, H1, H2, H, RehashPolicy, cache_hash_code, mutable_iterators, unique_keys>::node* std::tr1::hashtable<Key, Value, Allocator, ExtractKey, Equal, H1, H2, H, RehashPolicy, cache_hash_code, mutable_iterators, unique_keys>::find_node(Internal::hash_node<Value, cache_hash_code>*, const Key&, typename std::tr1::hashtable<Key, Value, Allocator, ExtractKey, Equal, H1, H2, H, RehashPolicy, cache_hash_code, mutable_iterators, unique_keys>::hash_code_t) \n[with \nKey = short unsigned int, \nValue = std::pair<const short unsigned int, pstsdk::disk::column_description>, \nAllocator = std::allocator<std::pair<const short unsigned int, pstsdk::disk::column_description> >, \nExtractKey = Internal::extract1st<std::pair<const short unsigned int, pstsdk::disk::column_description> >, \nEqual = std::equal_to<short unsigned int>, \nH1 = std::tr1::hash<short unsigned int>, \nH2 = Internal::mod_range_hashing, \nH = Internal::default_ranged_hash, \nRehashPolicy = Internal::prime_rehash_policy, \nbool cache_hash_code = false, \nbool mutable_iterators = true, \nbool unique_keys = true]' \ndiscards qualifiers\n \nThe error originates from this line in the template<typename T> inline pstsdk::ulonglong pstsdk::basic_table<T>::get_cell_value(ulong row, prop_id id) const function in table.h:\nconst_column_iter column = m_columns.find(id);\n \nAs a matter of fact, I get the same error in all three places in table.h where the m_columns.find function is called.  \n \nAny suggestions on what types of things to try?",
+    "LastUpdatedDate": "2013-05-16T02:40:25.093-07:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "Low",
+      "Severity": 50,
+      "Id": 1
+    },
+    "ProjectName": "pstsdk",
+    "ReportedDate": "2010-09-26T20:59:52.023-07:00",
+    "Status": {
+      "Name": "Closed",
+      "Id": 4
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "hashtable.h build error",
+    "Type": {
+      "Name": "Issue",
+      "Id": 3
+    },
+    "VoteCount": 1,
+    "Id": 7304
+  },
+  "FileAttachments": [],
+  "Comments": [
+    {
+      "Message": "I think the key point that error message was trying to make was the \"discards qualifiers\". I'm guessing at some level down the callstack their unordered_map implementation doesn't mark a member function as const when it should. \r\n\r\nI'd follow up with the GCC people maintaining that platform if I were you. First, you might want to see if you can repo the issue outside of pstsdk: create a test app which trys to call unordered_map::find from inside a const member function.",
+      "PostedDate": "2010-09-27T11:24:27.183-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2010-09-27T11:29:50.757-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-02-14T13:08:33.673-08:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-05-16T02:40:25.093-07:00",
+      "Id": -2147483648
+    }
+  ]
+}

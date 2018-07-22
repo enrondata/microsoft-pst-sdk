@@ -1,0 +1,77 @@
+<div class="wikidoc">This page contains a quick overview of the NDB layer. For a more in depth description of what is contained, see the NDB module in the documentation distributed with the library. 
+<h1>NDB Layer Overview</h1>
+The NDB Layer contains an implementation of all of the data structures defined in <span class="codeInline">[MS-PST]</span> 2.2, including abstractions for the database itself as well as blocks, pages (NBT/BBT), and nodes.<br />
+<ol><li><a href="#Getting Started">Getting Started</a></li>
+<li><a href="#Working with blocks and pages">Working with blocks and pages</a></li>
+<li><a href="#Iterating over the nodes of a database">Iterating over the nodes of a database</a></li>
+<li><a href="#Working with nodes">Working with nodes</a>
+<ol><li><a href="#Reading from a node">Reading from a node</a></li>
+<li><a href="#Opening a subnode">Opening a subnode</a></li></ol></li></ol>
+<br /><a name="Getting Started"></a>
+<h2>Getting Started</h2>A <span class="codeInline">db_context</span> object (usually referenced via a <span class="codeInline">shared_ptr&lt;db_context&gt;</span> typedef called <span class="codeInline">shared_db_ptr</span>) represents a PST file at the NDB layer. To create one, you call <span class="codeInline"> open_database </span> from database.h.<br /><br /><pre>
+#include &quot;ndb.h&quot; // includes all other ndb layer headers
+...
+shared_db_ptr pst_file = open_database(L&quot;sample.pst&quot;);
+</pre><br />Think of a shared<i>db</i>ptr as an object factory which can create all of the other NDB object types. Its primary job is to abstract away all the differences between the different types of PST files and produce in memory abstractions of various structures on demand. All other database objects also keep a pointer to the <span class="codeInline">db_context</span> object. These other objects can be divided into two broad types, based on the type of reference to a <span class="codeInline">db_context</span> they keep.<br /><br /><b>Independant Objects</b> Include the node class and every class in the LTP layer and above. These objects keep a strong reference (a proper <span class="codeInline">shared_db_ptr</span>) and thus extend the lifetime of the <span class="codeInline">db_context</span> to be at least that of their own.<br /><b>Dependant Objects</b> Consist of the entire <span class="codeInline">block</span> and <span class="codeInline">page</span> hierarchy. These objects only keep a weak reference (a <span class="codeInline">weak_ptr&lt;db_context&gt;</span> or <span class="codeInline">weak_db_ptr</span>) to the db_context, which does not extend the lifetime of the <span class="codeInline">db_context</span>.<br /><br /><a name="Working with blocks and pages"></a>
+<h2>Working with Blocks and Pages</h2>Blocks form the building blocks of nodes; pages form the building blocks of the NBT and BBT BTrees. Even when working with on the NDB layer, you will rarely interact with any of them except the root NBT page in order to do node lookups. <br /><br />To get the root NBT page, you simply call <span class="codeInline">read_nbt_root()</span> on your <span class="codeInline">db_context</span>:<br /><br /><pre>
+shared_ptr&lt;nbt_page&gt; nbtroot = pst_file-&gt;read_nbt_root();
+</pre><br />A <span class="codeInline">nbt_page</span> models the BTree concept described in <a href="https://pstsdk.codeplex.com/wikipage?title=util%3aBTree&referringTitle=ndb">BTree Hierarchy</a>, so can use it to lookup <span class="codeInline">node_info</span> objects, which is a simple structure mapping a node_id to its blocks, which can be used to construct a node. Or, you could use the <span class="codeInline">db_context::lookup_node_info</span> function, which does the exact same thing. Or, you could use <span class="codeInline">db_context::lookup_node</span>, which does the same thing, but constructs a <span class="codeInline">node</span> object from the <span class="codeInline">node_info</span> object. The following are equivalent:<br /><br /><pre>
+// Use the NBT root page
+node_info mynode_info = nbtroot-&gt;lookup(0x31);
+node mynode(pst_file, mynode_info);
+
+// Use Lookup node info
+node_info mynode_info2 = pst_file-&gt;lookup_node_info(0x31);
+node mynode2(pst_file, mynode_info2);
+
+// Use lookup node
+node mynode3 = pst_file-&gt;lookup_node(0x31);
+</pre><br />All of this obvious abstracts away the details of working with the NBT pages; each NBT page knows how to read the appropriate child pages from the <span class="codeInline">db_context</span> using the various page factory functions. You can work with these page factory functions yourself; the basic idea is you provide the physical location of the page and the type and call the appropriate member function on <span class="codeInline">db_context</span> to read that page.<br /><br />In a similar way, working with blocks is abstracted away by the <span class="codeInline">node</span> class. The <span class="codeInline">node</span> knows how to use the <span class="codeInline">db_context</span> to read the appropriate <span class="codeInline">block</span> type, and each <span class="codeInline">block</span> will know how to read any child blocks which may exist, etc. If you want to get very close to the metal you can use the block factory functions on <span class="codeInline">db_context</span>, you just provide basic information about the block and call the appropriate member function, and you&#39;ll get page an in memory abstraction for that block type.<br /><br /><a name="Iterating over the nodes of a database"></a>
+<h2>Iterating over the nodes of a database</h2>If you want to take a look at every node in the database, the NBT root page (via the BTree hierarchy) provides an iteration mechanism. Simply call <span class="codeInline">nbt_page::begin</span> to get an iterator positioned at the first <span class="codeInline">node_info</span> structure in the database, iterate until you hit the iterator returned by <span class="codeInline">nbt_page::end</span>, and do stuff in the middle. The basic form looks like this:<br /><br /><pre>
+void do_stuff(const node&amp; n);
+...
+
+for(const_nodeinfo_iterator iter = nbt_root-&gt;begin(); iter != nbt_root-&gt;end(); ++iter)
+{
+    do_stuff(node(pst_file, *iter));
+}
+</pre><br />Pretty straight forward. But what can you do with a <span class="codeInline">node</span>?<br /><br /><a name="Working with nodes"></a>
+<h2>Working with nodes</h2>The <span class="codeInline">node</span> class is the primary abstraction exposed by the NDB Layer. You can query information about it such as it&#39;s id, size, its block&#39;s id, etc; you can read information from it and treat it as a flat array of bytes (or a stream), and you can iterate over and open its subnodes.<br /><br />Let&#39;s learn about our <span class="codeInline">node</span>:<br /><br /><pre>
+node_id id = n.get_id(); // returns the node_id, which can be used to lookup this node later
+size_t size = n.get_size(); // returns the size of this node
+node_id parent_id = n.get_parent_id(); // the parent id, as in a folder/message relationship. Don&#39;t confuse with node/subnode
+</pre><br /><a name="Reading from a node"></a>
+<h3>Reading from a node</h3>Probably the most interesting thing to do with a <span class="codeInline">node</span> is read data from it. At the NDB Layer a node is just a flat array of bytes; higher level data structures are built on top of <span class="codeInline">nodes</span> by interpreting their content. But here, we can read from a node in one of two ways: directly, or by opening the node as a stream. To read from a node directly, you call one of the read overloads:<br /><br /><pre>
+std::vector&lt;byte&gt; content(15); // a vector of 15 bytes
+
+ // read the first 15 bytes of the node
+n.read(content, 0);
+
+// read the first 15 bytes on the second &quot;page&quot; (here, means external block) of the node
+n.read(content, 1, 0);
+
+// use the read_raw function to not play with vectors
+n.read_raw(&amp;content[0], 15, 0);
+
+// read&lt;T&gt; lets you read a arbitrary structure at an arbitrary location
+disk::heap_first_header first_header = n.read&lt;disk::heap_first_header&gt;(0);
+</pre><br />The second way is to open the node as a stream. Then you can do any crazy thing you can do with a regular bidirectional/seekable istream object:<br /><br /><pre>
+node_stream nstream(n.open_as_stream());
+float f;
+node_stream &gt;&gt; f; // for some reason
+</pre><br /><a name="Opening a subnode"></a>
+<h3>Opening a subnode</h3>A <span class="codeInline">node</span> may have zero or more subnodes. A subnode is in of itself a <span class="codeInline">node</span> (it can have subnodes itself, for example) - the only difference is that a subnode only exists in the context of a <span class="codeInline">node</span>, and does not exist in the top level NBT of the database.<br /><br />Information about the subnodes is stored in a special block that each node can reference called a <span class="codeInline">subnode_block</span>. The <span class="codeInline">subnode_block</span> forms a BTree hierarchy, similar to the NBT, but private to that node. You can get a reference to the <span class="codeInline">subnode_block</span> and work with it directly, or you can call some convenience methods on the node to lookup or open various subnodes (similar to how you can get the nbt_root page from a <span class="codeInline">db_context</span>, or you can call convenience methods on <span class="codeInline">db_context</span> object itself). We&#39;ll focus on the convenience methods of <span class="codeInline">node</span>:<br /><br /><pre>
+for(const_subnodeinfo_iterator iter = n.subnode_info_begin(); iter != n.subnode_info_end(); ++iter)
+{
+    // construct a subnode and call our do_stuff function to work with it
+    do_stuff(node(n, *iter));
+}
+</pre><br />Also, <span class="codeInline">node</span> provides a pair of methods which return <i>proxy iterators</i> over the subnodes. This basically means when you dereference the iterator, it returns an actual (temporary) node object constructed from the enclosing node and the subnode_info the iterator is positioned on. It just allows for some nicer looking and more natural syntax. The following is exactly equivalent to the above, and in fact does exactly what you see above behind the scenes:<br /><br /><pre>
+for(node::subnode_iterator iter = n.subnode_begin(); iter != n.subnode_end(); ++iter)
+{
+    // *iter is a node, no need to construct one ourselves
+    do_stuff(*iter);
+}
+</pre><br />And finally, <span class="codeInline">node</span> has a lookup method, for times you know exactly which subnode you&#39;re interested in.<br /><br /><pre>
+node mysubnode = n.lookup(0x2);
+</pre></div><div class="ClearBoth"></div>

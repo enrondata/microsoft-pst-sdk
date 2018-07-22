@@ -1,0 +1,50 @@
+[
+  {
+    "Id": "541438",
+    "ThreadId": "239831",
+    "Html": "\r\n<p>It seems that any message that is touched by Exchange no longer has an HTML body. Saving a PST file that comes from a user mailbox on an exchange server results in messages that contain compressed RTF, which includes embedded HTML, but no way as far as I\r\n can see to directly retrieve the HTML that was on the wire before it hit the Exchange server. It seems that I need some way to decompress, then interpret, the compressed RTF. Is there anything anyone can suggest to do this conversion?</p>\r\n",
+    "PostedDate": "2010-12-28T17:48:36.413-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "541453",
+    "ThreadId": "239831",
+    "Html": "\r\n<p>Yes, sometimes the HTML body simply isn't present in the PST file. Outlook, Exchange, etc.. all have logic (called &quot;Best Body&quot; logic) to convert existing body formats (such as RTF) into other body formats (like HTML) when the client requests the body of\r\n a specific format. In these cases, you'll basically have to replicate this functionality by using some RTF library to ready and interpret the compressed RTF streams.</p>\r\n",
+    "PostedDate": "2010-12-28T19:15:00.113-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "542597",
+    "ThreadId": "239831",
+    "Html": "\r\n<p>I was afraid of that. Well, if that's what I need to do, that is what I will do.</p>\r\n",
+    "PostedDate": "2010-12-31T16:29:46.867-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "542611",
+    "ThreadId": "239831",
+    "Html": "\r\n<p>If the HTML body isn't available, it might be easier to fallback on the plaintext version if present rather than trying to convert the RTF body.</p>\r\n",
+    "PostedDate": "2010-12-31T20:02:51.797-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "542617",
+    "ThreadId": "239831",
+    "Html": "\r\n<p>There are reasons that our clients want the formatted version. The plaintext will do for some content search, but we are going to have to produce the rich text somehow.</p>\r\n",
+    "PostedDate": "2010-12-31T20:58:30.403-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "619047",
+    "ThreadId": "239831",
+    "Html": "<p>The retrieval of the original format from the RTF isn't that hard - I've done it for the Thunderbird Outlook import module (<a href=\"https://bugzilla.mozilla.org/show_bug.cgi?id=207156\">https://bugzilla.mozilla.org/show_bug.cgi?id=207156</a>). The RTF format was extended by MS to be able to include information both of the original format (plaintext or HTML)&nbsp;and the original HTML tags (if any). Personally I found that it's safer to _always_ use RTF version, even if the body is originally plain/html and the corresponding property exists. But the obstacle may be in the decompression of the RTF. In Outlook MAPI, it's done with a call to WrapCompressedRTFStream (or WrapCompressedRTFStreamEx from msmapi32.dll). Is there any method to do this in pstsdk? Or maybe some hint how to implement this?</p>",
+    "PostedDate": "2011-05-26T20:07:30.49-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

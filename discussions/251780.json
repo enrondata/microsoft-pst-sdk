@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "588760",
+    "ThreadId": "251780",
+    "Html": "\r\n<p>When open the ansi PST files, the folder name&nbsp;, subject and&nbsp;body ...，all<span id=\"x_result_box\" lang=\"en\">\r\n<span title=\"点击可显示其他翻译\">is garbled.</span></span></p>\r\n<p><span lang=\"en\"><span title=\"点击可显示其他翻译\">And can't get the tagStoreUnicodeMask prop(0x340F) from the PST file.</span></span></p>\r\n<p>&quot;已删除的邮件&quot;&nbsp; -----&gt;&nbsp;&Ograve;&Ntilde;&Eacute;&frac34;&sup3;&yacute;&Oacute;&Ecirc;&frac14;&thorn;</p>\r\n",
+    "PostedDate": "2011-03-30T04:55:34.373-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "589207",
+    "ThreadId": "251780",
+    "Html": "<p>How to adjudicate that&nbsp;a PST file&nbsp;is&nbsp;ANSI PST file or unicode PST file?</p>",
+    "PostedDate": "2011-03-30T20:40:24.87-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

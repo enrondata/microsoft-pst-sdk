@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "904304",
+    "ThreadId": "393147",
+    "Html": "\r\n<p>I am using the property bag to try and create a mime out of a pst file. It works for the first 20 messages or so but after that all properties are empty. The loops are being executed the&nbsp;expected&nbsp;number of times so im not sure what to do to get\r\n the rest of the properties. It stops on the same message on wstring property 19 out of 24.</p>\r\n",
+    "PostedDate": "2012-08-26T16:45:38.83-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

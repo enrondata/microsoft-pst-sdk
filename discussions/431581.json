@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "994821",
+    "ThreadId": "431581",
+    "Html": "Hello, guys!..\r<br />\nI can't get the body from some messages (e.x. multipart/signed as written in header). I've tryed 3 different ways: get_body(), like a property and get_body_stream...and no result! So, how can I do this?<br />\n",
+    "PostedDate": "2013-01-31T10:14:57.6-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "994836",
+    "ThreadId": "431581",
+    "Html": "signed e-mails are wrapped in an envelope.  The actual body and content of the e-mail are in an attachment usually called smime.p7m or .p7s<br />\n",
+    "PostedDate": "2013-01-31T10:51:53.617-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "994840",
+    "ThreadId": "431581",
+    "Html": "oh, what a surprise!...thanx, and what about multipart/mixed &amp; multipart/alternative?<br />\n",
+    "PostedDate": "2013-01-31T11:09:35.213-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "514440",
+    "ThreadId": "232760",
+    "Html": "\r\n<p>Hi,</p>\r\n<p>I am very much new to vc&#43;&#43; programming.Please help me to to do the following,</p>\r\n<li>Make sure the PST File Format SDK directory is in your compilers include path\r\n</li><li>Make sure the Boost directory is in your compilers include path\r\n<p>What i am doing was creating win32 console application in vs 2010(.net 4.0) and adding library refrence by project properties--&gt;c/c&#43;&#43;-Add additional include directives.but it throws me error.I have downloaded pstsdk and boost 1.42 and extracted to a folder.</p>\r\n<p>please help me how out on how to add sdk directories.</p>\r\n<p>&nbsp;</p>\r\n</li>",
+    "PostedDate": "2010-10-29T02:09:38.177-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

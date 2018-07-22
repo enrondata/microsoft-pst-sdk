@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "507021",
+    "ThreadId": "230848",
+    "Html": "<p>Hello,</p>\r\n<p>I'm new to the sdk and I was trying to retrieve the body of a message. The only functions I see are get_body and get_html_body but there is none for RTF or MIME type. So I tried retrieving them individually the following way but I don't see valid contents for rtf and mime. &nbsp;How to identify the body type so that I can retrieve the appropriate body property?</p>\r\n<p>if (m.get_property_bag().prop_exists(0x1000))<span> </span>wstrBody = m.get_property_bag().read_prop&lt;std::wstring&gt;(0x1000);<br>if (m.get_property_bag().prop_exists(0x1009))<span> </span>wstrBody = m.get_property_bag().read_prop&lt;std::wstring&gt;(0x1009);<br>if (m.get_property_bag().prop_exists(0x1013))<span> </span>wstrBody = m.get_property_bag().read_prop&lt;std::wstring&gt;(0x1013);<br>if (m.get_property_bag().prop_exists(0x6659))<span> </span>wstrBody = m.get_property_bag().read_prop&lt;std::wstring&gt;(0x6659);</p>\r\n<p>Thanks in advance.</p>",
+    "PostedDate": "2010-10-13T21:49:21.213-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "507022",
+    "ThreadId": "230848",
+    "Html": "<p>It's complicated.</p>\r\n<p>Read up on the &quot;<a href=\"http://msdn.microsoft.com/en-us/library/ee204382(EXCHG.80).aspx\">best body</a>&quot; algorithm described in MSDN. Basically the various body types (plain text, html, and rtf) are kept in sync as requested by the client and as the properties are set on the object by the client.</p>",
+    "PostedDate": "2010-10-13T21:54:51.803-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "507028",
+    "ThreadId": "230848",
+    "Html": "<p>Thanks for the quick response terrymah. That was helpful. I have another question though. I have an html body in the original message and when i retrieve it through get_html_body call, it returns me some garbage but it returns a valid body through get_body call but the original format of the html message is missing so it looks more like plain text, all pictures in original message are gone. The same is the case if I retrieve them individually using read_prop like mentioned above.&nbsp;Am I doing anything wrong?</p>\r\n<p>Thanks.</p>",
+    "PostedDate": "2010-10-13T22:25:21.56-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "508140",
+    "ThreadId": "230848",
+    "Html": "<p>That's due to a naive implementation of read_prop&lt;std::wstring&gt; in object.h (line 329).&nbsp;</p>\r\n<p>Basically, it goes like this:</p>\r\n<p>HTML is typically transfered in a 8bit character encoding (possibly in ANSI or UTF-8 or some other 7 or 8bit compatible encoding). This means one byte per character.&nbsp;When the property gets stored in the PST, it's stored as PT_BINARY... instead of PT_STRING8. This is unfortunate, because the caller who is reading the stored property has no way of knowing if that binary blob is 8bit character data or 16bit character data.&nbsp;</p>\r\n<p>The implementation of read_prop looks at the type specified for the property, and if it's PT_STRING8 (aka 001E), it will correctly cast to a ANSI (8bit) string, then convert that to a wchar string (16bit), and return the wchar.... If it's anything else, it simply casts it to wchar via bytes_to_wstring... Unfortunately, since the data was originally stored in 8bit ANSI format, this causes garbage data, as your 8bit character data is now being interpreted as 16bit character data.&nbsp;</p>\r\n<p>In the .NET wrapper we're working on, we compensated for this by just assuming that the HTML body will always be in 8bit format... as it really doesn't make sense to store it any other way. Our current implementation is a bit of a bad hack, and actually takes the wchar returned from get_HtmlBody() and converts it back to an ANSI string... so it's not ideal. But I'm about to change that to just not use the get_HtmlBody() method, and call the get_value_variable directly to get a byte vector.. then cast to an ANSI string.&nbsp;</p>\r\n<p>This does leave the potential that we may trash valid Unicode content, if that field is ever stored as 16bit char data (like many of the others are)... I'm not sure of a solid way to detect 16bit vs 8bit when faced with a binary blob of unknown char data. I guess there's a lot of&nbsp;heuristics&nbsp;that could come close in a detection scheme, but wouldn't be perfect all the time.</p>\r\n<p>For reference, here's the implementation of read_prop that get_HtmlBody uses (from object.h)...&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<div style=\"color:black;background-color:white\">\r\n<pre><span style=\"color:blue\">template</span>&lt;&gt;\r\n<span style=\"color:blue\">inline</span> std::wstring const_property_object::read_prop&lt;std::wstring&gt;(prop_id id) <span style=\"color:blue\">const</span>\r\n{\r\n    std::vector&lt;byte&gt; buffer = get_value_variable(id); \r\n\r\n    <span style=\"color:blue\">if</span>(get_prop_type(id) == prop_type_string)\r\n    {\r\n        std::string s(buffer.begin(), buffer.end());\r\n        <span style=\"color:blue\">return</span> std::wstring(s.begin(), s.end());\r\n    }\r\n    <span style=\"color:blue\">else</span>\r\n    {\r\n        <span style=\"color:blue\">return</span> bytes_to_wstring(buffer);\r\n    }\r\n}\r\n</pre>\r\n</div>\r\n<p>&nbsp;</p>\r\n<p>and bytes_to_wstring (util.h : line 221):&nbsp;</p>\r\n<p>\r\n<div style=\"color:black;background-color:white\">\r\n<pre><span style=\"color:blue\">inline</span> std::wstring pstsdk::bytes_to_wstring(<span style=\"color:blue\">const</span> std::vector&lt;byte&gt; &amp;bytes)\r\n{\r\n    <span style=\"color:blue\">if</span>(bytes.size() == 0)\r\n        <span style=\"color:blue\">return</span> std::wstring();\r\n\r\n    <span style=\"color:blue\">return</span> std::wstring(<span style=\"color:blue\">reinterpret_cast</span>&lt;<span style=\"color:blue\">const</span> <span style=\"color:blue\">wchar_t</span> *&gt;(&amp;bytes[0]), bytes.size()/<span style=\"color:blue\">sizeof</span>(<span style=\"color:blue\">wchar_t</span>));\r\n}\r\n</pre>\r\n</div>\r\n</p>\r\n<p>&nbsp;</p>\r\n<p>Thanks,</p>\r\n<p>Troy</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-10-15T20:21:08.417-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "508158",
+    "ThreadId": "230848",
+    "Html": "<p>Very insightful. Thanks a lot Troy. I finally managed to get the correct body. What was looking like garbage was actually a valid body.</p>",
+    "PostedDate": "2010-10-15T23:22:06.277-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

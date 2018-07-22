@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "682881",
+    "ThreadId": "275521",
+    "Html": "\r\n<p>I am trying to retrieve the multi-value binary named property &quot;OneOffMembers&quot; from an entry in the Contacts folder.&nbsp; Can you tell me what is wrong with the following code:</p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"></p>\r\n<p>std::vector&lt;std::vector&lt;pstsdk::byte&gt;&gt; member;</p>\r\n</span></span>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p></p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span id=\"mce_marker\">&nbsp;</span></span></span><span style=\"font-family:Consolas; font-size:x-small\">\r\n</p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"></p>\r\n<p>member = bag.read_prop&lt;std::vector&lt;std::vector&lt;pstsdk::byte&gt;&gt;&gt;(nprop);</p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">The value of nprop is 0x8149, which was\r\n obtained by looking up 0x8054 in the named id table.&nbsp; This corresponds to the values that I see for that property with Outlook Spy.&nbsp; You can assume that 'bag' is valid, because I have used that to obtain other properties from the entry.&nbsp; The\r\n problem with the code is that it produces an exception.&nbsp; Any suggestions?</span></span></span></span></p>\r\n<font face=\"Consolas\" size=\"2\">\r\n<p></p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">&nbsp;</span></span></span></span></span></span></span></span></p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">&nbsp;</span></span></span></span></span></span></span></span></p>\r\n<p></p>\r\n</font></span>\r\n<p></p>\r\n</span>\r\n<p></p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2011-10-11T16:41:22-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "682954",
+    "ThreadId": "275521",
+    "Html": "<p>&nbsp; &nbsp; member = bag.read_prop&lt;std::vector&lt;std::vector&lt;pstsdk::byte&gt;&gt;&gt;(nprop);</p>\r\n<p>Should be</p>\r\n<p>&nbsp; &nbsp; member = bag.read_prop<strong>_array</strong>&lt;<strong>std::vector&lt;pstsdk::byte&gt;</strong>&gt;(nprop);</p>",
+    "PostedDate": "2011-10-11T22:04:46.14-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "682967",
+    "ThreadId": "275521",
+    "Html": "<p>Thanks for your replies to both of my questions -&nbsp; everything working as expected now.</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-10-11T23:07:06.877-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

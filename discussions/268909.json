@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "657409",
+    "ThreadId": "268909",
+    "Html": "<p>The GUID definition has two minor issues. It is defined as</p>\n<p>ulong data1;<br /> short data2;<br /> short data3;<br /> byte data4[8];</p>\n<p>The smaller problem is that this differs from the way GUIDs are usually shown, which is {12345678-1234-1234-1234-1234567890ab}. To match standard display practice, there should be a short data4, followed by a 6-byte data5. I have found that letting data4[0]  replace the first byte of the leading word, data4[1] the second byte, works, so the representation of the above value as an initializer would be {0x12345678, 0x1234, 0x1234, {0x12, 0x34, 0x12, 0x34, 0x56, 0x78, 0x90, 0xab}};</p>\n<p>Note the order of data4[0] and data4[1] are the reverse of what you might expect.</p>\n<p>The second problem lies in the definition of data2 and data3 as short. The initializers</p>\n<p>pstsdk::guid PSETID_Messaging<span> </span>= {0x41F28F13, 0x83F4, 0x4114, {0xA5, 0x84, 0xEE, 0xDB, 0x5A, 0x6B, 0x0B, 0xFF}};<br /> pstsdk::guid&nbsp;PSETID_UnifiedMessaging<span> </span>= {0x4442858E, 0xA9E3, 0x4E80, {0xB9, 0x00, 0x31, 0x7A, 0x21, 0x0C, 0xC1, 0x5B}};</p>\n<p>fail with \"warning 4309: truncation of constant value\" because the data2 values for each of them are greater than MAX_SHORT. I believe that these should be defined as ushort rather than short.</p>",
+    "PostedDate": "2011-08-12T13:32:42.05-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "659081",
+    "ThreadId": "268909",
+    "Html": "<p>That GUID definition matches (or is suppose to match) the definition in the windows SDK, which is why it's broken up like it is. That being said, you are right: they should be unsigned shorts. I'll make a note of it.</p>",
+    "PostedDate": "2011-08-16T13:55:49.89-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

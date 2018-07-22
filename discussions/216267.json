@@ -1,0 +1,162 @@
+[
+  {
+    "Id": "456303",
+    "ThreadId": "216267",
+    "Html": "<p>Greetings! I've fixed an assertion failure and a unit test failure on the Mac:</p>\r\n<p>http://pstsdk.codeplex.com/SourceControl/PatchList.aspx (patches&nbsp;6154,&nbsp;6155)</p>\r\n<p>You can also find my latest set of patches (with build instructions) on github:&nbsp;<a href=\"http://github.com/emk/pstsdk\">http://github.com/emk/pstsdk</a> . Note that is just a scratch repo while I'm working on the pstsdk port, and it may go away in the future.</p>\r\n<p>The unit tests currently fail on databasetest.cpp:242:</p>\r\n<p style=\"padding-left:30px\">test_node_resize&lt;ulonglong&gt;(db_2-&gt;lookup_node(nid_message_store));</p>\r\n<p>The program exits with the following message:</p>\r\n<p style=\"padding-left:30px\">*****N6pstsdk13key_not_foundIjEE*****</p>\r\n<p style=\"padding-left:30px\">terminate called after throwing an instance of 'pstsdk::key_not_found&lt;unsigned int&gt;'</p>\r\n<p style=\"padding-left:30px\">what(): &nbsp;key not found</p>\r\n<p style=\"padding-left:30px\">key not found</p>\r\n<p style=\"padding-left:30px\">Program received signal SIGABRT, Aborted.</p>\r\n<p>Here's a GDB stack trace:</p>\r\n<p style=\"padding-left:30px\">#0 &nbsp;0x00238ad5 in __cxa_throw ()</p>\r\n<p style=\"padding-left:30px\">#1 &nbsp;0x0002d1af in pstsdk::btree_node_leaf&lt;unsigned int, pstsdk::node_info&gt;::lookup (this=0x400290, k=@0xbffff068) at btree.h:297</p>\r\n<p style=\"padding-left:30px\">#2 &nbsp;0x00019be0 in pstsdk::database_impl&lt;unsigned long long&gt;::lookup_node_info (this=0x804a00, nid=33) at database.h:541</p>\r\n<p style=\"padding-left:30px\">#3 &nbsp;0x00019b1d in pstsdk::database_impl&lt;unsigned long long&gt;::lookup_node (this=0x804a00, nid=33) at database.h:79</p>\r\n<p style=\"padding-left:30px\">#4 &nbsp;0x00006836 in test_db () at /Users/emk/src/aranetic/pstsdk/test/databasetest.cpp:241</p>\r\n<p style=\"padding-left:30px\">#5 &nbsp;0x00055b12 in main () at /Users/emk/src/aranetic/pstsdk/test/main.cpp:20</p>\r\n<p>&nbsp;</p>\r\n<p>I'm not really sure how to debug this from here. I suppose that I might try building pstsdk on Windows, and stepping through it in a debugger to see where the Mac behavior diverges. Any other suggestions or advice would be greatly appreciated.</p>\r\n<p>Thank you for you help and advice!</p>\r\n<p>Cheers, Eric</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-16T11:06:12.01-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456432",
+    "ThreadId": "216267",
+    "Html": "<p>I wrote a reply to this earlier this morning - it looks like Codeplex dropped it on the floor.</p>\r\n<p>Anyway, I think the root cause of this issue is related to having the header structures incorrectly aligned. As I commented on one of the patches, the offset for the root_info structure was incorrect in your patch, so maybe that explains it. I know one thing for sure - database_impl::lookup_node_info shouldn't be calling directly into btree_node_leaf, it should be calling into a btree_node_nonleaf. So something is going wrong there, and I think it's reading the incorrect page off of disk. However I can't explain how it managed to get this far; if it read an incorrect address, the CRC should fail etc at some point before here. So that is a mystery.</p>",
+    "PostedDate": "2010-06-16T18:32:38.46-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456643",
+    "ThreadId": "216267",
+    "Html": "<p>Yeah, root_info does have an incorrect offset in my patch, which is weird, because I manually counted the bytes in doc/[MS-PST].pdf. In particular, see &quot;2.2.2.6 HEADER&quot;, where there's an 8-byte spacer named qwUnused in the Unicode header, but only a 4-byte gap in your version of the structure.</p>\r\n<p>Similarly, the latest [MS-PST].pdf says that root_info&lt;ulongulong&gt; should take up 72 bytes in the structure, but it takes up 80 in your code. And your code appears to work.</p>\r\n<p>So, the moral of this story is not to trust [MS-PST].pdf, but to instead use your code to dump structure offsets. I'll keep working on getting the structures aligned correctly, using a copy of Visual C++ 10 Express.</p>\r\n<p>Many thanks for helping me with this! I really appreciate your time and effort.</p>\r\n<p>Cheers, Eric</p>",
+    "PostedDate": "2010-06-17T05:34:49.77-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456705",
+    "ThreadId": "216267",
+    "Html": "<p>OK, I'm going through disk.h and adding more static_assert calls on the structures which are giving me trouble. I'll submit another patch with nothing but these static_assert calls, and then we can figure out how to get things correctly aligned on other platforms.</p>\r\n<p>My guess is we won't need lots of #ifdefs. There's a couple of GCC knobs I can twiddle to force alignment once I actually understand what's going on. Now that I know not to entirely trust [MS-PST].pdf, this should be relatively easy. ;-)</p>",
+    "PostedDate": "2010-06-17T06:46:27.12-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456725",
+    "ThreadId": "216267",
+    "Html": "<p>OK, I've submitted a (very rough) patch with more static assertions on all the tricky structures. Note that this patch appears to be broken on GCC (which doesn't like some of the assertions). I'll fix these problems and upload another patch.</p>",
+    "PostedDate": "2010-06-17T07:16:36.57-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456744",
+    "ThreadId": "216267",
+    "Html": "<p>New patches, tested on Mac and Win32:</p>\r\n<p>6162: Updated CMake patch which deletes test/makefile to prevent case-insensitive filename collision with CMake's generated test/Makefile.</p>\r\n<p>6163: Updated static assertion patch which only calls offset_of on POD (&quot;plain old data&quot;) classes, for compatibility with GCC.</p>\r\n<p>Please feel free to ignore the older versions of these patches.</p>\r\n<p>When you get in later today, would you like to get in touch via voice or IRC to figure out how to handle alignment in a cross-platform fashion? Thank you for all your help in porting pstsdk to other platforms!</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-17T07:56:46.827-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456779",
+    "ThreadId": "216267",
+    "Html": "<p>Ok, you've given me a lot to think about and look at, thanks for all your work here. :) I'll take a closer look at the patches in a bit, but for now I looked into the [MS-PST] issues you pointed out and I think I see what's going on.</p>\r\n<p>[MS-PST] has an 8 byte buffer before the root_info structure, and root_info has a 4 byte reserved value then then 8 byte ibFileEof value. After the root_info structure is a 4 byte alignment (in the header structure).</p>\r\n<p>pstsdk has a 4 byte buffer (alignment) before the root_info structure.. The root structure has a 4 byte cOrphans member, followed by a 4 byte alignment member. An in pstsdk, the 4 byte alignment located after the root structure is actually a member of the root structure.&nbsp;</p>\r\n<p>So, basically, when all is said and done, all member variables of interest are located at the same absolute offsets in both [MS-PST] and pstsdk. Things get confusing because A) cOrphans member is present in pstsdk, where it's ignored as general padding/buffer in [MS-PST], and B) various paddings are attributed to different structures sometimes between the two references.</p>\r\n<p>I'll make a note to update [MS-PST] to move around the padding to better reflect what pstsdk and the compiler do. If you see any other inconsistencies between pstsdk and [MS-PST], please point them out. Thanks again!</p>",
+    "PostedDate": "2010-06-17T08:46:49.213-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456802",
+    "ThreadId": "216267",
+    "Html": "<p>Thank you for looking into these problems! I really appreciate all your help.</p>\r\n<p>I've managed to get all the data structures correctly aligned under MacPorts GCC 4.4, simply by adding two (rather kludgy) __attribute((aligned(...))) declarations:</p>\r\n<pre>diff --git a/pstsdk/disk/disk.h b/pstsdk/disk/disk.h\r\nindex 591442a..1a9e09e 100644\r\n--- a/pstsdk/disk/disk.h\r\n+++ b/pstsdk/disk/disk.h\r\n@@ -111,7 +111,7 @@ enum crypt_method\r\n template&lt;typename T&gt;\r\n struct root\r\n {\r\n-    typedef T location;\r\n+    typedef T location __attribute((aligned(sizeof(T))));\r\n     typedef T count;\r\n \r\n     ulong cOrphans;             //!&lt; The number of &quot;orphans&quot; in the BBT\r\n@@ -562,7 +562,7 @@ struct page_trailer\r\n     ushort signature;      //!&lt; Signature of this page, as calculated by the \\ref compute_signature function\r\n     ulong crc;             //!&lt; CRC of this page, as calculated by the \\ref compute_crc function\r\n     block_id_disk bid;     //!&lt; The id of this page\r\n-};\r\n+} __attribute((aligned(sizeof(ulonglong))));\r\n //! \\cond static_asserts\r\n static_assert(sizeof(page_trailer) == 16, &quot;page_trailer incorrect size&quot;);\r\n //! \\endcond\r\n</pre>\r\n<p>These __attribute declarations are basically equivalent to aligning all ulonglong fields to an 8-byte boundary. Between them, they fix the alignment of root and page_trailer throughout the file (coincidentally fixing the other issues in page_header along the way). Obviously, this is a very kludgy solution, and we can presumably do better with a bit of thought.</p>\r\n<p>However, these changes cause a new test failure:</p>\r\n<pre>test_disk();\r\nbt-&gt;cb: 156 size: 156\r\nbt-&gt;cb: 1024 size: 0\r\nAssertion failed: (bt-&gt;cb == size), function test_block, file /Users/emk/src/aranetic/pstsdk/test/disktest.cpp, line 21.\r\n</pre>\r\n<p>This appears to be caused by something going wrong in align_disk and align_slot. I don't quite understand those two functions yet, so this may take me a little while to sort out. If you'd like to try for a real-time discussion at some point, please let me know--I'm working on pstsdk full-time for the next several days at least.</p>\r\n<p>Once again, thank you for your help!</p>\r\n<p>Cheers, Eric</p>",
+    "PostedDate": "2010-06-17T09:17:41.353-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456820",
+    "ThreadId": "216267",
+    "Html": "<p>All space allocations in the PST are multiples of 64 bytes. The point of align_slot is to round up the passed size to the nearest 64 bytes. The point of align_disk is to take the data size of a block, add in the block trailer size, and align that value to the nearest slot. Another detail - block trailers are always aligned to the end of the allocation, so any padding added because of align_slot is between the &quot;real&quot; data (aligned to the start of the allocation) and the block trailer (aligned against the end of the allocation). That's why you see the weird calculation on line 16 of disktest.cpp.</p>\r\n<p>I suspect there are still issues in structure alignment not caught by static_asserts based on that error. Perhaps we need to add more around block and block_trailer structures?</p>",
+    "PostedDate": "2010-06-17T09:39:25.587-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456828",
+    "ThreadId": "216267",
+    "Html": "<p>Thank you for explaining align_disk and align_slot! If you'd like, I can add some unit tests for these functions.</p>\r\n<p>I'll add some more alignment assertions this afternoon, and send you another patch. Now that I have a working Windows build, this isn't too hard.</p>",
+    "PostedDate": "2010-06-17T09:48:05.03-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456878",
+    "ThreadId": "216267",
+    "Html": "<p>It looks like you're right! I've been reading through disk.h, adding static assertions, and finding all sorts of little structures which will wind up misaligned.</p>\r\n<p>The only significant different between Windows and Mac here is the fact that Windows is aligning ulonglong to 8 bytes, and Mac is aligning ulongulong to 4 bytes. Now that I know what to look for, it's pretty easy to find the offenders by hand. This is apparently a <a href=\"http://www.winehq.org/pipermail/wine-patches/2004-August/012328.html\">well-known issue</a>, with <a href=\"http://stackoverflow.com/questions/611123/long-long-alignment-problem-msvc-vs-gcc\">several</a> possible <a href=\"http://gcc.gnu.org/onlinedocs/gcc/Structure_002dPacking-Pragmas.html\">workarounds</a>.</p>\r\n<p>To fix this, we need to decide which workaround adds the least crud to your nice clean code. :-) I'm thinking that&nbsp;__attribute__((ms_struct)) could be wrapped up in a macro and appended to each of the structure definitions, but maybe one of the available pragmas would be a better choice.</p>\r\n<p>Any thoughts? I'm happy to do whatever works for you, and supply a patch that has been tested on several compilers. Thank you for your feedback!</p>",
+    "PostedDate": "2010-06-17T11:36:15.357-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456891",
+    "ThreadId": "216267",
+    "Html": "<p>OK, '#pragma ms_struct on' seems to work fairly well, and I'll be preparing an appropriate patch.</p>\r\n<p>The tests are now failing in highlevel.cpp:</p>\r\n<pre>prop_type_mv_string\r\nGreen Category\r\nRed Category\r\n*****N6pstsdk13key_not_foundINS_10named_propEEE*****\r\nterminate called after throwing an instance of 'pstsdk::key_not_found'\r\n  what():  key not found\r\n</pre>\r\n<p>Here's a stack trace:</p>\r\n<pre>#0  0x00238ad5 in __cxa_throw ()\r\n#1  0x00038d05 in pstsdk::name_id_map::lookup (this=0xbfffebec, p=@0xbfffef64) at nameid.h:323\r\n#2  0x00030688 in test_nameid_map_samp1 (pdb={&gt; = {_M_ptr = 0x804200, _M_refcount = {_M_pi = 0x4004c0}}, }) at /Users/emk/src/aranetic/pstsdk/test/highlevel.cpp:22\r\n#3  0x00033335 in test_highlevel () at /Users/emk/src/aranetic/pstsdk/test/highlevel.cpp:303\r\n#4  0x00055b29 in main () at /Users/emk/src/aranetic/pstsdk/test/main.cpp:22\r\n</pre>\r\n<p>This looks more alignment problems somewhere. Do you know which other headers contain low-level structures that might need '#pragma ms_struct on'? I'll keep working, and let you know what I find.</p>",
+    "PostedDate": "2010-06-17T12:17:05.623-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456899",
+    "ThreadId": "216267",
+    "Html": "<p>I've added '#pragma ms_struct on' to database_iface.h, which has the only other suspicious 'struct' definitions. Unfortunately, the error is still occurring. Will keep digging...</p>",
+    "PostedDate": "2010-06-17T12:28:56.797-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456944",
+    "ThreadId": "216267",
+    "Html": "<p>util\\primitives.h is the only other file I can think of that might be problematic. I actually made an effort to centralize anything which is alignment sensitive in disk.h, for this reason. Let me know if you figure out what structure is the problem and I'll probably end up moving it.</p>",
+    "PostedDate": "2010-06-17T14:12:08.323-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456948",
+    "ThreadId": "216267",
+    "Html": "<p>I've temporarily wrapped <em>everything</em> in <code>ms_struct</code>, so I don't think it's an alignment problem (or at least not an obvious one).</p>\r\n<p>However, on the Mac, I only get a few lines of test output before this failure, and one Windows, I get many pages of output by the time I reach this point. It seems like the various 'iterate(...)' calls in highlevel.cpp are only looking at a small amount of the PST on the Mac. And the following code in name_id_map::lookup seems to suggest that there's a problem:</p>\r\n<pre>    prop_stream bucket(const_cast&lt;name_id_map*&gt;(this)-&gt;m_bag.open_prop_stream(get_bucket_prop(hash_value)));\r\n    disk::nameid_hash_entry entry;\r\n    while(bucket.read((char*)&amp;entry, sizeof(entry)) != 0)\r\n    {\r\n        if( (entry.hash_base == hash_base) &amp;&amp;\r\n            (disk::nameid_is_string(entry) == p.is_string()) &amp;&amp;\r\n            (disk::nameid_get_guid_index(entry) == guid_index)\r\n        )\r\n        {\r\n            // just double check the string..\r\n            if(p.is_string())\r\n            {\r\n                if(construct(disk::nameid_get_prop_index(entry)).get_name() != p.get_name())\r\n                    continue;\r\n            }\r\n\r\n            // found it!\r\n            return disk::nameid_get_prop_index(entry) + 0x8000;\r\n        }\r\n    }\r\n\r\n    throw key_not_found&lt;named_prop&gt;(p);\r\n</pre>\r\n<p>On the Mac, we only make one trip through this loop, and the comparison of <code>entry.hash_base == hash_base</code> fails.</p>\r\n<p>Thank you for any advice you can provide!</p>",
+    "PostedDate": "2010-06-17T14:24:14.273-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "457032",
+    "ThreadId": "216267",
+    "Html": "<p>Found it, in nameid.h:</p>\r\n<pre>    ulong compute_hash_base(const named_prop&amp; n) const \r\n        { return n.is_string() ? disk::compute_crc(&amp;(n.get_name())[0], n.get_name().length() * sizeof(wchar_t)) : n.get_id(); }\r\n</pre>\r\n<p>The problem here is wchar_t, which is 2 bytes on Windows, and 4 bytes on the Mac (and most newer Unix-like systems, including Linux). Normally, this wouldn't matter, but here, the CRC function is accessing the raw bytes of a std::wstring.</p>\r\n<p>Fixing this shouldn't be too hard, and I can grep for other occurrences of sizeof(wchar_t) and inspect them manually.&nbsp;I'm just glad that all our systems are little-endian, so I don't have to do any byte-swapping!</p>\r\n<p>Thank you for your hints! You've helped this port go quite quickly!</p>\r\n<p>Cheers, Eric</p>",
+    "PostedDate": "2010-06-17T19:17:32.85-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "457034",
+    "ThreadId": "216267",
+    "Html": "<p>Interesting! So basically, the CRC calculation was off because the string was twice the length (even though the string had the correct value)? And I was trying to be all nice and portable by using sizeof(wchar_t), but to no avail..</p>\r\n<p>Did you ever figure out why the output of the unit test was shorter on Mac? Is everything passing now?</p>",
+    "PostedDate": "2010-06-17T19:32:45.947-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "457474",
+    "ThreadId": "216267",
+    "Html": "<p>Current status:</p>\r\n<ul>\r\n<li>Working: OS X 10.5 (under MacPorts)</li>\r\n<li>Working: Ubuntu 10.04 32-bit</li>\r\n<li>BROKEN: Ubuntu 10.04 64-bit</li>\r\n</ul>\r\n<p>I'm going to debug a for a little bit more, then go to sleep.</p>\r\n<p>Once it's all working, I need to retest on Windows and organize the patches for submission.</p>",
+    "PostedDate": "2010-06-18T19:16:00.707-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "457478",
+    "ThreadId": "216267",
+    "Html": "<p>OK,&nbsp;Ubuntu 10.04 64-bit took less than an hour to working using an EC2 system, at a total cost of $0.34. :-) I needed to change read_prop&lt;long&gt; to specify a 32-bit type (and not a 64-bit long), and that was it.</p>\r\n<p>Each successive system is getting easier and easier, which is a good sign. I'll start preparing the patches tomorrow, and I'll try to submit them sometime this weekend if all goes well.</p>",
+    "PostedDate": "2010-06-18T19:50:26.157-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "457479",
+    "ThreadId": "216267",
+    "Html": "<p>Amazing progress. That reminds me of another item on my list: switch over to using boost types exclusively (uint_32, etc) to avoid this exact problem.</p>",
+    "PostedDate": "2010-06-18T19:56:43.42-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

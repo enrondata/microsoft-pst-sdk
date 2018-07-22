@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "510431",
+    "ThreadId": "231782",
+    "Html": "<p>Hi,</p>\r\n<p>I have been able to retrieve all folders, messages, attachments etc from pst file using pst layer of pstsdk. Now i want to do reverse process, i mean i want to create new pst file, add new folders of my choice, add new messages into them along with attachments, etc.</p>\r\n<p>I think working with pstsdk at pst level there is not much support to do this, but <strong>can i do all above while working on Disk Layer of pstsdk</strong>?</p>\r\n<p>I mean creating nodes, arranging them some how to each other can i create new pst file, can add messages to it etc using Disk.h.</p>\r\n<p>Any help will be appreciated.</p>\r\n<p>Thanks and Regards!!!</p>\r\n<p>Naveed Ahmed</p>",
+    "PostedDate": "2010-10-21T03:57:24.233-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "510729",
+    "ThreadId": "231782",
+    "Html": "<p>Yes it's possible, but it would require writing a lot of code as well as a significant amount of expertise when it comes to the PST and [MS-PST].doc.</p>",
+    "PostedDate": "2010-10-21T13:09:42.047-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "510927",
+    "ThreadId": "231782",
+    "Html": "\r\n<p>I have checked Disk.h, seems very abstract and unfortunately not found any helping sample code anywhere in docs, MS-PST.pdf and forum etc. Can you tell me</p>\r\n<p>1) Weather i'll be exactly and only working with Disk.h at disk layer?</p>\r\n<p>2) You know disk layer documentation is so abstract, where can i have some code snippets to writer message to pst file for example as you did in PST layer documentation?</p>\r\n<p>3) PST layer is absolutely handy to reading files, but can you tell me how much estimated time left of pstsdk release that covers writing to pst file at PST layer?</p>\r\n<p>4) AS i know PST layer does not provide .MSG format to save mail body to disk, but is there any other format or way to store message on disk other then streaming it in buffer and saving to file?</p>\r\n<p>5) What nature of expertise [other then programming] are supposed to have in dealing with disk layer?&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>Any help will be appriciated.</p>\r\n<p>Thanks and Regards!!!</p>\r\n<p>NAVEED AHMED</p>\r\n",
+    "PostedDate": "2010-10-22T00:21:36.717-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "511419",
+    "ThreadId": "231782",
+    "Html": "\r\n<p>I wouldn't call disk.h abstract at all - it contains the exact definitions of the data structures on disk. Clients working at that layer need to provide the expertise to do so. Developing that expertise typically takes several months to several years of\r\n working with the file format.</p>\r\n<p>1. Yes</p>\r\n<p>2. None exist, to my knowledge.</p>\r\n<p>3. We're working on it, no release date has been announced.</p>\r\n<p>4. The PST layer doesn't provide a way to save individual emails, no. There are plenty of email formats out there, just none are implemented in the SDK. .MSG in particular isn't very cross platform.</p>\r\n<p>5. In depth knowledge of the PST file format, as well as database implementation and transaction semantics, etc if you're interested in writing.</p>\r\n",
+    "PostedDate": "2010-10-22T22:11:16.193-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "726302",
+    "ThreadId": "231782",
+    "Html": "<p>Dear Support,</p>\r\n<p>It's been almost 15 months now after my last message; I really want to know latest answer on one of my question:</p>\r\n<p><span>3) PST layer is absolutely handy to reading files, but can you tell me how much estimated time left of pstsdk release that covers writing to pst file at PST layer?</span></p>\r\n<p><span>your answer was:</span></p>\r\n<p><span><span>We're working on it, no release date has been announced.</span></span></p>\r\n<p><span><span>..........</span></span></p>\r\n<p><span><span>Please can I have latest update; I really want to write to PST file at PST Layer.</span></span></p>\r\n<p>&nbsp;</p>\r\n<p>Looking forward to have your prompt reply.</p>\r\n<p>Regards,</p>\r\n<p>Naveed</p>\r\n<p><span><span><br /></span></span></p>",
+    "PostedDate": "2012-01-17T03:38:24.437-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "506254",
+    "ThreadId": "230636",
+    "Html": "<p>Opening the PST via PST SDK fails if the PST is open in Outlook (since Outlook obtains an exclusive file lock to a PST). I am wondering if there is a way around it or SDK can only be ussed for &quot;offline&quot; PSTs?</p>\r\n<div id=\"_mcePaste\" style=\"width:1px;height:1px;overflow:hidden;top:0px;left:-10000px\">﻿</div>",
+    "PostedDate": "2010-10-12T13:38:19.803-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "506258",
+    "ThreadId": "230636",
+    "Html": "<p>Well, the problem is more or less intractable - I don't think there is a work around until Outlook releases it's lock, and even if there was, you probably don't want to be reading from a PST file as someone else is modifying it from under you. Bad things can happen.</p>",
+    "PostedDate": "2010-10-12T13:43:33.823-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

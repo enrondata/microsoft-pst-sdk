@@ -1,0 +1,39 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "Throwing on a missing property is by design &#40;although I need to work on tightening up exception specifications&#41;. Checking for an empty string is fixed on trunk",
+    "ClosedDate": "2010-05-24T13:27:25.247-07:00",
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "In line 424 of message.h, you get the subject property, but if the property is missing an error is thrown.  By design?\nIf the subject is an empty string of 0 bytes, you are doing an invalid read of the first character in the buffer on line 426, which does not exist.",
+    "LastUpdatedDate": "2013-05-16T02:40:25.993-07:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "Low",
+      "Severity": 50,
+      "Id": 1
+    },
+    "ProjectName": "pstsdk",
+    "ReportedDate": "2010-05-24T12:58:53.297-07:00",
+    "Status": {
+      "Name": "Closed",
+      "Id": 4
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "Error in get_subject() when PR_SUBJECT is empty or missing",
+    "Type": {
+      "Name": "Issue",
+      "Id": 3
+    },
+    "VoteCount": 1,
+    "Id": 6721
+  },
+  "FileAttachments": [],
+  "Comments": []
+}

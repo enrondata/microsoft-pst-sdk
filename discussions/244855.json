@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "561490",
+    "ThreadId": "244855",
+    "Html": "\r\n<p>Hello guys,</p>\r\n<p>do you support compiling the SDK for 64bit on VS2008 with SP1?</p>\r\n<p>I'm getting an &quot;Error<span> </span>111<span> </span>error C2220: warning treated as error - no 'object' file generated<span>\r\n</span>...\\pstsdk\\fairport\\trunk\\test\\btreetest.cpp<span> </span>79&quot; error and don't know if I'm doing something wrong.</p>\r\n<p>&nbsp;</p>\r\n<p>Thanks,</p>\r\n<p>ShaLi</p>\r\n",
+    "PostedDate": "2011-02-06T08:30:02.477-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "561510",
+    "ThreadId": "244855",
+    "Html": "\r\n<p>It's not tested explicitly, but it should work.</p>\r\n<p>It looks like there is an x64 specific warning in our unit tests, and you're compiling with treat warnings as errors. I'll look into it. In the meantime, since this is in the unit test it doesn't really block using the SDK, but you could try turning off\r\n treat warnings as errors in the makefile.</p>\r\n",
+    "PostedDate": "2011-02-06T09:26:39.293-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "570758",
+    "ThreadId": "244855",
+    "Html": "<p>x64 build produces a lot of warnings on VS2008. Almost all of them about potential data loss because of type conversion from size_t to int/uint. So there is no chance it can be built with treating warnings as errors. Built version works fine though.</p>\r\n<p>Are there any plans for cleaning code for x64 build? Long list of warnings looks a bit messy.</p>",
+    "PostedDate": "2011-02-23T05:41:13.243-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

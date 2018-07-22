@@ -1,0 +1,114 @@
+[
+  {
+    "Id": "452186",
+    "ThreadId": "215111",
+    "Html": "<p>Is this a &quot;virtual&quot; property in MAPI?&nbsp; I was attempting to fetch it from the message property bag, but it didn't exist.&nbsp; Is there another/better way to get this property?</p>",
+    "PostedDate": "2010-06-06T10:31:05.757-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452189",
+    "ThreadId": "215111",
+    "Html": "<p>Yes, it's a virtual property. It's calculated based on the node_id of each object (folder, message, etc). I believe [MS-PST] has the algorithm to calculate the entry id from a node_id.</p>",
+    "PostedDate": "2010-06-06T10:38:30.59-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "465411",
+    "ThreadId": "215111",
+    "Html": "<p>Good morning! We also needed PR_ENTRYID for an e-discovery application, and I thought it might be worth adding to the pstsdk API.</p>\r\n<p>Here are two very rough patches which implement a get_entry_id function:&nbsp;</p>\r\n<p><span style=\"font-family:Consolas, 'Courier New', Courier, monospace;white-space:pre\"><a href=\"http://github.com/emk/pstsdk/commit/adb403270711fb8cab497a2de4870ea3bb36f5b2\">Add a node::get_db() function</a></span></p>\r\n<p><span style=\"font-family:Consolas, 'Courier New', Courier, monospace;white-space:pre\"><a href=\"http://github.com/emk/pstsdk/commit/adb403270711fb8cab497a2de4870ea3bb36f5b2\"></a></span><span style=\"font-family:Consolas, 'Courier New', Courier, monospace;white-space:pre\"><a href=\"http://github.com/emk/pstsdk/commit/82f2bf9ec834ba38800c347ee83120f0da86267e\">Compute MAPI PR_ENTRYID for messages and attachments</a></span></p>\r\n<p>Please let me know if you have any suggestions! I'm happy to make changes. When you're ready, I'll send you an email with a single patch.</p>",
+    "PostedDate": "2010-07-09T07:19:19.777-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "465520",
+    "ThreadId": "215111",
+    "Html": "<p>I think adding accessors to get PR_ENTRYID is a good idea. My thoughts:</p>\r\n<ul>\r\n<li>I don't think attachments have entry ids (since they're only unique in the context of their parents). I also see special code to ensure that if someone tries to read the entry id of an embedded message, it fails.</li>\r\n<li>Might as well allow accessing the entryid of a folder as well.</li>\r\n<li>Might as well allow opening a message or folder object by entryid (in addition to by node id).</li>\r\n<li>I don't think propbag.h is the proper place to put this logic. Ideally at this level it knows nothing of MAPI specific logic. To me, it feels like&nbsp;it should go in a helper function at the PST layer which is called by the message and folder objects get_entryid() methods. The equivalent decode function (entryid to node_id) would exist to be used to simplify the above methods of opening a folder or message by entryid.</li>\r\n<li>Might as well add a get_entryid() method to the pst object. Note though, that the PSTs entryid is computed differently from the message and folders entryid.</li>\r\n</ul>\r\n<p>Did you verify that the PR_ENTRYID value computed by MAPI proper is the same as your implementation, btw? MFCMapi can be used to easily get a byte dump of the expected value of an entry id for a given message.</p>",
+    "PostedDate": "2010-07-09T10:15:56.903-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "465570",
+    "ThreadId": "215111",
+    "Html": "<p>One other note; the entry id calculation for OST files is different (PST/OST differences are not documented, but this is among them). Perhaps all of the get_entryid() functions should throw some exception if the underlying file is actually an OST file to avoid headaches for someone down the road?</p>",
+    "PostedDate": "2010-07-09T12:16:42.723-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "465729",
+    "ThreadId": "215111",
+    "Html": "<p>Call me crazy, but why not document the method for OST entryid generation, and incorporate it into the code!&nbsp; :)</p>",
+    "PostedDate": "2010-07-09T20:56:24.79-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "476154",
+    "ThreadId": "215111",
+    "Html": "<p>These all sound like excellent ideas! A few of them may be a little bit beyond my current command of PST internals, however. I'm preparing another set of patches based on some in-house testing, and will submit them to you once we've tested them a bit.</p>\r\n<p>I haven't run&nbsp;MFCMapi because MFC isn't included with Visual Studio Express. Is there a copy I can download somewhere?</p>\r\n<p>Cheers, Eric</p>",
+    "PostedDate": "2010-08-03T14:57:02.91-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "476267",
+    "ThreadId": "215111",
+    "Html": "<p>MFCMapi is a stand alone application available at http://mfcmapi.codeplex.com. It's very useful in a situation like this, because you can compare the &quot;official&quot; output of a calculated property with a new implementation quite easily.</p>",
+    "PostedDate": "2010-08-03T22:29:40.41-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "477784",
+    "ThreadId": "215111",
+    "Html": "<p>Good morning! Here is the latest version of my PR_ENTRYID patch:</p>\r\n<p><a href=\"http://github.com/emk/pstsdk/commit/09ace8195d2e574f7ac62d894fca990ec2d7a535\">http://github.com/emk/pstsdk/commit/09ace8195d2e574f7ac62d894fca990ec2d7a535</a></p>\r\n<p>This fixes a number of problems with the previous patch:</p>\r\n<ol>\r\n<li>We no longer support calculating PR_ENTRYID for attachments.</li>\r\n<li>We raise an error if the user tries to calculate PR_ENTRYID for a submessage.</li>\r\n<li>All the support code now lives in the PST layer, as requested.</li>\r\n<li>The generated PR_ENTRYID values have now been checked against MFCMAPI, as requested. And this was a <em>very</em>&nbsp;good idea&mdash;my earlier code was outputting the last 4 bytes in big-endian order. This bug has now been fixed. Thank you for helping me get some real-world test data!</li>\r\n</ol>\r\n<p>However, some of the issues raised above have not yet been addressed:</p>\r\n<ol>\r\n<li>I haven't added support for calculating the PST's PR_ENTRYID.</li>\r\n<li>I haven't added support for opening a message or folder by PR_ENTRYID.</li>\r\n<li>I haven't added any code to detect OST files and either (a) raise an error or (b) calculate a correct PR_ENTRYID.</li>\r\n</ol>\r\n<p>Issues (1) and (2) are highly desirable features, but they're not required by our application. And since we wouldn't use them, I'd be coding somewhat blindly and I would risk writing code that fails in the real world. Would it be OK to leave the implementation of (1) and (2) to somebody who'll be using them with real data?</p>\r\n<p>Issue (3) definitely needs to be addressed. Is there an easy way to tell a PST from an OST without relying on the file extension? Is there an easy way to calculate correct OST PR_ENTRYID values? And would it be possible to add a sample OST file to the 'pstsdk/test' directory? (I don't think we have any OST files that we can redistribute.)</p>\r\n<p>As always, thank you for reviewing patches, and for all your advice!</p>\r\n<p>Cheers, Eric</p>",
+    "PostedDate": "2010-08-08T09:41:34.35-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "477867",
+    "ThreadId": "215111",
+    "Html": "<p>Looks good. You actually don't need to add the m_is_submessage variable - you can test directly by calling is_subnode() on the underlying node. Other than that it looks good.</p>\r\n<p>I'll take care of #1 and #2 at some point. As for #3, I wouldn't say it *has* to be addressed; but the easiest thing would be to expose the database_type field of the header (probably through the database_context interface).&nbsp;</p>\r\n<p>As far as calculating the OST entry IDs, it involves a few lookup tables which tend to change (or at least, can change) from version to version. It works hard to ensure it returns the same entry id as the server, which is the ultimately&nbsp;authority. OST internals aren't documented, so the goal for pstsdk is just to support them to the extent that they are the same as PST files (and not necessary address how they're&nbsp;different).</p>",
+    "PostedDate": "2010-08-08T19:26:25.633-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "478103",
+    "ThreadId": "215111",
+    "Html": "<p>Thank you for the feedback!</p>\r\n<p>I've updated the patch so that it calls is_subnode(), and so that it raises errors if somebody asks for the PR_ENTRYID of an OST.</p>\r\n<p><a href=\"http://github.com/emk/pstsdk/commit/1065b0063c7371da4e20915cbe1f25b753e43aee\">http://github.com/emk/pstsdk/commit/1065b0063c7371da4e20915cbe1f25b753e43aee</a></p>\r\n<p>I'm not sure whether the 'is_pst()' function is sufficiently general here&mdash;it's enough for the needs of this patch, but you might want to expose the actual disk::database_type directly. I just didn't want to start exposing disk-level types without your prior approval. :-)</p>\r\n<p>You can see our entire patch series here, including the patches you reviewed in another thread:</p>\r\n<p><a href=\"http://github.com/emk/pstsdk/commits/for_upstream_6\">http://github.com/emk/pstsdk/commits/for_upstream_6</a></p>\r\n<p>Once we finish testing this on Windows, 32-bit Linux and 64-bit Linux, I'll assemble all the patches into a single diff and email it to you.</p>\r\n<p>Thank you for all your help!</p>",
+    "PostedDate": "2010-08-09T07:03:27.103-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "478121",
+    "ThreadId": "215111",
+    "Html": "<p>I went about checking for PST/OST a little differently ... no code changes to the core were necessary (that I recall):</p>\r\n<p><span style=\"color:blue;font-size:9.5pt\">template</span><span style=\"font-size:9.5pt\">&lt;<span style=\"color:blue\">typename</span> T&gt;<br></span><span style=\"color:blue;font-size:9.5pt\">class </span><span style=\"font-size:9.5pt\">database_check : <span style=\"color:blue\">public</span> database_impl&lt;T&gt;<br></span><span style=\"font-size:9.5pt\">{<br></span><span style=\"color:blue;font-size:9.5pt\">public</span><span style=\"font-size:9.5pt\">:<br>&nbsp; </span><span style=\"font-size:9.5pt\">database_check(<span style=\"color:blue\">const</span> <span style=\"color:blue\">wchar_t</span> *filename) : database_impl&lt;T&gt;(filename)</span><span style=\"font-size:9.5pt\"> {</span><span style=\"font-size:9.5pt\">}<br><br>&nbsp; </span><span style=\"font-size:9.5pt\"><span style=\"color:blue\">bool</span> is_ost()<br>&nbsp; </span><span style=\"font-size:9.5pt\">{<br>&nbsp; </span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; <span style=\"color:blue\">return</span> (m_header.wVerClient == pstsdk::disk::database_ost);<br>&nbsp; </span><span style=\"font-size:9.5pt\">}<br>&nbsp; </span><span style=\"font-size:9.5pt\">pstsdk::byte get_crypt_method()<br>&nbsp; </span><span style=\"font-size:9.5pt\">{<br>&nbsp; </span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; <span style=\"color:blue\">return</span> m_header.bCryptMethod;<br>&nbsp; </span><span style=\"font-size:9.5pt\">}<br></span><span style=\"font-size:9.5pt\">};</span></p>\r\n<p>Using that as a base, I could then check for&nbsp;ANSI/UNICODE, as well as OST/PST, and get the encryption method the store used:</p>\r\n<p><span style=\"font-size:9.5pt\"><span style=\"color:blue\">bool</span> ost = <span style=\"color:blue\">false</span>;<br></span><span style=\"font-size:9.5pt\"><span style=\"color:blue\">bool</span> ansi = <span style=\"color:blue\">false</span>;<br></span><span style=\"font-size:9.5pt\"><span style=\"color:blue\">try<br></span></span><span style=\"font-size:9.5pt\">{<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; database_check&lt;ulong&gt; db(argv[1]);<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; ost = db.is_ost();<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; ansi = <span style=\"color:blue\">true</span>;<br></span><span style=\"font-size:9.5pt\">}<br></span><span style=\"font-size:9.5pt\"><span style=\"color:blue\">catch</span>(pstsdk::invalid_format)<br></span><span style=\"font-size:9.5pt\">{<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; <span style=\"color:blue\">try<br></span></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; {<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp;&nbsp;&nbsp; database_check&lt;ulonglong&gt; db(argv[1]);<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp;&nbsp;&nbsp; ost = db.is_ost();<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp;&nbsp;&nbsp; ansi = <span style=\"color:blue\">false</span>;<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; }<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; <span style=\"color:blue\">catch</span>(...)<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; {<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp;&nbsp;&nbsp; wcout &lt;&lt; L<span style=\"color:#a31515\">&quot;Not a PST/OST store\\n&quot;</span>;<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp;&nbsp;&nbsp; <span style=\"color:blue\">return</span> 0;<br></span><span style=\"font-size:9.5pt\">&nbsp;&nbsp; }<br></span><span style=\"font-size:9.5pt\">}</span></p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-08-09T07:32:59.707-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "478143",
+    "ThreadId": "215111",
+    "Html": "<p>One other approach if you only wanted to check ost/pst/ansi/unicode is to&nbsp;interpret&nbsp;the file (starting at byte 0) as a disk::header&lt;ulong&gt; and read the wVer and wVerClient fields directly. Not&nbsp;coincidentally, these fields are located at the same physical offsets in both ansi and unicode files.</p>",
+    "PostedDate": "2010-08-09T08:06:46.933-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "478144",
+    "ThreadId": "215111",
+    "Html": "<p>Btw ekidd, everything looks good in both patches now.</p>",
+    "PostedDate": "2010-08-09T08:07:40.563-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

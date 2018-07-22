@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "702192",
+    "ThreadId": "280518",
+    "Html": "<p>Hi,</p>\n<p>I'm looking for an option where I should be able to retrieve some set of messages which match a certain property value. For example: returning messages that have the subject line as \"I am here\"..</p>\n<p>or messages that &nbsp;were delivered after a given timesatmp ?</p>\n<p>If there is no direct way to search a message based on the property, can you please suggest a better way than to iterate through all the messages and matching properties.</p>",
+    "PostedDate": "2011-11-22T23:30:37.953-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "703227",
+    "ThreadId": "280518",
+    "Html": "<p><span style=\"font-family: Consolas, 'Courier New', Courier, monospace; white-space: pre;\">ignore the above. boost::make_filter_iterator will work for me.</span></p>",
+    "PostedDate": "2011-11-24T21:14:49.077-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

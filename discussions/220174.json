@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "469721",
+    "ThreadId": "220174",
+    "Html": "<p>hello,</p>\r\n<p>Any easy way to create a folder or message using pstsdk? it seems pstsdk designed for read pst file not write, doesn't it.?</p>",
+    "PostedDate": "2010-07-20T07:50:31.227-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "469763",
+    "ThreadId": "220174",
+    "Html": "<p>Not yet, but we're working on it.</p>",
+    "PostedDate": "2010-07-20T09:01:40.773-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

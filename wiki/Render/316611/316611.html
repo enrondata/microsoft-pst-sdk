@@ -1,0 +1,123 @@
+<div class="wikidoc">This page contains a quick overview of the PST layer. For a more in depth description of what is contained, see the PST module in the documentation distributed with the library. 
+<h1>PST Layer Overview</h1>
+If you&#39;re confused and trying to figure out how to use this library to just get an email out of a PST, congratulations - you found the right page. The PST layer provides the highest level of abstraction, with simple to use objects like a <span class="codeInline">pst</span>, <span class="codeInline">folder</span>, <span class="codeInline">message</span>, etc. Each object provides friendly wrappers around common properties, provides access to &quot;child&quot; objects, and allows you to even unwrap to the LTP layer if you need to do any complex processing. Here we&#39;ll cover the basics of how to open a PST file, access some folders, access some messages, and access some properties on those messages.<br />
+<ol><li><a href="#Getting Started">Getting Started</a></li>
+<li><a href="#The PST Object">The PST Object</a>
+<ol><li><a href="#Accessing Folders">Accessing Folders</a></li></ol></li>
+<li><a href="#Working with Folders">Working with Folders</a>
+<ol><li><a href="#Accessing Subfolders">Accessing Subfolders</a></li>
+<li><a href="#Accessing Messages">Accessing Messages</a></li></ol></li>
+<li><a href="#Working with Messages">Working with Messages</a>
+<ol><li><a href="#The content of messages">The content of messages</a></li>
+<li><a href="#Accessing Attachments">Accessing Attachments</a></li>
+<li><a href="#Accessing Recipients">Accessing Recipients</a></li></ol></li>
+<li><a href="#Working with Attachments">Working with Attachments</a></li>
+<li><a href="#Working with Recipients">Working with Recipients</a></li>
+<li><a href="#Unwrapping to the LTP">Unwrapping to the LTP</a></li></ol>
+<br /><a name="Getting Started"></a>
+<h2>Getting Started</h2>A <span class="codeInline">pst</span> object represents both a PST and OST file, both ANSI and Unicode versions. It is the entry point to working on the PST Layer. To get started, you need to create an instance of a <span class="codeInline">pst</span> object<br /><br /><pre>
+#include &quot;pst.h&quot; // includes all pst layer headers
+...
+pst myfile(L&quot;myfile.pst&quot;);
+</pre><br /><a name="The PST Object"></a>
+<h2>The PST Object</h2>The <span class="codeInline">pst</span> object does a lot of things - it has properties on it you can query, it supports iteration over every <span class="codeInline">message</span> in the store, every <span class="codeInline">folder</span> in the store, it also exposes named property mapping. But the most interesting things here for a quick start guide involve getting past the <span class="codeInline">pst</span> object and getting ahold of a <span class="codeInline">folder</span> object so we can eventually get to the <span class="codeInline">message</span> objects it contains. So let&#39;s focus on that, and move on.<br /><br /><a name="Accessing Folders"></a>
+<h3>Accessing Folders</h3>There are three basic methods to access any given folder from a <span class="codeInline">pst</span> object:
+<ol><li>Iterate over every folder in the store using the provided iterators, and stop when you found the right folder</li>
+<li>Open the root folder, and recursively look at its sub folders</li>
+<li>Open the folder by name</li></ol>
+<br />The <span class="codeInline">pst</span> object provides a pair of iterators, given by <span class="codeInline">pst::folder_begin</span> and <span class="codeInline">pst::folder_end</span>, which you can use to enumerate all of the folders in the store. There is a similar pair for all the messages in the store. The folders will be iterated over in a seemingly random order (by node id, which turns out to basically be by creation time) regardless of the actual underlying hierarchy. This is what it looks like:<br /><br /><pre>
+void do_stuff(const folder&amp; f);
+...
+for(pst::folder_iterator iter = myfile.folder_begin(); iter != myfile.folder_end(); ++iter)
+{
+    do_stuff(*iter);
+}
+</pre><br />The actual iterator type is kind of complicated. It&#39;s a proxy iterator, so it is constructing a temporary <span class="codeInline">folder</span> object when dereferenced from the actual iterator type; which is really a transform iterator over a filter iterator over a <span class="codeInline">node_info</span> iterator from the NDB layer. But don&#39;t worry about that.<br /><br />So that&#39;s one way; you can then implement do_stuff as appropriate. You can also open the root folder, and perhaps use that to look at subfolders, and recurse down the folder tree as appropriate:<br /><br /><pre>
+folder fold = myfile.open_root_folder();
+.... // party with fold, perhaps open other subfolders
+</pre><br />One final option is to use a feature to open a folder by name:<br /><br /><pre>
+folder inbox = myfile.open_folder(L&quot;Inbox&quot;);
+... // party with the inbox
+</pre><br />This method actually uses the first; it just stops the iteration and returns the first folder which matches the supplied display name. Simple but convenient.<br /><a name="Working with Folders"></a>
+<h2>Working with Folders</h2>So, once you have a folder, you can do three things really:
+<ol><li>Access properties on the folder</li>
+<li>Access subfolders of the folder</li>
+<li>Access the messages in this folder</li></ol>
+<br />Accessing properties on the folder is pretty straight forward. There are a bunch of methods on the folder object which tell you about the folder. Accessing subfolders or the messages in the folder involves working with a pair of iterators.<br /><a name="Accessing Subfolders"></a>
+<h3>Accessing Subfolders</h3>The <span class="codeInline">folder</span> object provides a pair of iterators, <span class="codeInline">folder::sub_folder_begin</span> and <span class="codeInline">folder::sub_folder_end</span>, which allow access to the sub folders of that <span class="codeInline">folder</span>.<br /><br /><pre>
+for(folder::folder_iterator iter = fold.sub_folder_begin(); iter != fold.sub_folder_end(); ++iter)
+{
+    do_stuff(*iter); // *iter is one subfolder of this folder
+}
+</pre><br />You can also lookup a subfolder by name. This is not a recursive operation - it only looks at folders which are direct children of this folder.<br /><br /><pre>
+folder leah = fold.open_sub_folder(L&quot;Pictures of my Daughter&quot;);
+</pre><br />She&#39;s really cute.<br /><a name="Accessing Messages"></a>
+<h3>Accessing Messages</h3>The <span class="codeInline">folder</span> object also provides a pair of iterators, <span class="codeInline">folder::message_begin</span> and <span class="codeInline">folder::message_end</span>, which allow access to messages contained in that <span class="codeInline">folder</span>.<br /><br /><pre>
+void do_stuff(const message&amp; m); 
+...
+for(folder::message_iterator iter = fold.message_begin(); iter != fold.message_end(); ++iter)
+{
+    do_stuff(*iter); // *iter is a message in this folder
+}
+</pre><br />There is no equivalent lookup of a message by name. Sorry.<br /><a name="Working with Messages"></a>
+<h2>Working with Messages</h2>Congratulations, you have a message object! This object allows access to the data you actually care about. Note that every type of object you can think of is a <span class="codeInline">message</span> in the PST, this includes not just mail items but calendar items, task items, contacts, etc. They&#39;re all <span class="codeInline">message</span> objects with different sets of properties on them.<br /><br />The basic <span class="codeInline">message</span> abstraction doesn&#39;t care about all of that, however. It just provides access to the most commonly requested properties as well as access through iterators to the attachments and recipients of the message.<br /><br /><a name="The content of messages"></a>
+<h3>The content of messages</h3>The <span class="codeInline">message</span> object has methods to get the subject, body (both html and plain text, both as a blob and a stream), as well as the attachment and recipient count. It looks something like this:<br /><br /><pre>
+message m = ...
+wstring subject = m.get_subject();
+wstring body = m.get_body();
+wstring htmlbody = m.get_html_body();
+
+prop_stream bodystream(m.open_body_stream());
+prop_stream htmlbodystream(m.open_html_body_stream());
+
+size_t num_attachments = m.get_attachment_count();
+size_t num_recipients = m.get_recipient_count();
+</pre><br />Pretty straight forward. Congratulations, you&#39;ve read a message from a PST!<br /><br /><a name="Accessing Attachments"></a>
+<h3>Accessing Attachments</h3>You access the attachments of a <span class="codeInline">message</span> using the <span class="codeInline">message::attachment_begin</span> and <span class="codeInline">message::attachment_end</span> functions, which return the standard begin/end iterator pairs over the message attachment collection. You should check to ensure that <span class="codeInline">message::get_attachment_count</span> is greater than 0 before calling these methods.<br /><br /><pre>
+void do_stuff(const attachment&amp; attach);
+...
+if(m.get_attachment_count() &gt; 0)
+{
+    for(message::attachment_iterator iter = m.attachment_begin(); iter != m.attachment_end(); ++iter)
+    {
+        do_stuff(*iter); // *iter is an attachment on this message
+    }
+}
+</pre><br /><a name="Accessing Recipients"></a>
+<h3>Accessing Recipients</h3>Pretty much identical to accessing attachments, except call <span class="codeInline">message::recipient_begin</span> and <span class="codeInline">message::recipient_end</span>.<br /><br /><pre>
+void do_stuff(const recipient&amp; r);
+...
+for(message::recipient_iterator iter = m.recipient_begin(); iter != m.recipient_end(); ++iter)
+{
+    do_stuff(*iter); // *iter is a recipient on this message
+}
+</pre><br /><a name="Working with Attachments"></a>
+<h2>Working with Attachments</h2>Ok, you have an attachment. Now what? Well, the three most important methods to know are these:<br /><br /><pre>
+attachment attach = ...;
+wstring filename = attach.get_filename();
+vector&lt;byte&gt; content = attach.get_bytes();
+prop_stream content_stream(attach.open_byte_stream());
+</pre><br />It is left as an exercise to the reader to decode what these mysterious methods do.<br /><br /><span class="codeInline">operator&lt;&lt;</span> for working with ostreams is provided, so implementing a &quot;save to disk&quot; function is actually pretty trivial:<br /><br /><pre>
+void save_to_disk(const attachment&amp; attach)
+{
+    std::wstring wfilename = attach.get_filename();
+    // stupid ofstream wanting ansi C strings
+    std::string filename(wfilename.begin(), wfilename.end()); 
+
+    ofstream newfile(filename.c_str(), ios::out | ios::binary);
+    newfile &lt;&lt; attach;    
+}
+</pre><br />And one last thing: some attachments are actually themselves messages. These are sometimes called &quot;embedded messages&quot;. This is explicitly supported by the <span class="codeInline">attachment</span> object, allowing you to convert any <span class="codeInline">attachment</span> which is really an embedded message into a proper <span class="codeInline">message</span> object. Two methods help here, <span class="codeInline">attachment::is_message</span> and <span class="codeInline">attachment::open_as_message</span>.<br /><br /><pre>
+if(attach.is_message())
+{
+    message m = attach.open_as_message(); // throws bad_cast if is_message() == false
+    do_stuff(m);
+}
+</pre><br />That&#39;s it for attachments.<br /><a name="Working with Recipients"></a>
+<h2>Working with Recipients</h2>A <span class="codeInline">recipient</span> is a much smpler object than an <span class="codeInline">attachment</span>, it merely provides access to some simple properties. Here are some examples:<br /><br /><pre>
+recipient r = ...;
+wstring name = r.get_name(); // the name of the recipient
+wstring email = r.get_email_address(); // the email address of the recipient
+recipient_type t = r.get_type(); // get the type of the recipient, to, cc, etc.
+</pre><br /><a name="Unwrapping to the LTP"></a>
+<h2>Unwrapping to the LTP</h2>As a final note; all of the above objects: the <span class="codeInline">pst</span>, <span class="codeInline">folder</span>, <span class="codeInline">message</span>, <span class="codeInline">recipient</span>, and <span class="codeInline">attachment</span> - all provide access to the underlying LTP objects. This means that if you&#39;re not happy with the properties exposed by the <span class="codeInline">message</span>, you can call <span class="codeInline">message::get_property_bag</span> and access the other properties directly. If you need to do some advanced table sorting, or merely want to be more efficient with your folder or message iteration, you can use <span class="codeInline">folder::get_contents_table</span> or <span class="codeInline">folder::get_hierarchy_table</span> to get the LTP <span class="codeInline">table</span> objects backing those structures. Even the <span class="codeInline">pst</span> object allows you to grab it&#39;s <span class="codeInline">property_bag</span>, the <span class="codeInline">name_id_map</span> for the store, or even the lowest level NDB <span class="codeInline">shared_db_ptr</span>. A master of the PST layer is at minimum very comfortable at the LTP layer and aware of the NDB Layer and its constructs.</div><div class="ClearBoth"></div>

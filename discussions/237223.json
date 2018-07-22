@@ -1,0 +1,34 @@
+[
+  {
+    "Id": "531511",
+    "ThreadId": "237223",
+    "Html": "\r\n<p>I use function &quot;get_email_address( ) &quot; to get the email address of the recipient ,but failed ,how?</p>\r\n",
+    "PostedDate": "2010-12-05T18:08:53.787-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "533238",
+    "ThreadId": "237223",
+    "Html": "\r\n<p>Perhaps that recipient doesn't have an email address?</p>\r\n",
+    "PostedDate": "2010-12-08T22:14:37.45-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "561561",
+    "ThreadId": "237223",
+    "Html": "\r\n<p>I have the same problem.</p>\r\n<p>Trying to index a pst file, a lot of key_not_found&lt;prop_id&gt; exceptions occur and it slows down my code very much. Can you suggest enhancements for this code snippet?</p>\r\n<p></p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre><span style=\"color:blue\">try</span>\r\n{\r\n\ttmp2 = <span style=\"color:blue\">gcnew</span> String(rc.get_email_address().c_str()); <span style=\"color:green\">// the email of the recipient</span>\r\n}\r\n<span style=\"color:blue\">catch</span> (key_not_found&lt;prop_id&gt;&amp; ex)\r\n{\r\n\t<span style=\"color:green\">// pass</span>\r\n}\r\n</pre>\r\n</div>\r\nI test if tmp2 is null later in the code, but it seems to slow down on the catch. There is nothing there, but it prints an error to the output anyway.\r\n<p></p>\r\n",
+    "PostedDate": "2011-02-06T12:05:54.847-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "561613",
+    "ThreadId": "237223",
+    "Html": "\r\n<p>I think you're doing the right thing - some recipients just may not have the email address property, depending on where they came from. Try manually inspecting the properties on a recipient without an email address (get the property bag and iterate over\r\n them) to see if you can find anything useful.</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2011-02-06T14:18:38.367-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

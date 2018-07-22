@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "563448",
+    "ThreadId": "245317",
+    "Html": "\r\n<p>Just logged a bug as well, but it seems the message HTML body is not a std:wstring ?</p>\r\n<p>it should be regular string according to [MS-PST]&nbsp;.. when I read it through the open_html_body_stream as char*, it seems to work fine ?</p>\r\n<div id=\"x__mcePaste\" style=\"width:1px; height:1px; overflow:hidden; top:0px; left:-10000px\">\r\n&#65279;</div>\r\n",
+    "PostedDate": "2011-02-09T10:42:03.643-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "564802",
+    "ThreadId": "245317",
+    "Html": "<p>I believe there are seperate HTML and HTML_W props.</p>\r\n<p>Ultimately what is in the PST is the content set by the creator of the PST though.</p>",
+    "PostedDate": "2011-02-11T10:46:51.05-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

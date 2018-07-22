@@ -1,0 +1,74 @@
+[
+  {
+    "Id": "457425",
+    "ThreadId": "216569",
+    "Html": "<p>I am having problem reading&nbsp;all folder's propertiy's values. My code throws an exception after reading the third property and every one after that. Here is what I do</p>\r\n<p>&nbsp;void getProperties(folder folder) {<br>&nbsp;&nbsp;property_bag bag = folder.get_property_bag();<br>&nbsp;&nbsp;vector&lt;prop_id&gt; ids = bag.get_prop_list();<br>&nbsp;&nbsp;for(vector&lt;prop_id&gt;::const_iterator it = ids.begin(); it != ids.end(); ++it) {</p>\r\n<p>&nbsp;&nbsp; try {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // the line below works for first two properties (12289:PR_DISPLAY_NAME and 12292:PR_COMMENT), but starting with third (13826:PR_CONTENT_COUNT) it throws<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // &quot;key not found&quot; exception in line&nbsp;1411 of node.h&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //=======================================<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pstsdk::prop_stream stream(bag.open_prop_stream( *it));&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; std::vector&lt;pstsdk::byte&gt; content = bag.read_prop&lt;std::vector&lt;pstsdk::byte&gt;&gt;( *it);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sreeam.close();<br>&nbsp;&nbsp; } catch (std:exceptio n&amp; e) {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; error = e.what();<br>&nbsp;&nbsp; }</p>\r\n<p>&nbsp;&nbsp;&nbsp;//... do something with content</p>\r\n<p>&nbsp;&nbsp;}<br>&nbsp;}</p>",
+    "PostedDate": "2010-06-18T14:20:47.45-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "457439",
+    "ThreadId": "216569",
+    "Html": "The problem here is that you can only open strings and other variable length props as streams. This should probably throw a better error and/or be documented  better.",
+    "PostedDate": "2010-06-18T15:13:04.903-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "457459",
+    "ThreadId": "216569",
+    "Html": "<p>Does it mean that it is impossible to read all the properties from PST layer? &nbsp;I may be missing something, but open_prop_stream is the only public &quot;content reading&quot; method of &nbsp;property_bag class.</p>",
+    "PostedDate": "2010-06-18T16:25:39.65-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "457470",
+    "ThreadId": "216569",
+    "Html": "<p>open_prop_stream is not the only public &quot;content reading&quot; method of the property_bag class - in fact, you correctly used the main content reading method in your example: <strong>read_prop&lt;T&gt;</strong>. Properties are typed, so you're responsible for giving the correct T for the property type you're reading (for PR_CONTENT_COUNT, you'll probably want read_prop&lt;ulong&gt;). All you're doing with the stream is immediately opening it and then closing it. I'm not sure why you're doing that - although I'd like to know what led you to believe you had to, so I can improve the documentation.</p>\r\n<p>The purpose of open_prop_stream is to give users the option of creating a stream interface over any property which is too large to be comfortable read with read_prop&lt;T&gt;. You probably only want to use it when reading very large properties, or when you only want to read a small part of a large property.</p>",
+    "PostedDate": "2010-06-18T18:57:08.777-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "457567",
+    "ThreadId": "216569",
+    "Html": "<p>The reason why I tried to use the streams is because my code needs to compare properties of two folders (or messages) with the same name. I code doesn't really care about the type or content. Having that in mind dumping the property value into a byte vector and comparing two vectors seemed like good idea.</p>",
+    "PostedDate": "2010-06-19T07:10:06.82-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "535534",
+    "ThreadId": "216569",
+    "Html": "\r\n<p>On the topic of reading and dumping all the properties, I have the following. Can someone help me fill out the types which I have left blank in the code below? Specifically, how to read (a) variable and multi value types and (b) apptime - how to convert\r\n that into time_t?</p>\r\n<p></p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre><span style=\"color:blue\">void</span> dump_property_bag (<span style=\"color:blue\">const</span> property_bag &amp;bag)\r\n{\r\n  vector&lt;pstsdk::prop_id&gt; props = bag.get_prop_list();\r\n  prop_type pt;\r\n\r\n  <span style=\"color:blue\">int</span> j = 0;\r\n  <span style=\"color:blue\">for</span>(vector&lt;prop_id&gt;::iterator i = props.begin(); i != props.end(); &#43;&#43;i) {\r\n    pt = bag.get_prop_type(*i);\r\n\r\n    cout &lt;&lt; <span style=\"color:#a31515\">&quot;Prop # &quot;</span>           &lt;&lt; setw(3) &lt;&lt; right   &lt;&lt; j&#43;&#43;\r\n         &lt;&lt; <span style=\"color:#a31515\">&quot;  Prop_Id = 0x&quot;</span>    &lt;&lt; hex     &lt;&lt; setw(5) &lt;&lt; *i\r\n         &lt;&lt; <span style=\"color:#a31515\">&quot;  Prop_type_id = &quot;</span> &lt;&lt; dec     &lt;&lt; setw(4) &lt;&lt; pt   &lt;&lt; <span style=\"color:#a31515\">&quot;: &quot;</span>;\r\n\r\n    <span style=\"color:blue\">switch</span> (pt) {\r\n\r\n    <span style=\"color:blue\">case</span> prop_type_unspecified:\r\n      wcout &lt;&lt; <span style=\"color:#a31515\">&quot;Unspecified Prop Type&quot;</span>;\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_null:\r\n      wcout &lt;&lt; <span style=\"color:#a31515\">&quot;Null Prop Type&quot;</span>;\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_short:\r\n      wcout &lt;&lt; bag.read_prop&lt;<span style=\"color:blue\">short</span>&gt;(*i);\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_long:\r\n      wcout &lt;&lt; bag.read_prop&lt;<span style=\"color:blue\">long</span>&gt;(*i);\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_float:\r\n      wcout &lt;&lt; bag.read_prop&lt;<span style=\"color:blue\">float</span>&gt;(*i);\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_double:\r\n      wcout &lt;&lt; bag.read_prop&lt;<span style=\"color:blue\">double</span>&gt;(*i);\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_boolean:\r\n      wcout &lt;&lt; bag.read_prop&lt;<span style=\"color:blue\">bool</span>&gt;(*i);\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_longlong:\r\n      wcout &lt;&lt; bag.read_prop&lt;<span style=\"color:blue\">long</span> <span style=\"color:blue\">long</span>&gt;(*i);\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_string:\r\n      cout &lt;&lt; bag.read_prop&lt;string&gt;(*i);\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_wstring:\r\n      wcout &lt;&lt; bag.read_prop&lt;wstring&gt;(*i);\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_currency: {\r\n      uint64_t curr = bag.read_prop&lt;uint64_t&gt;(*i);\r\n      <span style=\"color:blue\">long</span> <span style=\"color:blue\">long</span> major = curr / 1000;\r\n      <span style=\"color:blue\">int</span>       minor = curr % 1000;\r\n      wcout &lt;&lt; major &#43; minor/1000.0;\r\n      <span style=\"color:blue\">break</span>;\r\n    }\r\n    <span style=\"color:blue\">case</span> prop_type_error:\r\n      wcout &lt;&lt; bag.read_prop&lt;uint32_t&gt;(*i);\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">case</span> prop_type_binary: {\r\n      <span style=\"color:blue\">unsigned</span> <span style=\"color:blue\">short</span> size = bag.read_prop&lt;<span style=\"color:blue\">unsigned</span> <span style=\"color:blue\">short</span>&gt;(*i);\r\n      wcout &lt;&lt; size &lt;&lt; <span style=\"color:#a31515\">&quot; bytes: &quot;</span>;\r\n      <span style=\"color:green\">// Need Help</span>\r\n      <span style=\"color:blue\">break</span>;\r\n    }\r\n    <span style=\"color:blue\">case</span> prop_type_systime: {\r\n      time_t t = filetime_to_time_t(bag.read_prop&lt;ulonglong&gt;(*i));\r\n      wcout &lt;&lt; ctime(&amp;t);\r\n      <span style=\"color:blue\">break</span>;\r\n    }\r\n    <span style=\"color:blue\">case</span> prop_type_apptime:\r\n    <span style=\"color:blue\">case</span> prop_type_guid:\r\n    <span style=\"color:blue\">case</span> prop_type_object:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_short:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_long:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_float:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_double:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_currency:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_apptime:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_longlong:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_string:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_wstring:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_systime:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_guid:\r\n    <span style=\"color:blue\">case</span> prop_type_mv_binary:\r\n      wcout &lt;&lt; <span style=\"color:#a31515\">&quot;** Multi Value Type. Need Help here, please!&quot;</span>;\r\n      <span style=\"color:blue\">break</span>;\r\n    <span style=\"color:blue\">default</span>: \r\n      wcout &lt;&lt; <span style=\"color:#a31515\">&quot;** Default Type. Error.&quot;</span>;\r\n    }\r\n    wcout &lt;&lt; endl;\r\n  }\r\n}\r\n\r\n</pre>\r\n</div>\r\n<p></p>\r\n",
+    "PostedDate": "2010-12-14T05:50:54.257-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "535729",
+    "ThreadId": "216569",
+    "Html": "\r\n<p>For any property T, to read the multivalued version of that property use read_prop&lt;std::vector&lt;T&gt;&gt;(id);</p>\r\n<p>For binary properties, call read_prop&lt;std::vector&lt;byte&gt;&gt;(id);</p>\r\n<p>For a multivalued binary property, call read_prop&lt;std::vector&lt;std::vector&lt;byte&gt;&gt;&gt;(id); etc.</p>\r\n<p>There is also a time_t specific method to use for non-VC compilers.</p>\r\n",
+    "PostedDate": "2010-12-14T11:18:02.25-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "535964",
+    "ThreadId": "216569",
+    "Html": "\r\n<p>Terry, thanks for your response. If I modify the above code and send it over, would you be interested in including it in the samples/ directory?</p>\r\n",
+    "PostedDate": "2010-12-14T23:49:43.68-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "537005",
+    "ThreadId": "216569",
+    "Html": "\r\n<p>Sure!</p>\r\n",
+    "PostedDate": "2010-12-16T14:18:16.93-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

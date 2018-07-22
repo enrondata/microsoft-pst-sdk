@@ -1,0 +1,34 @@
+[
+  {
+    "Id": "460328",
+    "ThreadId": "217470",
+    "Html": "<p>When reading the attachment leah_thumper.jpg in&nbsp;pstsdk/test/sample1.pst, the size() function returns&nbsp;96808, but get_bytes().size() returns&nbsp;93142. I can think of two possible explantions:</p>\r\n<ol>\r\n<li>attachment.size() contains not just the size of the attachment, but also the size of the metadata.</li>\r\n<li>Alternatively, attachment.get_bytes() is somehow failing to return all of the data.</li>\r\n</ol>\r\n<p>Since the attachment appears to be uncorrupted, I'm guessing that (1) is correct. This is not inconsistent with the documentation for PidAttachSize: &quot;Contains the size in bytes consumed by the Attachment object on the server.&quot;</p>\r\n<p>Thank you very much for any information you can provide!</p>\r\n<p>Cheers, Eric</p>",
+    "PostedDate": "2010-06-27T04:06:21.727-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "460370",
+    "ThreadId": "217470",
+    "Html": "<p>I'll have to look at the real mspst source on monday, but I strongly suspect your theory about the metadata is correct - the size property (0xe20) is probably the total size of the attachment node, where as the get_bytes() size returns just the data in the attachment data subnode.</p>\r\n<p>Maybe const_property_object should have a method to (cheaply) expose the size of a variable length property, and attachment can have a get_data_size() method, message can have a get_body_size, get_html_body_size, etc.. basically anything that it's expected might be opened as a stream.</p>",
+    "PostedDate": "2010-06-27T09:52:27.673-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "460390",
+    "ThreadId": "217470",
+    "Html": "<p>Thank you for looking into this!</p>\r\n<p>We're written quite a bit of code this week using pstsdk, and things are going well.</p>",
+    "PostedDate": "2010-06-27T11:57:40.23-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "460442",
+    "ThreadId": "217470",
+    "Html": "<p>Check out my latest commit. The new rules are to add a &quot;has_X&quot; method sibling methods for accessor methods which may potentially be absent, as well as &quot;X_size&quot; methods for any accessor which has a stream method (so you can decide if you want the stream version of not). Obviously a lot of accessors may have both.&nbsp;</p>\r\n<p>And feel free to submit a patch or just suggestions for accessor methods which you think are missing on message or folder.</p>",
+    "PostedDate": "2010-06-27T17:32:44.573-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

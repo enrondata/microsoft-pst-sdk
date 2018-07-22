@@ -1,0 +1,50 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "",
+    "ClosedDate": null,
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "When a message legitimately contains no attachments, the message::attachment_begin property raises a key_not_found exception. It seems reasonable to expect 'attachment_begin() == attachment_end()' so that clients need not test for the presence of attachments before using the iteration interface.\n \nException is raised due to failed lookup in the call to 'reset' (see below).\n \ninline const pstsdk::table& pstsdk::message::get_attachment_table() const\n{\n    if(!m_attachment_table)\n        m_attachment_table.reset(new table(m_bag.get_node().lookup(nid_attachment_table)));\n \n    return *m_attachment_table;\n}",
+    "LastUpdatedDate": "2013-02-14T13:08:33.213-08:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "Low",
+      "Severity": 50,
+      "Id": 1
+    },
+    "ProjectName": "pstsdk",
+    "ReportedDate": "2011-05-10T10:10:58.667-07:00",
+    "Status": {
+      "Name": "Proposed",
+      "Id": 1
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "message::attachment_begin throws exception when message contains no attachments",
+    "Type": {
+      "Name": "Issue",
+      "Id": 3
+    },
+    "VoteCount": 1,
+    "Id": 8227
+  },
+  "FileAttachments": [],
+  "Comments": [
+    {
+      "Message": "This appears to be intended behavior. The body of message::get_attachment_count is enclosed in a try...catch block allowing clients to safely check for the attachments prior to iteration. Feel free to remove this post (or file as non-essential).",
+      "PostedDate": "2011-05-10T10:33:42.81-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-02-14T13:08:33.213-08:00",
+      "Id": -2147483648
+    }
+  ]
+}

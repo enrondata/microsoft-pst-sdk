@@ -1,0 +1,361 @@
+Index: test/btreetest.cpp
+===================================================================
+--- test/btreetest.cpp	(revision 46111)
++++ test/btreetest.cpp	(working copy)
+@@ -14,11 +14,11 @@
+     leaf(int k1, string v1, int k2, string v2, int k3, string v3);
+     ~leaf() { }
+ 
+-    const string& get_value(uint pos) const 
++    const string& get_value(pstsdk::uint pos) const 
+         { return values[pos]; }
+-    const int& get_key(uint pos) const 
++    const int& get_key(pstsdk::uint pos) const 
+         { return keys[pos]; }
+-    uint num_values() const 
++    pstsdk::uint num_values() const 
+         { return 3; }
+ 
+ private:
+@@ -32,13 +32,13 @@
+     non_leaf(int k1, leaf* l1, int k2, leaf* l2, int k3, leaf* l3);
+     ~non_leaf() { }
+ 
+-    const int& get_key(uint pos) const 
++    const int& get_key(pstsdk::uint pos) const 
+         { return keys[pos]; }
+-    btree_node<int,string>* get_child(uint i)
++    btree_node<int,string>* get_child(pstsdk::uint i)
+         { return leafs[i]; }
+-    const btree_node<int,string>* get_child(uint i) const 
++    const btree_node<int,string>* get_child(pstsdk::uint i) const 
+         { return leafs[i]; }
+-    uint num_values() const 
++    pstsdk::uint num_values() const 
+         { return 3; }
+ 
+ private:
+Index: test/databasetest.cpp
+===================================================================
+--- test/databasetest.cpp	(revision 46111)
++++ test/databasetest.cpp	(working copy)
+@@ -108,18 +108,18 @@
+ 
+     if(expected > 0)
+     {
+-        uint expected_page_count = expected / disk::external_block<T>::max_size;
++        pstsdk::uint expected_page_count = expected / disk::external_block<T>::max_size;
+         if(expected % disk::external_block<T>::max_size != 0)
+             expected_page_count++;
+ 
+-        uint actual_page_count = n.get_page_count();
++        pstsdk::uint actual_page_count = n.get_page_count();
+         assert(expected_page_count == actual_page_count);
+ 
+-        uint test_value = 0xdeadbeef;
++        pstsdk::uint test_value = 0xdeadbeef;
+         size_t offset = expected-sizeof(test_value);
+         n.write(test_value, offset);
+ 
+-        uint read_test_value = n.read<uint>(offset);
++        pstsdk::uint read_test_value = n.read<pstsdk::uint>(offset);
+ 
+         assert(test_value == read_test_value);
+     }
+@@ -196,8 +196,8 @@
+     using namespace std::tr1;
+     using namespace pstsdk;
+     bool caught_invalid_format = false;
+-    uint node = 0;
+-    uint block = 0;
++    pstsdk::uint node = 0;
++    pstsdk::uint block = 0;
+ 
+     try
+     {
+@@ -228,7 +228,7 @@
+     shared_db_ptr db_3 = open_database(L"test_ansi.pst");
+ 
+     node = 0;
+-    shared_ptr<const nbt_page> nbt_root = db_2->read_nbt_root();
++    std::tr1::shared_ptr<const nbt_page> nbt_root = db_2->read_nbt_root();
+     for(const_nodeinfo_iterator iter = nbt_root->begin();
+                     iter != nbt_root->end();
+                     ++iter, ++node)
+@@ -242,7 +242,7 @@
+     test_node_stream<ulonglong>(db_2->lookup_node(nid_message_store));
+ 
+     block = 0;
+-    shared_ptr<const bbt_page> bbt_root = db_2->read_bbt_root();
++    std::tr1::shared_ptr<const bbt_page> bbt_root = db_2->read_bbt_root();
+     for(const_blockinfo_iterator iter = bbt_root->begin();
+                     iter != bbt_root->end();
+                     ++iter, ++block)
+@@ -253,7 +253,7 @@
+     }
+   
+     node = 0;
+-    shared_ptr<const nbt_page> nbt_root2 = db_3->read_nbt_root();
++    std::tr1::shared_ptr<const nbt_page> nbt_root2 = db_3->read_nbt_root();
+     for(const_nodeinfo_iterator iter = nbt_root2->begin();
+                     iter != nbt_root2->end();
+                     ++iter, ++node)
+@@ -263,11 +263,11 @@
+         pstsdk::node n(db_3, *iter);
+         process_node(n);
+     }
+-    test_node_resize<ulong>(db_3->lookup_node(nid_message_store));
+-    test_node_stream<ulong>(db_2->lookup_node(nid_message_store));
++    test_node_resize<pstsdk::ulong>(db_3->lookup_node(nid_message_store));
++    test_node_stream<pstsdk::ulong>(db_2->lookup_node(nid_message_store));
+ 
+     block = 0;
+-    shared_ptr<const bbt_page> bbt_root2 = db_3->read_bbt_root();
++    std::tr1::shared_ptr<const bbt_page> bbt_root2 = db_3->read_bbt_root();
+     for(const_blockinfo_iterator iter = bbt_root2->begin();
+                     iter != bbt_root2->end();
+                     ++iter, ++block)
+Index: test/highlevel.cpp
+===================================================================
+--- test/highlevel.cpp	(revision 46111)
++++ test/highlevel.cpp	(working copy)
+@@ -72,18 +72,18 @@
+ 
+     wcout << "Properties on this table (" << tc.size() << "): " << endl;
+     std::vector<prop_id> prop_list = tc.get_prop_list();
+-    for(uint i = 0; i < prop_list.size(); ++i)
++    for(pstsdk::uint i = 0; i < prop_list.size(); ++i)
+         wcout << hex << prop_list[i] << " ";
+     wcout << endl;
+ 
+-    for(uint i = 0; i < tc.size(); ++i)
++    for(pstsdk::uint i = 0; i < tc.size(); ++i)
+     {
+         wcout << "RowID: " << tc[i].get_row_id() << endl;
+         wstring display_name;
+         wstring subject;
+ 
+-         std::vector<ushort> proplist(tc[i].get_prop_list());
+-        for(uint j = 0; j < proplist.size(); ++j)
++         std::vector<pstsdk::ushort> proplist(tc[i].get_prop_list());
++        for(pstsdk::uint j = 0; j < proplist.size(); ++j)
+         {
+             try {
+                 if(tc[i].get_prop_type(proplist[j]) == prop_type_wstring)
+@@ -118,14 +118,14 @@
+ {
+     using namespace std;
+     using namespace pstsdk;
+-    for(uint i = 0; i < tc.size(); ++i)
++    for(pstsdk::uint i = 0; i < tc.size(); ++i)
+     {
+         node attach = message.lookup(tc[i].get_row_id());
+         
+         wcout << "Attachment " << i << endl;
+         property_bag pc(attach);
+-            std::vector<ushort> proplist(pc.get_prop_list());
+-            for(uint i = 0; i < proplist.size(); ++i)
++            std::vector<pstsdk::ushort> proplist(pc.get_prop_list());
++            for(pstsdk::uint i = 0; i < proplist.size(); ++i)
+             {
+                 if(pc.get_prop_type(proplist[i]) == prop_type_wstring)
+                 {
+@@ -157,7 +157,7 @@
+     using namespace std;
+     using namespace std::tr1;
+     using namespace pstsdk;
+-    shared_ptr<const nbt_page> nbt_root = pdb->read_nbt_root();
++    std::tr1::shared_ptr<const nbt_page> nbt_root = pdb->read_nbt_root();
+     for(const_nodeinfo_iterator iter = nbt_root->begin();
+             iter != nbt_root->end();
+             ++iter)
+@@ -169,10 +169,10 @@
+         try
+         {
+             property_bag bag(n);
+-            std::vector<ushort> proplist(bag.get_prop_list());
++            std::vector<pstsdk::ushort> proplist(bag.get_prop_list());
+ 
+             // look for mv props
+-            for(uint i = 0; i < proplist.size(); ++i)
++            for(pstsdk::uint i = 0; i < proplist.size(); ++i)
+             {
+                 switch(bag.get_prop_type(proplist[i]))
+                 {
+@@ -212,8 +212,8 @@
+         {
+             
+             property_bag pc(n);
+-            std::vector<ushort> proplist(pc.get_prop_list());
+-            for(uint i = 0; i < proplist.size(); ++i)
++            std::vector<pstsdk::ushort> proplist(pc.get_prop_list());
++            for(pstsdk::uint i = 0; i < proplist.size(); ++i)
+             {
+                 if(pc.get_prop_type(proplist[i]) == prop_type_wstring)
+                 {
+@@ -251,7 +251,7 @@
+         
+         try{
+             heap h(n);
+-            std::unique_ptr<bth_node<ushort, disk::prop_entry>> bth = h.open_bth<ushort, disk::prop_entry>(h.get_root_id());
++            std::unique_ptr<bth_node<pstsdk::ushort, disk::prop_entry>> bth = h.open_bth<pstsdk::ushort, disk::prop_entry>(h.get_root_id());
+          }
+         catch(exception&)
+         {
+Index: test/disktest.cpp
+===================================================================
+--- test/disktest.cpp	(revision 46111)
++++ test/disktest.cpp	(working copy)
+@@ -93,8 +93,8 @@
+     file uni(L"test_unicode.pst");
+     file ansi(L"test_ansi.pst");
+ 
+-    assert(offsetof(disk::header<unsigned long long>, dwCRCFull) == 524);
++    assert(offsetof(disk::header<pstsdk::ulonglong>, dwCRCFull) == 524);
+ 
+-    test_disk_structures<unsigned long long>(uni);
+-    test_disk_structures<unsigned long>(ansi);
++    test_disk_structures<pstsdk::ulonglong>(uni);
++    test_disk_structures<pstsdk::ulong>(ansi);
+ }
+Index: pstsdk/ltp/heap.h
+===================================================================
+--- pstsdk/ltp/heap.h	(revision 46111)
++++ pstsdk/ltp/heap.h	(working copy)
+@@ -19,6 +19,10 @@
+ #pragma warning(pop)
+ #endif
+ 
++#if __GNUC__
++#include <tr1/memory>
++#endif
++
+ #include "pstsdk/util/primitives.h"
+ 
+ #include "pstsdk/disk/disk.h"
+Index: pstsdk/ltp/object.h
+===================================================================
+--- pstsdk/ltp/object.h	(revision 46111)
++++ pstsdk/ltp/object.h	(working copy)
+@@ -25,6 +25,9 @@
+ #ifdef _MSC_VER
+ #pragma warning(pop)
+ #endif
++#ifdef __GNUC__
++#include <tr1/functional>
++#endif
+ 
+ #include "pstsdk/util/primitives.h"
+ #include "pstsdk/util/errors.h"
+Index: pstsdk/ltp/table.h
+===================================================================
+--- pstsdk/ltp/table.h	(revision 46111)
++++ pstsdk/ltp/table.h	(working copy)
+@@ -8,6 +8,9 @@
+ 
+ #include <vector>
+ #include <unordered_map>
++#if __GNUC__
++#include <tr1/unordered_map>
++#endif
+ #include <boost/iterator/iterator_facade.hpp>
+ 
+ #include "pstsdk/util/primitives.h"
+Index: pstsdk/ndb/database_iface.h
+===================================================================
+--- pstsdk/ndb/database_iface.h	(revision 46111)
++++ pstsdk/ndb/database_iface.h	(working copy)
+@@ -10,6 +10,9 @@
+ #define PSTSDK_NDB_DATABASE_IFACE_H
+ 
+ #include <memory>
++#ifdef __GNUC__
++#include <tr1/memory>
++#endif
+ 
+ #include "pstsdk/util/util.h"
+ #include "pstsdk/util/primitives.h"
+Index: pstsdk/util/primitives.h
+===================================================================
+--- pstsdk/util/primitives.h	(revision 46111)
++++ pstsdk/util/primitives.h	(working copy)
+@@ -11,10 +11,19 @@
+ #ifndef PSTSDK_UTIL_PRIMITIVES_H
+ #define PSTSDK_UTIL_PRIMITIVES_H
+ 
++#include <boost/cstdint.hpp>
++
+ //
+ // Global compiler hacks
+ //
+ 
++#ifdef __GNUC__
++# ifndef BOOST_NO_LAMBDAS
++#  define BOOST_NO_LAMBDAS
++# endif
++# define SUPPRESS_CPLUSPLUS0X_MESSAGES
++#endif
++
+ #ifdef BOOST_NO_LAMBDAS
+ #ifndef SUPPRESS_CPLUSPLUS0X_MESSAGES
+ #pragma message("C++0x lambdas not supported; consider updating your compiler")
+@@ -25,10 +34,17 @@
+ #ifndef SUPPRESS_CPLUSPLUS0X_MESSAGES
+ #pragma message("C++0x rvalue references not supported; consider updating your compiler")
+ #endif
+-// I'll assume a compiler supports unique_ptr iff it supports rvalue references
++// I'll assume a compiler might supports unique_ptr iff it supports rvalue references
+ // huge hack
+ #define unique_ptr tr1::shared_ptr
++#else
++#if defined(__GNUC__)
++// unique_ptr is available in gcc 4.4
++#if __GNUC__ < 4 || (__GNUC__ == 4 && (__GNUC_MINOR__ < 4))
++#define unique_ptr tr1::shared_ptr
+ #endif
++#endif
++#endif
+ 
+ #ifdef BOOST_NO_STATIC_ASSERT
+ #ifndef SUPPRESS_CPLUSPLUS0X_MESSAGES
+@@ -62,12 +78,12 @@
+ /*! \addtogroup primitive
+  * @{
+  */
+-typedef unsigned int uint;
+-typedef unsigned long ulong;
+-typedef unsigned long long ulonglong;
+-typedef long long longlong;
+-typedef unsigned char byte;
+-typedef unsigned short ushort;
++typedef boost::uint32_t uint;
++typedef boost::uint32_t ulong;
++typedef boost::uint64_t ulonglong;
++typedef boost::int64_t longlong;
++typedef boost::uint8_t byte;
++typedef boost::uint16_t ushort;
+ /*! @} */
+ 
+ //! \cond static_asserts
+Index: pstsdk/util/btree.h
+===================================================================
+--- pstsdk/util/btree.h	(revision 46111)
++++ pstsdk/util/btree.h	(working copy)
+@@ -309,7 +309,7 @@
+     {
+         if(iter.m_path.size() > 0)
+         {
+-            for(btree_iter_impl<K,V>::path_iter piter = iter.m_path.begin();
++            for(typename btree_iter_impl<K,V>::path_iter piter = iter.m_path.begin();
+                 piter != iter.m_path.end(); 
+                 ++piter)
+             {
+@@ -333,7 +333,7 @@
+     {
+         if(iter.m_path.size() > 0)
+         {
+-            for(btree_iter_impl<K,V>::path_iter piter = iter.m_path.begin();
++            for(typename btree_iter_impl<K,V>::path_iter piter = iter.m_path.begin();
+                 piter != iter.m_path.end();
+                 ++piter)
+             {

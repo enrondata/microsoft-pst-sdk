@@ -1,0 +1,50 @@
+[
+  {
+    "Id": "602643",
+    "ThreadId": "255231",
+    "Html": "\r\n<p>Sorry for what is probably a dumb question - I'm just getting started with using PSTSDK and I cannot compile a test program.&nbsp;I'm using VC&#43;&#43; Express version 10.&nbsp;&nbsp; I have the PSTSDK and BOOST directories in the compiler include path.&nbsp; VC\r\n has no problem compiling the headers, but I get a compile error about &quot;pst&quot; being an undeclared identifier:</p>\r\n<p><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\">#include\r\n &quot;<span style=\"font-family:Consolas; color:#a31515; font-size:x-small\"><span style=\"font-family:Consolas; color:#a31515; font-size:x-small\"><span style=\"font-family:Consolas; color:#a31515; font-size:x-small\">pstsdk\\pst\\pst.h&quot;</span></span></span></span></span></span></span></span></span></span></span><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">&nbsp;i</span></span><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\">nt</span></span></span></span><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">_tmain(</span></span><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\"><span style=\"font-family:Consolas; color:#0000ff; font-size:x-small\">int</span></span></span><span style=\"font-family:Consolas; font-size:x-small\">\r\n<span style=\"font-family:Consolas; font-size:x-small\">argc, _TCHAR* argv[]) </span>\r\n</span></p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><font face=\"Consolas\" size=\"2\"></p>\r\n<p>pst p(L<span style=\"font-family:Consolas; color:#a31515; font-size:x-small\"><span style=\"font-family:Consolas; color:#a31515; font-size:x-small\"><span style=\"font-family:Consolas; color:#a31515; font-size:x-small\">&quot;c:/junk/txtesting.pst&quot;</span></span></span><span style=\"font-family:Consolas; font-size:x-small\">&nbsp;</span></p>\r\n</font></span></span><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">);<font face=\"Consolas\" size=\"2\">\r\n</font></span></span></span></span></span><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">&nbsp;</span></span></span></span></span></span><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">}</span></span></p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"></span></span></span></span>COMPILE ERRORS\r\n ...</p>\r\n</span></span></span>\r\n<p></p>\r\n<p><span style=\"font-family:Consolas; font-size:x-small\"></span></p>\r\n<p></p>\r\n<p>&nbsp;</p>\r\n<p></p>\r\n<p><span style=\"font-family:Consolas; font-size:xx-small\"><span style=\"font-family:Consolas; font-size:xx-small\"></p>\r\n<p>1&gt;c:\\junk\\testproj\\testproj\\testproj.cpp(11): error C2065: 'pst' : undeclared identifier</p>\r\n<p>1&gt;c:\\junk\\testproj\\testproj\\testproj.cpp(11): error C2146: syntax error : missing ';' before identifier 'p'</p>\r\n<p>1&gt;c:\\junk\\testproj\\testproj\\testproj.cpp(11): error C3861: 'p': identifier not found</p>\r\n<p><span style=\"font-family:Consolas; font-size:xx-small\"></span></p>\r\n</span></span>\r\n<p></p>\r\n<p></p>\r\n<p>&nbsp;</p>\r\n<p></p>\r\n<p>{</p>\r\n<span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><font face=\"Consolas\" size=\"2\">\r\n<p>printf(<span style=\"font-family:Consolas; color:#a31515; font-size:x-small\"><span style=\"font-family:Consolas; color:#a31515; font-size:x-small\"><span style=\"font-family:Consolas; color:#a31515; font-size:x-small\">&quot;Starting open of .pst file\\n&quot;</span></span></span><span style=\"font-family:Consolas; font-size:x-small\">&nbsp;</span></p>\r\n</font></span></span><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">);<font face=\"Consolas\" size=\"2\">\r\n</font></span></span></span></span></span><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\"><span style=\"font-family:Consolas; font-size:x-small\">&nbsp;</span></span></span></span>\r\n<p></p>\r\n",
+    "PostedDate": "2011-04-25T16:52:14.747-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "602661",
+    "ThreadId": "255231",
+    "Html": "<p>The pst object is declared in the \"pstsdk\" namespace (as are all other objects in the sdk), so you'll either need to say:</p>\r\n<p>&nbsp;</p>\r\n<pre>pstsdk::pst p(L\"myfile.pst\");</pre>\r\n<p>&nbsp;</p>\r\n<p>Or at the top of your source file put:</p>\r\n<p>&nbsp;</p>\r\n<pre>using namespace pstsdk;</pre>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-04-25T19:08:18.36-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "603134",
+    "ThreadId": "255231",
+    "Html": "<p>Thanks.&nbsp; Again, sorry for asking C++ questions in this forum, but I have primarily been doing 'C' and a lot of this is new to me.&nbsp; Hopefully this is the last of them:</p>\r\n<p>I am trying to put the declaration of the store inside a try/catch so that I do not get a runtime error if the supplied .pst name is invalid.&nbsp; This works, but then VC does not recognize the store name if I use it later:</p>\r\n<p>try {</p>\r\n<p>&nbsp; pst store(wpath);</p>\r\n<p>}</p>\r\n<p>catch (exception&amp; e) {</p>\r\n<p>&nbsp;&nbsp; printf(\"Cannot open .pst file\");</p>\r\n<p>&nbsp; return;</p>\r\n<p>}</p>\r\n<p>process_folder(0, store.open_root_folder());</p>\r\n<p>This last statement generates the compile error \"identifier store is undefined\".&nbsp; If I get rid of the try/catch it works.&nbsp; How do I define 'store' in advance so that VC knows about it?</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-04-26T12:24:52.543-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "603188",
+    "ThreadId": "255231",
+    "Html": "<p>You can't. Try putting all of your code in a helper function, and call the helper function from within a try/catch block.</p>",
+    "PostedDate": "2011-04-26T13:44:25.487-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "603214",
+    "ThreadId": "255231",
+    "Html": "<p>OK, but then I have the problem of how to return the pst object to the caller - not sure how to do that - can you give an example?&nbsp; In any case, my intention is to use the sdk in a dll, with one routine that opens the .pst file, others to access it in various ways, so what I really need to do is define the pst object as a global variable - is that possible?&nbsp; Or would I create the pst object in each routine that needs to access the .pst file?&nbsp; That seems very inefficient, or would there be very little overhead doing that?</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-04-26T14:23:27.113-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "649182",
+    "ThreadId": "255231",
+    "Html": "<p>Did you figure this out?</p>\n<p>The one issue in your code is that the declaration of the PST object is inside a block, so it falls out of scope and goes away at the end of the try block. The easiest way to correct this is:</p>\n<p>&nbsp;</p>\n<div style=\"color: black; background-color: white;\">\n<pre>pstsdk::pst *store;\n\n<span style=\"color: blue;\">try</span> {\n  store = <span style=\"color: blue;\">new</span> pstsdk::pst(wpath);\n}\n<span style=\"color: blue;\">catch</span> (exception&amp; e) {\n   printf(<span style=\"color: #a31515;\">\"Cannot open .pst file\"</span>);\n   <span style=\"color: blue;\">return</span>;\n}\n\nprocess_folder(0, store-&gt;open_root_folder());\n</pre>\n</div>",
+    "PostedDate": "2011-07-28T13:46:44.87-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

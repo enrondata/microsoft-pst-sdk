@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "688571",
+    "ThreadId": "277024",
+    "Html": "\r\n<p>I have noticed something unexpected in the character encoding of certain character strings<br>\r\nwhen retrieved via pstsdk.&nbsp; I was assuming that everything is returned in Unicode, but that<br>\r\ndoes not seem to be true for all cases.&nbsp; For example, I have a .pst file with the folder<br>\r\nname &quot;Smazan&aacute; po&scaron;ta&quot;. In my MAPI application, if I retrieve PR_DISPLAY_NAME_W, I get the<br>\r\nfollowing bytes:</p>\r\n<pre>53 00 6d 00 61 00 7a 00 61 00 6e 00 e1 00 20 00   S.m.a.z.a.n... .\r\n70 00 6f 00 61 01 74 00 61 00 00                  p.o.a.t.a..</pre>\r\n<p>Note that the lower case 'a' with acute accent is encoded as &quot;E1 00&quot;,and the lower case<br>\r\n's' with caron is encoded as &quot;61 01&quot; which is correct Unicode.</p>\r\n<p>Using pstsdk, I have retrieved the same property by using folder.get_name() and also by<br>\r\nreading directly the property 0x3001.&nbsp; In both cases, the bytes returned, by looking at<br>\r\nc_str(), are:</p>\r\n<pre>53 00 6d 00 61 00 7a 00 61 00 6e 00 e1 ff 20 00   S.m.a.z.a.n... .\r\n70 00 6f 00 9a ff 74 00 61 00 00                  p.o...t.a..</pre>\r\n<p>For the two characters in question, the second byte is FF, and the first byte represents<br>\r\nthe ISO Latin-1 encoding of the character.&nbsp; So I suppose I do have a means of correcting<br>\r\nthe problem, i.e. looking for 'FF' then doing a one byte conversion, but I would like to<br>\r\nunderstand why pstsdk is not supplying the same bytes that MAPI does.&nbsp; Is MAPI performing<br>\r\nsome internal conversion for applications?&nbsp; Is my suggested workaround safe for all cases?<br>\r\nI have tested other pst files containing Asian character sets and not had a problem<br>\r\nwith pstsdk.</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2011-10-24T11:40:33.917-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

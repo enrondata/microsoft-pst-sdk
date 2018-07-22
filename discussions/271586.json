@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "667960",
+    "ThreadId": "271586",
+    "Html": "\r\n<p>I need to consolidate items from pst files that were created by many users using outlook connected to a local exchange server.</p>\r\n<p>Many messages were addresed to a few users, and were saved to each users PST file. so we have the same message in multiple files.</p>\r\n<p>I want to be able to save only a single copy of that message.</p>\r\n<p>Is there some ID I can compare to see that two messages are the same original message ?</p>\r\n<p>Thanks in advance.</p>\r\n<p>Tzahij&nbsp;</p>\r\n",
+    "PostedDate": "2011-09-06T00:12:34.867-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

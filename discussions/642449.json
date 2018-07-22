@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "1437681",
+    "ThreadId": "642449",
+    "Html": "Hi guys, this might be a stupid question (probably it is) but i really can't figure out how to retrieve the form field of a message. I'm able to get the recievers (to, cc and bcc) but i don't understand how to get the sender of the message!\r<br />\nCan you please help me? \r<br />\nThanks<br />\n",
+    "PostedDate": "2015-08-07T02:04:14.023-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "1437685",
+    "ThreadId": "642449",
+    "Html": "ok i solved following documentation at this page <a href=\"https://msdn.microsoft.com/en-us/library/office/cc815517.aspx\" rel=\"nofollow\">https://msdn.microsoft.com/en-us/library/office/cc815517.aspx</a> where all properties are enumerated with their id!<br />\n",
+    "PostedDate": "2015-08-07T03:09:48.67-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

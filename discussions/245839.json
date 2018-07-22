@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "565395",
+    "ThreadId": "245839",
+    "Html": "\r\n<p>Hello,&nbsp;</p>\r\n<p>I can't open ost files,</p>\r\n<p>When ever I try I get an error:</p>\r\n<p><br>\r\npstsdk.definition.exception.PstSdkException: Error constructing Pst instance. ---&gt; System.Runtime.InteropServices.SEHException: External component has thrown an exception.&nbsp;&nbsp;</p>\r\n<p>at _CxxThrowException(Void* , _s__ThrowInfo* )&nbsp;&nbsp; <br>\r\nat pstsdk.file.{ctor}(file* , basic_string&lt;wchar_t\\,std::char_traits&lt;wchar_t&gt;\\,std::allocator&lt;wchar_t&gt; &gt;* filename) in pstsdk\\pstsdk\\util\\util.h:line 148&nbsp;&nbsp;\r\n<br>\r\nat pstsdk.database_impl&lt;unsigned long&gt;.{ctor}(database_impl&lt;unsigned long&gt;* , basic_string&lt;wchar_t\\,std::char_traits&lt;wchar_t&gt;\\,std::allocator&lt;wchar_t&gt; &gt;* filename) in pstsdk\\pstsdk\\ndb\\database.h:line 345&nbsp;&nbsp;<br>\r\nat pstsdk.open_small_pst(shared_ptr&lt;pstsdk::database_impl&lt;unsigned long&gt; &gt;* , basic_string&lt;wchar_t\\,std::char_traits&lt;wchar_t&gt;\\,std::allocator&lt;wchar_t&gt; &gt;* filename) in pstsdk\\pstsdk\\ndb\\database.h:line 233&nbsp;&nbsp;<br>\r\nat pstsdk.open_database(shared_ptr&lt;pstsdk::db_context&gt;* , basic_string&lt;wchar_t\\,std::char_traits&lt;wchar_t&gt;\\,std::allocator&lt;wchar_t&gt; &gt;* filename) in pstsdk\\pstsdk\\ndb\\database.h:line 219</p>\r\n<p>Thanks,</p>\r\n<p>Sagi.</p>\r\n",
+    "PostedDate": "2011-02-13T06:17:23.863-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "565440",
+    "ThreadId": "245839",
+    "Html": "<p>Opening OST files works fine here.</p>\r\n<p>The only exception thrown by the file constructor (as shown by your callstack) is when the CRT call to open the file fails.</p>",
+    "PostedDate": "2011-02-13T08:39:49.62-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

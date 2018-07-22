@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "710246",
+    "ThreadId": "282487",
+    "Html": "\r\n<p>Is it likely that the SDK will ever offer the ability to create and modify PST files?</p>\r\n<p>This appeared in the original roadmap but does not seem to have happened yet.</p>\r\n<p>Many thanks.</p>\r\n",
+    "PostedDate": "2011-12-10T05:16:32.533-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "712399",
+    "ThreadId": "282487",
+    "Html": "<p>Perhaps a project update is in order. I'll create a seperate topic.</p>",
+    "PostedDate": "2011-12-14T15:25:50.527-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

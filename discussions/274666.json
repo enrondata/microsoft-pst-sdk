@@ -1,0 +1,50 @@
+[
+  {
+    "Id": "679630",
+    "ThreadId": "274666",
+    "Html": "\r\n<p>I am planning to customize the SDK code to suit my application (commercial) needs. Does it have any licensing implication? Please clarify.</p>\r\n",
+    "PostedDate": "2011-10-03T22:11:59.23-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "682956",
+    "ThreadId": "274666",
+    "Html": "<p>It's Apache licensed, so you can basically do what you want.</p>",
+    "PostedDate": "2011-10-11T22:07:18.207-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "682957",
+    "ThreadId": "274666",
+    "Html": "<p>-</p>",
+    "PostedDate": "2011-10-11T22:15:48.67-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "682959",
+    "ThreadId": "274666",
+    "Html": "<div>-</div>",
+    "PostedDate": "2011-10-11T22:20:49.43-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "682960",
+    "ThreadId": "274666",
+    "Html": "<div>\n<div>Thanks for your reply...</div>\n<div>Based on your comment I also assume that the code need not be submitted back, is that right?</div>\n<div>Thanks and Regards</div>\n<div>Mahesha RT</div>\n</div>",
+    "PostedDate": "2011-10-11T22:21:08.227-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "683034",
+    "ThreadId": "274666",
+    "Html": "<p>That is correct</p>",
+    "PostedDate": "2011-10-12T03:27:40.187-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

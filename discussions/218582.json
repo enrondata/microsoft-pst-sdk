@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "464214",
+    "ThreadId": "218582",
+    "Html": "<p>With the help of PST SDK, can we create .eml or&nbsp; any other mail format files ,out of a read PST ?</p>",
+    "PostedDate": "2010-07-07T05:12:04.953-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "464576",
+    "ThreadId": "218582",
+    "Html": "<p>pstsdk does not currently support export to another format.</p>\r\n<p>The pstsdk does allow you to create in memory objects representing data from the PST as well as read/enumerate all of the properties on that object. You'd need to use another library for whatever format you want to export in, and feed the data you read from pstsdk into that.</p>\r\n<p>There has occasionally been suggestions or discussion about pstsdk objects supporting export to one file format or another (like adding a to_eml(ostream&amp;) method to the message object), but not one has stepped up with any patches to do so and I'm not an expert in any other file format to easily add such functionality.</p>",
+    "PostedDate": "2010-07-07T18:02:07.903-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "465366",
+    "ThreadId": "218582",
+    "Html": "<p>Thanks for quick reply.</p>",
+    "PostedDate": "2010-07-09T06:04:36.887-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

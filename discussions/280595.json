@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "702401",
+    "ThreadId": "280595",
+    "Html": "<p>Hi. I have started to tackle writing an msg file from a message object. I have had some success as long as the message does not have an embedded object. I think the problem is I currently write an empty __nameid_version1.0 sub-storage stream to the msg file. I understand the concept of the named property mapping table but I am not sure how to go about creating the msg nameid storage stream. Any ideas or direction?</p>\n<p>As an example my message object for a particular entryid has a property with a property id of 0x8360. Using mfcmapi to view the properties on the same msg created indicates 0x8360 should be mapped to 0x801C.&nbsp;Is there an API that allows me to map back and forth?&nbsp;</p>\n<p>Thanks in advance.</p>",
+    "PostedDate": "2011-11-23T07:58:56.467-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "702538",
+    "ThreadId": "280595",
+    "Html": "<p>Ignore the above. I found what I was looking for. The API <span style=\"font-size: x-small;\">lookup_name_prop is what I needed.</span></p>\r\n<p><span style=\"font-size: x-small;\">Thanks</span></p>\r\n<p><span style=\"font-size: x-small;\">&nbsp;</span></p>",
+    "PostedDate": "2011-11-23T11:52:26.97-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "704980",
+    "ThreadId": "280595",
+    "Html": "<p>Well back to the drawing board. I still cannot replicate the mapping that I see in saved msg files from Outlook. Mfcmapi indicates that I am not mapping to the correct numerical property name. Is it possible to create the stream __nameid_version1.0 from the property list of a message and the name_id_map?</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-11-29T13:38:16.153-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

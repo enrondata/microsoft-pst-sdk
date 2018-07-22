@@ -1,0 +1,90 @@
+[
+  {
+    "Id": "452027",
+    "ThreadId": "215065",
+    "Html": "<p>In trying to read a prop_type_mv_long, I received an index out of bounds error in read_prop_array():</p>\r\n<p>object.h, line 215:<br>&nbsp;&nbsp;&nbsp; std::vector&lt;byte&gt; buffer = get_value_variable(id); <br>--&gt;&nbsp;&nbsp;&nbsp; return std::vector&lt;T&gt;((T*)&amp;buffer[0], (T*)&amp;buffer[buffer.size()]);</p>\r\n<p>buffer[buffer.size()] is out of bounds</p>\r\n<p>the buffer is:<br>-&nbsp;&nbsp;buffer&nbsp;[12](3 '&#3;',0,0,0,0,0,0,0,3 '&#3;',0,0,0)&nbsp;std::vector&lt;unsigned char,std::allocator&lt;unsigned char&gt; &gt;<br>&nbsp;&nbsp;[size]&nbsp;12&nbsp;unsigned long<br>&nbsp;&nbsp;[capacity]&nbsp;12&nbsp;unsigned long<br>&nbsp;&nbsp;[0]&nbsp;3 '&#3;'&nbsp;unsigned char<br>&nbsp;&nbsp;[1]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[2]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[3]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[4]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[5]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[6]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[7]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[8]&nbsp;3 '&#3;'&nbsp;unsigned char<br>&nbsp;&nbsp;[9]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[10]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[11]&nbsp;0&nbsp;unsigned char</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-05T11:41:04.58-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452029",
+    "ThreadId": "215065",
+    "Html": "<p>What is up with Issue Tracker? Maybe we should report it to the codeplex people...</p>\r\n<p>Anyway, that looks like a bug. Try replacing the line you quoted with:</p>\r\n<p>&nbsp;&nbsp; &nbsp;return std::vector&lt;T&gt;(reinterpret_cast&lt;T*&gt;(&amp;buffer[0]), buffer.size()/sizeof(T)); <br><br></p>",
+    "PostedDate": "2010-06-05T11:48:23.053-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452032",
+    "ThreadId": "215065",
+    "Html": "<p>Dunno -- every time I try and report something, I get a codeplex error.&nbsp; Does it work for you?</p>",
+    "PostedDate": "2010-06-05T11:56:32.25-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452034",
+    "ThreadId": "215065",
+    "Html": "<p>That doesn't work either, btw.&nbsp; sorry ...</p>\r\n<p>1&gt;e:\\src\\pstsdk_0_1\\pstsdk\\ltp\\object.h(215): error C2665: 'std::vector&lt;_Ty&gt;::vector' : none of the 7 overloads could convert all the argument types<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Ty=pstsdk::ulong<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; c:\\program files (x86)\\microsoft visual studio 10.0\\vc\\include\\vector(521): could be 'std::vector&lt;_Ty&gt;::vector(unsigned int,const _Ty &amp;)'<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Ty=pstsdk::ulong<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while trying to match the argument list '(pstsdk::ulong *, unsigned int)'<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e:\\src\\pstsdk_0_1\\pstsdk\\ltp\\object.h(232) : see reference to function template instantiation 'std::vector&lt;_Ty&gt; pstsdk::const_property_object::read_prop_array&lt;pstsdk::ulong&gt;(pstsdk::prop_id) const' being compiled<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Ty=pstsdk::ulong<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br>1&gt;e:\\src\\pstsdk_0_1\\pstsdk\\ltp\\object.h(215): error C2665: 'std::vector&lt;_Ty&gt;::vector' : none of the 7 overloads could convert all the argument types<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Ty=double<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; c:\\program files (x86)\\microsoft visual studio 10.0\\vc\\include\\vector(521): could be 'std::vector&lt;_Ty&gt;::vector(unsigned int,const _Ty &amp;)'<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Ty=double<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while trying to match the argument list '(double *, unsigned int)'<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e:\\src\\pstsdk_0_1\\pstsdk\\ltp\\object.h(268) : see reference to function template instantiation 'std::vector&lt;_Ty&gt; pstsdk::const_property_object::read_prop_array&lt;double&gt;(pstsdk::prop_id) const' being compiled<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Ty=double<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br>1&gt;e:\\src\\pstsdk_0_1\\pstsdk\\ltp\\object.h(215): error C2665: 'std::vector&lt;_Ty&gt;::vector' : none of the 7 overloads could convert all the argument types<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Ty=pstsdk::block_id<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; c:\\program files (x86)\\microsoft visual studio 10.0\\vc\\include\\vector(521): could be 'std::vector&lt;_Ty&gt;::vector(unsigned int,const _Ty &amp;)'<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Ty=pstsdk::block_id<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; while trying to match the argument list '(pstsdk::ulonglong *, unsigned int)'<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; e:\\src\\pstsdk_0_1\\pstsdk\\ltp\\object.h(275) : see reference to function template instantiation 'std::vector&lt;_Ty&gt; pstsdk::const_property_object::read_prop_array&lt;pstsdk::ulonglong&gt;(pstsdk::prop_id) const' being compiled<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; with<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; _Ty=pstsdk::block_id<br>1&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</p>",
+    "PostedDate": "2010-06-05T12:02:41.457-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452038",
+    "ThreadId": "215065",
+    "Html": "<p>Oops, std::vector doesn't have that constructor, sorry. My fault for not compiling before hitting &quot;Post&quot;..</p>\r\n<p>Try:</p>\r\n<p>&nbsp;&nbsp; &nbsp;return std::vector&lt;T&gt;(reinterpret_cast&lt;T*&gt;(&amp;buffer[0]), reinterpret_cast&lt;T*&gt;(&amp;buffer[0] + buffer.size()));</p>\r\n<p>This compiles, but unfortunately (and obviously) the unit test doesn't cover reading a multi valued long property type (only multivalued string props, apparently), so I'm not 100% certain this solves the problem entirely.</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-05T12:19:43.993-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452043",
+    "ThreadId": "215065",
+    "Html": "<p>I'm also having an issue with mv_guid, but I dunno if I'm doing it wrong ... code looks something like this:</p>\r\n<p>&nbsp;&nbsp;&nbsp; case prop_type_mv_guid:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; vector&lt;vector&lt;pstsdk::byte&gt;&gt; arr = bag.read_prop_array&lt;vector&lt;pstsdk::byte&gt;&gt;(orig);<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // irrelevent stuff stripped<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; break;</p>\r\n<p>read_prop_array&lt;vector&lt;pstsdk::byte&gt;&gt;(orig)&nbsp; throws a &quot;std::length&quot; error every time.</p>\r\n<p>object.h, line 301:</p>\r\n<p>#ifdef PSTSDK_VALIDATION_LEVEL_WEAK<br>&nbsp;&nbsp;&nbsp; if(buffer.size() &lt; (sizeof(ulong) + ptoc-&gt;count * sizeof(ulong)))<br>--&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; throw std::length_error(&quot;mv prop too short&quot;);<br>#endif</p>\r\n<p>+&nbsp;&nbsp;this&nbsp;0x0071e20c {m_pbth=shared_ptr {m_heap=shared_ptr {m_node={...} } [1 strong ref, 1 weak ref] [default] m_id=96 m_level=0 } [1 strong ref] [default] }&nbsp;const pstsdk::const_property_object * const<br>&nbsp;&nbsp;id&nbsp;3678&nbsp;unsigned short<br>-&nbsp;&nbsp;buffer&nbsp;[16](184 '&cedil;',221 '&Yacute;',210 '&Ograve;',133 '&hellip;',37 '%',98 'b',210 '&Ograve;',17 '&#17;',189 '&frac12;',241 '&ntilde;',0,192 '&Agrave;',79 'O',214 '&Ouml;',85 'U',181 '&micro;')&nbsp;std::vector&lt;unsigned char,std::allocator&lt;unsigned char&gt; &gt;<br>&nbsp;&nbsp;[size]&nbsp;16&nbsp;unsigned long<br>&nbsp;&nbsp;[capacity]&nbsp;16&nbsp;unsigned long<br>&nbsp;&nbsp;[0]&nbsp;184 '&cedil;'&nbsp;unsigned char<br>&nbsp;&nbsp;[1]&nbsp;221 '&Yacute;'&nbsp;unsigned char<br>&nbsp;&nbsp;[2]&nbsp;210 '&Ograve;'&nbsp;unsigned char<br>&nbsp;&nbsp;[3]&nbsp;133 '&hellip;'&nbsp;unsigned char<br>&nbsp;&nbsp;[4]&nbsp;37 '%'&nbsp;unsigned char<br>&nbsp;&nbsp;[5]&nbsp;98 'b'&nbsp;unsigned char<br>&nbsp;&nbsp;[6]&nbsp;210 '&Ograve;'&nbsp;unsigned char<br>&nbsp;&nbsp;[7]&nbsp;17 '&#17;'&nbsp;unsigned char<br>&nbsp;&nbsp;[8]&nbsp;189 '&frac12;'&nbsp;unsigned char<br>&nbsp;&nbsp;[9]&nbsp;241 '&ntilde;'&nbsp;unsigned char<br>&nbsp;&nbsp;[10]&nbsp;0&nbsp;unsigned char<br>&nbsp;&nbsp;[11]&nbsp;192 '&Agrave;'&nbsp;unsigned char<br>&nbsp;&nbsp;[12]&nbsp;79 'O'&nbsp;unsigned char<br>&nbsp;&nbsp;[13]&nbsp;214 '&Ouml;'&nbsp;unsigned char<br>&nbsp;&nbsp;[14]&nbsp;85 'U'&nbsp;unsigned char<br>&nbsp;&nbsp;[15]&nbsp;181 '&micro;'&nbsp;unsigned char<br>+&nbsp;&nbsp;results&nbsp;[0]()&nbsp;std::vector&lt;std::vector&lt;unsigned char,std::allocator&lt;unsigned char&gt; &gt;,std::allocator&lt;std::vector&lt;unsigned char,std::allocator&lt;unsigned char&gt; &gt; &gt; &gt;<br>+&nbsp;&nbsp;ptoc&nbsp;0x03324b18 {count=2245189048 offsets=0x03324b1c }&nbsp;pstsdk::disk::mv_toc *</p>",
+    "PostedDate": "2010-06-05T12:32:36.9-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452055",
+    "ThreadId": "215065",
+    "Html": "<p>You should just be calling read_prop_array&lt;guid&gt;, which returns a vector&lt;guid&gt;</p>",
+    "PostedDate": "2010-06-05T13:11:34.263-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452060",
+    "ThreadId": "215065",
+    "Html": "<p>Nice!&nbsp; I was confused, since I wasn't able to read_prop&lt;guid&gt;() -- it won't compile.&nbsp; So I figured if I couldn't do read_prop&lt;guid&gt; I'd have little or no chance of doing read_prop_array&lt;guid&gt;</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-05T13:40:35.743-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452061",
+    "ThreadId": "215065",
+    "Html": "<p>Doh, read_prop&lt;guid&gt; should&nbsp;definitely&nbsp;compile..</p>",
+    "PostedDate": "2010-06-05T13:45:57.44-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452148",
+    "ThreadId": "215065",
+    "Html": "<p>Try the latest from trunk</p>",
+    "PostedDate": "2010-06-06T06:12:30.023-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452177",
+    "ThreadId": "215065",
+    "Html": "<p>Working nicely!&nbsp; I'll be kicking the tires against a bunch of PST's and OST's over the coming week, several of them may be corrupt in some fashion or another.&nbsp; Should be a good series of tests!&nbsp; My code is iterating over every message, attachment, recipient and property for each.&nbsp; I'm going to attempt to validate every prop by running the same MAPI code to open a copy of the same PST, and iterate through the store and compare every prop of every object.</p>",
+    "PostedDate": "2010-06-06T09:47:51.817-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

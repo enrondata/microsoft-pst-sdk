@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "507528",
+    "ThreadId": "230985",
+    "Html": "<p>Hello,</p>\r\n<p>I'm trying to get subfolder count for a folder in a pst using get_subfolder_count() and it is not returning me the right value. When I looked at the sdk, it looks like that it is reading the property below -</p>\r\n<pre>0x36030003  PR_CONTENT_UNREAD\t\t\t\tPidTagContentUnreadCount</pre>\r\n<p>This doesn't seem to be a subfolder count property. I even tried 0x6638 which is PR_FOLDER_CHILD_COUNT but this property doesn't exist in property bag.&nbsp;Any idea how to get the correct subfolder count?</p>\r\n<p>here's my code -</p>\r\n<p><span> </span>folder fSub = m_pstStore-&gt;open_folder(nidFolder);<br>for(folder::folder_iterator fIter = fSub.sub_folder_begin(); fIter != fSub.sub_folder_end(); ++fIter)<span> <br></span>{<span> <br></span><span style=\"white-space:pre\"> </span>contentCount = fIter-&gt;get_message_count();<br><span style=\"white-space:pre\"> </span>subfolderCount = fIter-&gt;get_subfolder_count();<br>}&nbsp;</p>\r\n<p>Thanks.</p>",
+    "PostedDate": "2010-10-14T19:01:31.643-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "507927",
+    "ThreadId": "230985",
+    "Html": "<p>You're right; that method is named wrong. It's right next to the get_message_count() method too..</p>\r\n<p>The best way to get the subfolder count looks like myfold.get_hierarchy_table().size(), and get_subfolder_count() should be implemented as&nbsp;such. Thanks for reporting the issue!</p>",
+    "PostedDate": "2010-10-15T11:17:19.383-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "508069",
+    "ThreadId": "230985",
+    "Html": "<p>Perfect. I was trying this property directly&nbsp;<span style=\"font-family:Consolas, 'Courier New', Courier, monospace;white-space:pre\">0x663e0003 (PR_HIERARCHY_CHANGE_NUM) </span><span style=\"font-family:Consolas, 'Courier New', Courier, monospace;white-space:pre\">but read_prop didn't return anything. Forgot to check that there's a function call get_hierarchy_table</span></p>\r\n<p><span style=\"font-family:Consolas, 'Courier New', Courier, monospace;white-space:pre\">Thanks much.</span></p>\r\n<pre><br></pre>",
+    "PostedDate": "2010-10-15T15:44:34.843-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

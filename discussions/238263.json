@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "535367",
+    "ThreadId": "238263",
+    "Html": "\r\n<p>Can someone point me to any place in the code where all possible prop_id values are documented? I could find many descriptions in [MS-OXPROPS], but I seek to find out if all the values and associated string descriptors etc. are captured as an enum or something\r\n in one of the header files. Further, certain properties of common folders such as a vanilla PST Inbox are not documented in [MS-OXPROPS] - as they are in the 0x6600 - 0x67FF range which is a &quot;Provider-defined internal non-transmittable property&quot;.</p>\r\n<p>Is there any comprehensive code-ready listing that is available from anyone, anywhere?</p>\r\n",
+    "PostedDate": "2010-12-13T22:55:40.97-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "535368",
+    "ThreadId": "238263",
+    "Html": "\r\n<p>Hmm, not really. I think [MS-OXPROPS] is the best we have at the moment. Although such a header file would be a good addition to the PSTSDK someday..</p>\r\n",
+    "PostedDate": "2010-12-13T23:01:20.753-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

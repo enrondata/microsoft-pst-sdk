@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "655570",
+    "ThreadId": "268460",
+    "Html": "\r\n<p>Trying to compile under VC&#43;&#43; 10 with runtime library /MT, generates a bunch of link errors in pstsdk code,</p>\r\n<p>specifically _CrtDbgReportW and _free_dbg.&nbsp; Problem goes away when I use /MTd, but is there a way to turn off</p>\r\n<p>the debug code?</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2011-08-09T17:20:40.873-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "655642",
+    "ThreadId": "268460",
+    "Html": "<p>Never mind - getting rid of _DEBUG in the preproccesor definitions fixes this.</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-08-09T21:29:33.573-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

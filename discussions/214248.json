@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "448840",
+    "ThreadId": "214248",
+    "Html": "<p>First of all, thanks to everyone who has tried out the initial beta version of pstsdk - especially those of you who have sent feedback and submitted patches!</p>\r\n<p>Since we released this past Monday, there have been numerous bug fixes in response to bug reports and feedback. Thanks everyone! I'd recommend at this point everyone use the latest version from trunk if they're doing any serious development.</p>\r\n<p>About bug reports; if you think you've found a bug, first make sure it repos on the latest trunk, then open an issue inside Issue Tracker in codeplex (or vote up an existing issue if you see it's a duplicate). Attach to the issue a self contained repo (a .cpp file I can compile) and any PST files needed to demonstrate the problem (the smaller the better).</p>\r\n<p>As far as support goes; this forum (the Discussions section of Codeplex) is the best location to ask for help, as well as leave general comments or feedback about the SDK or it's design. A few people have contacted me offline - I'm more than happy to help, but if the discussion is&nbsp;available&nbsp;publicly&nbsp;it's better for everyone.</p>\r\n<p>As far as the roadmap goes, the plan in my head looks like this:</p>\r\n<ul>\r\n<li>Next 1-2 months: v0.1-v0.x - Additional &quot;beta&quot; releases, bug fixes only</li>\r\n<li>~2 months: v1.0 - Stable version of the current beta. No new features (read only)</li>\r\n<li>2-6 months: v1.1 - v1.x - Continue development, new features added as well as changes too large to target v1.0. Write support is worked on, but not exposed.</li>\r\n<li>~6 months: v2.0 Beta - Write support enabled, betas begin for v2.0 release</li>\r\n</ul>\r\n<p>Keep in mind these are rough estimates, and subject to change. Thats all - thanks again.</p>\r\n<ul>\r\n</ul>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-05-28T12:57:31.843-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "451072",
+    "ThreadId": "214248",
+    "Html": "<p>This is great. Pst files have long been a black box. When moving mailboxes around these are a hassle for administrators. I am planning to produce a network archive with &quot;long forgotten&quot; pst files and then produce a web interface on top of it. Any chance of seeing some C# wrappers for this?</p>\r\n<p>&nbsp;</p>\r\n<p>Regards,</p>\r\n<p>/Mads</p>",
+    "PostedDate": "2010-06-03T01:41:22.207-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "451225",
+    "ThreadId": "214248",
+    "Html": "<p>Not from me; but thoward started pstsdknet.codeplex.com aiming to do that.</p>",
+    "PostedDate": "2010-06-03T08:16:53.073-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "520080",
+    "ThreadId": "214248",
+    "Html": "\r\n<p>Is there any chance of getting an updated roadmap? What is the status of this project now according to the original roadmap,&nbsp;is it still in the ~2 month stage?</p>\r\n<p>Thanks</p>\r\n",
+    "PostedDate": "2010-11-10T09:38:52.347-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "520098",
+    "ThreadId": "214248",
+    "Html": "\r\n<p>Ah, sorry.&nbsp; Yes, that roadmap is out of date and was overly optimisitic.</p>\r\n<p>The current status is that my employeer has me dilligently working on the next version of Outlook, while we have someone new ramping up on the project and working on write support (anniruddh). I still will pop in to do bug fixes (because I tend to be able\r\n to do them quickly and easily), and there are no active bugs at the moment. I'll most likely come back to the project once our coding sprints are done for Outlook 15.</p>\r\n",
+    "PostedDate": "2010-11-10T10:01:23.813-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

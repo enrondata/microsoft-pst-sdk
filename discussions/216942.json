@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "458720",
+    "ThreadId": "216942",
+    "Html": "<p><span style=\"font-size:small\">Yesterday, I wrote a PST-dumping script using pstsdk. There's a lot of interesting data hiding in PST files! And using pstsdk, it's really easy to access. You've definitely earned my thanks many times over. :-)</span></p>\r\n<p><span style=\"font-size:small\">Here are a few notes from my work:</span></p>\r\n<p><span style=\"font-size:small\">\r\n<div>1) pst::message could use some more accessors, including 'From', 'Sender', 'Date', date received, and the RFC822 email headers (if present). I could easily throw a patch together for you tomorrow, if you're interested (and if I don't spend the day chasing server issues&mdash;c'est la vie). It seems like 'From' and 'Sender' are similar to, but not quite identical to, the pst::recipient class.</div>\r\n<div></div>\r\n<div>2) As mentioned in the other thread, using the pst::message API requires writing a lot of 'catch (key_not_found&lt;...&gt; ...)' blocks, because almost every accessor may raise that error. I'm not sure I have a better solution, but if you like, I could experiment with boost::optional and see what the resulting code looks like. Or maybe it would be better to define functions like 'has_subject'? I'm not really sure of the best approach here. But if you have any strong preferences, I'm happy to implement 'em.</div>\r\n<div></div>\r\n<div>3) How do ANSI-format PST files handle non-1252 code pages? Can I just check&nbsp;PidTagMessageCodepage and assume that all 8-bit strings are in that code page? Or do I need to find the right MS-OXO* PDF and start reading? :-) The following note in [MS-OXOPROPS].pdf looks promising:</div>\r\n<blockquote>\r\n<div>\r\n<div>Canonical name: PidTagMessageCodepage&nbsp;</div>\r\n<div>Description: Specifies the code page used to encode the non-Unicode string properties on this&nbsp;</div>\r\n<div>Message object.&nbsp;</div>\r\n</div>\r\n</blockquote>\r\n<div>As usual, I'm happy to send you a patch if there's any particular behavior you'd prefer.</div>\r\n<div></div>\r\n<div>As always, many thanks for all your help, and thank you for such an excellent library!</div>\r\n<br>\r\n<div>Cheers,</div>\r\n<div>Eric</div>\r\n</span></p>",
+    "PostedDate": "2010-06-22T15:58:46.113-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "458726",
+    "ThreadId": "216942",
+    "Html": "<p>My thoughts:</p>\r\n<p>1) For From &amp; Sender, do you consider iterating over the recipient collection insufficent, or do you think there should be helper for getting a copy of the common recipients? From and Sender should be identical to the recipient object - internally there is a table with all the recipients, and some properties from that table are promoted to the message object (sender name, etc) at save time. As far as the recieved date goes; as a side note; I am very unhappy with the date representation currently in pstsdk. I'm converting everything back and forth from time_t, but internally in the PST they are generally stored as FILETIMEs. I wish I knew what the &quot;prefered&quot; way to do this was. If you'll look in object.h you'll see that time_t gave me some headaches on gcc.</p>\r\n<p>2) I'm strongly considering a has_XXX() method for all accessor methods which may be optional, since the previous discussion. I hadn't considered boost::optional - I've been trying to avoid using boost in external facing parts of the library though.</p>\r\n<p>3) The PST cares very little about codepages (or the content/format of non-unicode strings, or unicode strings for that matter). It just happily stores char arrays given to it and returns them when asked. I imagine things would look very confusing if you took a PST file created on a computer in one locale and moved to to another. I don't see any conversion happening. And PidTagMessageCodepage also isn't enforced or set by the PST proper (mspst32.dll), thats just a convention where MAPI client stamp what codepage they were using on the PST. The PST knows nothing of it (and a quick scan of the Outlook source code makes me suspect this is generally just used/set by the OAB). It's entirely possible that Outlook might do the conversions necessary to make these scenarios work.</p>\r\n<p>In general, i am not opposed to adding any number of accessor methods to the message class, folder, etc as long as they seem &quot;out of place&quot; by not being present. I do want to avoid these classes becoming bloated with&nbsp;hundreds (or even dozens) of properties, though.</p>",
+    "PostedDate": "2010-06-22T16:17:55.757-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "476144",
+    "ThreadId": "216942",
+    "Html": "<p><em>1) For From &amp; Sender, do you consider iterating over the recipient collection insufficent, or do you think there should be helper for getting a copy of the common recipients?</em></p>\r\n<p>Interesting. How does this work? When I iterate over the recipient collection, I see entries for&nbsp;mapi_to, mapi_cc, and mapi_bcc, but nothing else. Do I need to do something special to get access to From and Sender?</p>\r\n<p><em>2) I'm strongly considering a has_XXX() method for all accessor methods which may be optional, since the previous discussion.</em></p>\r\n<p>This would be a reasonable approach. We're already written the helper methods we need for this, so it's mostly a moot point for us. But I agree that this is probably worth addressing anyway.</p>\r\n<p><em>3) The PST cares very little about codepages (or the content/format of non-unicode strings, or unicode strings for that matter). It just happily stores char arrays given to it and returns them when asked.</em></p>\r\n<p>Ouch. So if we encounter any non-1252 ANSI PSTs, I guess we'll just run character set detection on them, and hope that we get a plausible answer. :-)</p>\r\n<p>Many thanks for answering my questions, as always!</p>\r\n<p>Cheers,&nbsp;Eric</p>",
+    "PostedDate": "2010-08-03T14:21:43.6-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "535283",
+    "ThreadId": "216942",
+    "Html": "\r\n<p>Eric, did you manage to figure out the answer to your &quot;Interesting. How does this work?&quot; part?</p>\r\n<p>Can you share the helper functions you refer to in 2) above?</p>\r\n",
+    "PostedDate": "2010-12-13T17:46:28.51-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "585977",
+    "ThreadId": "216942",
+    "Html": "<p>I was able to get the sender email address by using the following snippet:</p>\r\n<p><span style=\"white-space: pre;\"> </span>std::wstring senderEmail = message.get_property_bag().read_prop&lt;std::wstring&gt;(0x0C1F);</p>\r\n<p>The tag I used (0x0C1F) corresponds to the MAPI tag&nbsp;PR_SENDER_EMAIL_ADDRESS_W. &nbsp;To get the sender name (PR_SENDER_NAME_W), use tag&nbsp;0x0C1A.</p>",
+    "PostedDate": "2011-03-24T12:49:36.757-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

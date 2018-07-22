@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "535962",
+    "ThreadId": "238423",
+    "Html": "\r\n<p>I have a pst file created with Outlook 2007. I have been exploring folder properties of various 'Special Folders' and user created folders by dumping the property bags for all folders. I have two observations with my test pst:</p>\r\n<ol>\r\n<li>The special folder 'Deleted Items' should have PR_CONTAINER_CLASS value of IPF.Note, according to [MS-OXOSFLD]. However I do not see with my Outlook 2007 generated .pst. In fact the property does not even exist for my Deleted Items\r\n</li><li>Ditto for the Outbox special folder </li></ol>\r\n<p>My questions are:</p>\r\n<ol>\r\n<li>Why am I seeing this deviation from the documentation? </li><li>According to [MS-OXOSFLD] many of the sync related folders also have IPF.Note as their container class. If I have a pst with such folders (is that even possible), what container class value will I really see?&nbsp;\r\n</li><li>Can I progamatically identify all the sync related folders (other than by checking for some of the standard names)?\r\n</li><li>How is it possible to create a folder (through Outlook) that contains objects of more than one type (like Deleted Items, which can store deleted mails, contacts, notes, etc.?\r\n</li></ol>\r\n",
+    "PostedDate": "2010-12-14T23:48:10.327-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "537003",
+    "ThreadId": "238423",
+    "Html": "\r\n<p>1. Probably because the documentation is imperfect, or these requirements are not as strong as you think</p>\r\n<p>2. No, there are no sync related folders in the PST</p>\r\n<p>3. You mean like &quot;Sync Issues&quot;, etc? I think the entry id is stamped on the root folder or something, but I'm not really sure.</p>\r\n<p>4. The Container Class is more of a hint to the UI as to how to interpret the folder (what view object to create, etc) rather than a hard and fast rule about what type of items can be in a folder. The UI (Outlook.exe) also uses it as a hint for creating\r\n new items when dragging and dropping into a folder.</p>\r\n",
+    "PostedDate": "2010-12-16T14:11:02.733-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "447837",
+    "ThreadId": "213972",
+    "Html": "<p>Is it possible to dump a message object out to the file system as a .msg file?</p>\r\n<p>&nbsp;</p>\r\n<p>Thanks,</p>\r\n<p>Ryan</p>",
+    "PostedDate": "2010-05-26T13:27:58.183-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "447842",
+    "ThreadId": "213972",
+    "Html": "<p>Not directly, no - but that is a good feature request.</p>",
+    "PostedDate": "2010-05-26T13:35:59.133-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

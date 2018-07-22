@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "1015453",
+    "ThreadId": "436673",
+    "Html": "It seems that Microsoft has kindly introduced a new version of .ost files for Outlook 2013 (see <a href=\"http://technet.microsoft.com/en-us/library/cc179067.aspx\" rel=\"nofollow\">http://technet.microsoft.com/en-us/library/cc179067.aspx</a>).  When I try reading this with the pstsdk, I get an exception on get_name_id_map().  Hey Terryma, any chance you can do a new release with support for this? Sorry, the work is totally beyond my compentence level :(<br />\n",
+    "PostedDate": "2013-03-14T10:53:52.66-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

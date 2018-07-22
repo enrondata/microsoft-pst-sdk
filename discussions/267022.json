@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "649397",
+    "ThreadId": "267022",
+    "Html": "<p>Hello all.</p>\n<p>I couldn't find a way to get Message-ID from message class instance? is there such a way??</p>",
+    "PostedDate": "2011-07-29T00:21:27.797-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "649775",
+    "ThreadId": "267022",
+    "Html": "<p>I think you have to look in the property bag for that. Which message ID are you looking for, the MAPI EID, or the Internet message ID from the header?</p>",
+    "PostedDate": "2011-07-29T13:53:25.017-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "652939",
+    "ThreadId": "267022",
+    "Html": "<p>I'm looking for RFC822 Message-ID header</p>",
+    "PostedDate": "2011-08-05T03:09:05.123-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "652947",
+    "ThreadId": "267022",
+    "Html": "<p>as I saw in sources I have to know an ID or smth like that for the property (Message-ID)... unfortunately I see no enum/consts in sources w/ available properties :(</p>\r\n<p>any ideas are welcome...</p>",
+    "PostedDate": "2011-08-05T03:26:12.973-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "653193",
+    "ThreadId": "267022",
+    "Html": "<p>MAPI is not a RFC822 implementation, and it doesn't generate Message-IDs for all it's contained messages. It'll generate them on the edge (when transporting over SMTP from MAPI), and will store incoming message IDs from MIME messages in an x-header named prop, but in general, that specific property doesn't exist.</p>\r\n<p>The equivalent is the \"entry id\" property.</p>",
+    "PostedDate": "2011-08-05T08:52:15.83-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

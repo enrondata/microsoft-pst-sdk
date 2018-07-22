@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "1149678",
+    "ThreadId": "483737",
+    "Html": "every time i use the sdk to extract the body of contained messages in a PST file, it works fine until it reach the first (  '  ) in the body or subject ..\r<br />\n<br />\ni don't know if it is a bug in the SDK .. of a wrong definition of wide strings ..\r<br />\nany help will be appreciated ,,\r<br />\n<br />\nthanks<br />\n",
+    "PostedDate": "2014-01-05T05:22:59.53-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

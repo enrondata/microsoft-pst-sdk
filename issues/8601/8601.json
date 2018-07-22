@@ -1,0 +1,86 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "Boost issue, not a PSTSDK issue",
+    "ClosedDate": "2011-08-12T08:03:49.193-07:00",
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "file pstsdk/ltp/object.h has method \ntemplate<>\ninline std::vector<bool> pstsdk::const_property_object::read_prop_array<bool>(prop_id id) const {...}\n \nwhich is use std::bind. this fact make impossible to work w/ some boost libs which are implicitly include boost::bind (I'm talking about c++0x mode) cuz both libs are trying to put placeholder objects into the same namespace.\n \ncuz README recommends minimum required GCC version as 4.4 native c++0x lambdas could be used instead (and will produce petter optimized code btw):\nstd::transform(values.begin(), values.end(), results.begin(), [](const ulong v) -> bool { return v != 0; });",
+    "LastUpdatedDate": "2013-05-16T02:40:24.563-07:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "Low",
+      "Severity": 50,
+      "Id": 1
+    },
+    "ProjectName": "pstsdk",
+    "ReportedDate": "2011-08-11T07:54:06.727-07:00",
+    "Status": {
+      "Name": "Closed",
+      "Id": 4
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "boost::bind conflicts w/ pstsdk",
+    "Type": {
+      "Name": "Issue",
+      "Id": 3
+    },
+    "VoteCount": 1,
+    "Id": 8601
+  },
+  "FileAttachments": [
+    {
+      "FileId": 2692,
+      "FileName": "errors.log",
+      "DownloadUrl": ".\\2692"
+    }
+  ],
+  "Comments": [
+    {
+      "Message": "I'm not sure I follow - I use pstsdk in projects with boost (although not boost::bind, since std::bind has been available for a while). What errors are you seeing? I'm aware of any namespace issues; std placeholders are in std::placeholders and boost's are just in boost, I think. It sounds like this might be a boost issue, not a pstsdk issue.\r\n\r\nI can't use lambdas because it was decided to try and support non-C++0x compilers (VC9, old gccs) a while back. I pulled all the lambdas out and made the rvalue reference overloads optional.",
+      "PostedDate": "2011-08-11T17:18:02.443-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2011-08-12T04:02:17.007-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "this test program failed to compile by gcc 4.5.3:\r\n#include <boost/bind.hpp>                                                                                                                              \r\n#include <pstsdk/pst.h>                                                                                                                                \r\n                                                                                                                                                       \r\nint main()                                                                                                                                             \r\n{                                                                                                                                                      \r\n    return 0;                                                                                                                                          \r\n}                                                                                                                                                      \r\n",
+      "PostedDate": "2011-08-12T04:02:19.23-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "I see what you mean, boost is putting their placeholders in the global namespace. This is a Boost issue. See https://svn.boost.org/trac/boost/ticket/2240. As a work around, I suggest you use std::bind instead of boost::bind. ",
+      "PostedDate": "2011-08-12T08:03:28.657-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2011-08-12T08:03:49.193-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "Also, just reversing the order of your includes (include pstsdk/pst.h first) might be an easy work around.",
+      "PostedDate": "2011-08-12T08:12:06.53-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-02-14T13:08:32.76-08:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-05-16T02:40:24.563-07:00",
+      "Id": -2147483648
+    }
+  ]
+}

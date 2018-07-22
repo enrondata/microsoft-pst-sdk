@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "455689",
+    "ThreadId": "216099",
+    "Html": "<p>Greetings! Thank you for releasing such a cleanly-written C++ library for working with PST files. It looks really great&mdash;lots of straightforward boost and C++ code.</p>\r\n<p>I work for an electronic discovery company in the legal industry, and we'd love to use pstsdk for unpacking and analyzing PST files collected from end-user systems. To do this, we would like to use pstsdk on MacOS X and on Linux. Among other things, this means making sure the pstsdk packages build cleanly and pass all their unit tests on these systems.</p>\r\n<p>I'm not sure what kind of portability and packaging fixes would actually be of interest to you, but here are some possibilities:</p>\r\n<p>1) Any patches required to get the unit test suite working.</p>\r\n<p>2) A configure.ac file to pick out an appropriate version of GCC and boost compiler flags. Granted, these tend to be a little ugly, and they're not always necessary for header-only projects like pstsdk. But on the positive side, they make it easy to verify that the build environment is sane, and to give useful error messages. And it certainly makes life a bit easier for users if './configure &amp;&amp; make check &amp;&amp; make install' does the Right Thing.&nbsp;If you're potentially interested, I can throw together a patch, and you can decide whether or not it adds too much Unix junk. :-)</p>\r\n<p>3) Debian/Ubuntu packages. This would make it easier to deploy pstsdk on Debian-like systems. Note that I'm not a Debian or Ubuntu maintainer, however, so I can't actually get packages into either distribution. But once the packages exist, somebody will sooner or later make it work.</p>\r\n<p>Basically, my goal would be to make it very easy for Mac and Linux developers to use pstsdk. I'm happy to either send you patches, or to maintain a few patches on github&mdash;whatever works for best you.</p>\r\n<p>Once again, many thanks for releasing this library, and for taking the time to support the community!</p>\r\n<p>Cheers,&nbsp;Eric</p>",
+    "PostedDate": "2010-06-15T08:45:07.273-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "455698",
+    "ThreadId": "216099",
+    "Html": "<p>I am&nbsp;definitely&nbsp;interested in any patches required to get the unit test suite working, and would appreciate that greatly.</p>\r\n<p>As far as configure.ac goes - I'm planning to go the cmake route eventually rather than autoconf. And as for packages; would people really find that useful given it is a header only library? Easy deployment is a goal, and I was hoping that &quot;dump a bunch of header files in an include directory&quot; is about as simple as it can get. I think having packages sounds great, but honestly I wouldn't even know where to start in terms of creating and updating the various packages on various distros.</p>",
+    "PostedDate": "2010-06-15T09:02:48.863-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "455742",
+    "ThreadId": "216099",
+    "Html": "<p>Thank you for your swift reply! I'll send you any unit test fixes that I find.</p>\r\n<p>CMake looks very interesting; thank you for pointing it out! I had only suggested autoconf because it's widely used for Unix libraries, and because I have _way_ more experience with it than any sane person would ever want. :-) However, some brief Googling suggests that CMake looks pretty reasonable, and since it's used to build KDE, it shouldn't be too hard to fit into existing Mac/Linux/Unix toolchains. So&nbsp;I'm going to go down to the bookstore and look for a CMake book, and see if I can figure out how to autodetect gcc 4.4 and boost 1.42. If I get anything working, I'll send you patches.</p>\r\n<p>&gt;&nbsp;Easy deployment is a goal, and I was hoping that &quot;dump a bunch of header files in an include directory&quot; is about as simple as it can get.</p>\r\n<p>It may sound weird, but the &quot;dump a bunch of header files in a directory&quot; can sometimes cause headaches in the Linux world. Debian, for example, packages Boost as a standalone library, and they actually have a written policy against bundling the source of a library inside another package. It's _possible_ to get permission for the &quot;dump a bunch of header files in an include directory&quot; approach, but it's pretty hard.[1]&nbsp;</p>\r\n<p>If your goal is easy deployment, then it might actually be better to mimic Boost: Make the library available as regular headers, but also offer native packages on platforms where developers tend to prefer them.</p>\r\n<p>I think that I will first try to generate packages using CPack, which works with CMake. It claims to support Debian and a number of other platforms. So maybe this will all be very easy, if we get lucky. :-)</p>\r\n<p>Once again, thank you for your feedback and encouragement! I'm going to go find the CMake book and start working on the Mac test suites.</p>\r\n<p>Cheers, Eric</p>\r\n<p>[1] Debian did wave the rule against against bundling package source code inside other packages for me, once, back in 2001, and they wound up getting burnt by it this past February. As it turned out, the bundled package had a security hole. Debian missed the bundled copy of the package during their security sweep, and they had to issue a separate advisory. Ouch.</p>",
+    "PostedDate": "2010-06-15T10:27:07.073-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456293",
+    "ThreadId": "216099",
+    "Html": "<p>Greetings!</p>\r\n<p>I have uploaded a _very_ preliminary CMake patch for pstsdk.</p>\r\n<p>http://pstsdk.codeplex.com/SourceControl/PatchList.aspx (patch&nbsp;6156)</p>\r\n<p>Note that this was generated using git, so it may not apply cleanly. I'm happy to reformat my patches as needed to work with your toolset.</p>\r\n<p>There's obviously quite a bit more that needed to be done to these CMakeLists.txt files, but it will have to wait until I get some clue what I am actually doing with CMake. :-)</p>\r\n<p>Thank you for any feedback and suggestions you can provide!</p>\r\n<p>Cheers, Eric</p>",
+    "PostedDate": "2010-06-16T10:42:29.913-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "456656",
+    "ThreadId": "216099",
+    "Html": "<p>Good news: The CMake patch appears to work fine with Visual C++ 10. It's still missing a lot of stuff, but I'm currently using it to compare structure offsets between Mac and Windows, and everything is working fine.</p>\r\n<p>You can find <a href=\"http://github.com/emk/pstsdk\">Windows build instructions</a> on my github account.</p>",
+    "PostedDate": "2010-06-17T05:48:56.47-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

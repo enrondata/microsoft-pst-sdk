@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "458127",
+    "ThreadId": "216769",
+    "Html": "Hi, \r\nI am getting exceptions calling get_email_address() and get_account_name() on some messages. The root cause of it is the absence of MAPI properties 0x39fe and 0x3a00 respectively in certain messages. Did you intend for this methods to throw exceptions and I need to handle them in my code or it is just a bug?\r\n\r\n ",
+    "PostedDate": "2010-06-21T10:04:54.387-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "458136",
+    "ThreadId": "216769",
+    "Html": "<p>Yes; the current design is that if you try to read a property (either directly or through a simple helper method) and that property doesn't exist, a key_not_found&lt;propid&gt; exception is thrown. You should be prepared to handle this.</p>\r\n<p>If you don't want to deal with exceptions, all PST objects have a get_prop_bag method. With the property_bag, you can test to see if a property exists before reading it.</p>",
+    "PostedDate": "2010-06-21T10:18:52.713-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "458138",
+    "ThreadId": "216769",
+    "Html": "Great. Thank you",
+    "PostedDate": "2010-06-21T10:22:44.983-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

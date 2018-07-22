@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "653538",
+    "ThreadId": "267995",
+    "Html": "\r\n<p>Terry, thanks for your help so far.</p>\r\n<p>I am working my way through all the data that I need to collect, and I'm having a problem with the recipient email addresses</p>\r\n<p>of messages - pstsdk is&nbsp;telling me there is none.&nbsp; Again, I can see them in the recipient table via MAPI.&nbsp; I was going to try the</p>\r\n<p>technique of accessing the properties directly using the property_bag, but there does not seem to be that member for the recipient</p>\r\n<p>object.&nbsp; Does the get_property_row() function provide the same kind of thing?&nbsp; Can you give me a quick code example of how</p>\r\n<p>to use that?</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2011-08-05T21:52:00.62-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "653854",
+    "ThreadId": "267995",
+    "Html": "<p>Yeah, the item returned from get_property_row works just like a property_bag (they have the same base class for accessing properties.</p>\n<p>Keep in mind not every recipient will have an SMTP style email address stamped on it, especially in the Exchange world.</p>",
+    "PostedDate": "2011-08-06T13:59:41.167-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "653914",
+    "ThreadId": "267995",
+    "Html": "<p>Thanks.&nbsp; I am able to use the row property to get the correct property, PR_EMAIL_ADDRESS (0x3003).&nbsp; The get_email_address() function</p>\r\n<p>is looking for PR_SMTP_ADDRESS (0x39FE).&nbsp; I can see now in my own MAPI code I look for both properties - it might be a good enhancement</p>\r\n<p>to pstsdk to do the same.</p>",
+    "PostedDate": "2011-08-06T20:42:23.583-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

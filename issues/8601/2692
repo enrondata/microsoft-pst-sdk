@@ -1,0 +1,8 @@
+In file included from ./pstsdk/ltp/propbag.h:17:0,
+                 from ./pstsdk/pst/pst.h:24,
+                 from ./pstsdk/pst.h:69,
+                 from pst_bind_test.cc:2:
+./pstsdk/ltp/object.h: In member function 'std::vector<_RealType> pstsdk::const_property_object::read_prop_array(pstsdk::prop_id) const [with T = bool, pstsdk::prop_id = short unsigned int]':
+./pstsdk/ltp/object.h:244:113: error: reference to '_1' is ambiguous
+/usr/lib/gcc/x86_64-pc-linux-gnu/4.5.3/include/g++-v4/tr1/functional:852:23: error: candidates are: std::tr1::_Placeholder<1> std::tr1::placeholders::<unnamed>::_1
+/usr/include/boost/bind/placeholders.hpp:55:15: error:                 boost::arg<1> <unnamed>::_1

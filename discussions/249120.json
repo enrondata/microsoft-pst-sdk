@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "578169",
+    "ThreadId": "249120",
+    "Html": "<p>Hello,&nbsp;</p>\n<p><span title=\"Click for alternate translations\"><span title=\"Click for alternate translations\">now</span>&nbsp;I</span>&nbsp;<span title=\"Click for alternate translations\">use this</span>&nbsp;<span title=\"Click for alternate translations\">SDK,but &nbsp;</span>i&nbsp;<span title=\"Click for alternate translations\">do  not</span>&nbsp;<span title=\"Click for alternate translations\">know how to get</span>&nbsp;<span title=\"Click for alternate translations\">e-mail</span>&nbsp;<span title=\"Click for alternate translations\">sender and the</span>&nbsp;<span title=\"Click for alternate translations\">datetime.<span title=\"Click for alternate translations\">I  would like to</span>&nbsp;<span title=\"Click for alternate translations\">know</span>&nbsp;<span title=\"Click for alternate translations\">which</span>&nbsp;<span title=\"Click for alternate translations\">methods&nbsp;to</span>&nbsp;<span title=\"Click for alternate translations\">get</span>&nbsp;<span title=\"Click for alternate translations\">the  sneder and datetime</span>&nbsp;<span title=\"Click for alternate translations\">the e-mail.</span></span></p>\n<p>Thanks,</p>",
+    "PostedDate": "2011-03-09T19:17:15.387-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "578229",
+    "ThreadId": "249120",
+    "Html": "<p>Oh~ i see...</p>\r\n<p>&nbsp;0x0c1f001f &nbsp;PidTagSenderEmailAddress_W&nbsp;</p>\r\n<p>if (msg.get_property_bag().prop_exists( 0x0c1f ))</p>\r\n<p>{</p>\r\n<p><span style=\"white-space: pre;\"> </span>tmp=(msg.get_property_bag().read_prop&lt;std::wstring&gt;( 0x0c1f )).c_str() ;</p>\r\n<p>}</p>",
+    "PostedDate": "2011-03-09T22:49:26.937-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

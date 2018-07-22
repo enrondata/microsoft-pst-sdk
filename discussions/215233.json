@@ -1,0 +1,82 @@
+[
+  {
+    "Id": "452606",
+    "ThreadId": "215233",
+    "Html": "<p>So far, I've encountered a couple different flaky types of corrupt things in the stores I've tested ... I'm using the PSTSDK_VALIDATION_LEVEL_WEAK flag in my code, just to clarify.</p>\r\n<p>First, in table.h, line 660, I&nbsp;changed read_raw_row&nbsp;this way to avoid an unhandled exception:</p>\r\n<p>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ulong pos = row * cb_per_row() + offset;<br>+<br>+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (pos + sizeof(Val)&nbsp;&gt;= m_vec_rowarray.size())<br>+&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; throw std::out_of_range(&quot;attempt to read past&nbsp;m_vec_rowarray.size()&quot;);<br>+<br>*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; memcpy(&amp;val, &amp;m_vec_rowarray[ pos ], sizeof(Val));</p>\r\n<p>Also, the next thing I've encountered a lot of is&nbsp;bad named prop_id lookups.&nbsp; I've had to not only check is_string() == false, (which it is), but also check to make sure HIWORD(get_id()) is zero before considering whether or not to use the named prop further.<span id=\"_mce_start\" style=\"line-height:0;display:none\">﻿&nbsp; I wonder if some validation can be baked into the <span id=\"_mce_start\" style=\"line-height:0;display:none\">﻿</span>named_prop class<span id=\"_mce_start\" style=\"line-height:0;display:none\">﻿, or maybe the lookup code itself to&nbsp;maybe throw an exception <span id=\"_mce_start\" style=\"line-height:0;display:none\">﻿</span>if the named prop fails to&nbsp;pass muster?<span id=\"_mce_start\" style=\"line-height:0;display:none\">﻿</span></span></span>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-07T11:38:57.727-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452617",
+    "ThreadId": "215233",
+    "Html": "<p>I'm concerned about why this validation code is necessary (ie, there may be a bug in the sdk higher in the callstack). After all, the row number was validated earlier in this function. This implies the only way to overflow is that the offset they're trying to read is greater than the row length - I wonder who is requested a read at such an offset. It could just be a corrupt store - try with FULL validation to see if a CRC error gets thrown earlier.</p>\r\n<p>Can you give more details about what you mean about a bad named prop lookup? You're finding ids with a non-zero hiword? I don't recall any requirement about the hiword being zero....</p>",
+    "PostedDate": "2010-06-07T11:56:54.087-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452622",
+    "ThreadId": "215233",
+    "Html": "<p>I'll trap the out of range errors and give you a callstack.&nbsp; One of the problems I face is that I need to read as much of the PST as possible, and not abort for every little corrupt thing I may find (like a CRC error).&nbsp; Some of these PST's I'm attempting to read have been recovered from a bad drive, or have some other innate corruption that prevents SCANPST from completing or crashes SCANPST entirely.</p>\r\n<p>As for the named prop ... the guid was {cccccccc-cccc-cccc-cccc-cccccccccccc}, it was KIND_MNID, and the ID was cccccccc</p>\r\n<p>I've never seen a named prop of type KIND_MNID with a value greater than a USHORT, so the fact that those can exist is news to me!</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-07T12:17:26.297-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452654",
+    "ThreadId": "215233",
+    "Html": "<p>Ok. The all 0xcccc named_prop doesn't sound kosher either - that sounds like you're looking at an uninitialized variable. Are you sure those values came from disk?</p>",
+    "PostedDate": "2010-06-07T13:23:40.03-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452667",
+    "ThreadId": "215233",
+    "Html": "<p>They appear to have come from disk, but I can't be sure.&nbsp; The code to fetch the named prop is pretty straightforward (edited for brevity):</p>\r\n<p>&nbsp; if (propid &gt; 0x7fff)<br>&nbsp; {<br>&nbsp;&nbsp;&nbsp; named_prop nprop = store-&gt;lookup_name_prop(propid);<br>&nbsp;&nbsp;&nbsp; // do something with it ... at this point it contains the 0xcccccccc values, and is_string() is false<br>&nbsp; }</p>",
+    "PostedDate": "2010-06-07T13:49:12.627-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452676",
+    "ThreadId": "215233",
+    "Html": "<p>Where did propid come from in this example (and what is it)?</p>\r\n<p>Remember, anyone can create a named prop with an arbitrary id and guid through MAPI - it is possible that someone just decided to create a name prop with a&nbsp;guid of {cccccccc-cccc-cccc-cccc-cccccccccccc} and ID cccccccc I suppose.</p>",
+    "PostedDate": "2010-06-07T13:56:47.227-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452695",
+    "ThreadId": "215233",
+    "Html": "<p>I'll have to look.&nbsp; I was enumerating through the props on a message I think.&nbsp; Basically, I am converting a pstsdk::message object to an IMessage object, which of course involves walking every prop, converting it to an LPSPropValue, and writing the prop to the IMessage.&nbsp; When I come across a named prop range, I query for the named prop, and re-create the named prop in the IMessage when copying it over.&nbsp; Rinse and repeat for recipients, attachments, etc.&nbsp; Everything's working quite nicely, but occasionally I find a rogue prop or funky named propid.</p>\r\n<p>It's a nice way to verify the PST SDK, actually ... Accounting for every possible property, copying every field, embedded object, etc -- walking through every sub object and so forth.</p>",
+    "PostedDate": "2010-06-07T14:51:24.067-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452696",
+    "ThreadId": "215233",
+    "Html": "<p>Ok. Try running the nameprop sample on the PST in question; see if the weird named prop shows up in the output there. Other than that, I can't do much else without the PST - but maybe if you can debug into the process of reading the name prop, looking at locals along the way, etc, maybe you can get an idea as to what is going on. Same with the table issue.</p>\r\n<p>And also; I'd recommend you try it with full validation on. If you are hitting CRC errors that are ignored under weak validation, that would explain things and make this a lot less interesting.</p>\r\n<p>Let me know if you find anything out, thanks again!</p>",
+    "PostedDate": "2010-06-07T14:54:40.753-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452807",
+    "ThreadId": "215233",
+    "Html": "<p>With validation set to FULL, I get crc_fail errors when calling lookup_name_prop(), which is actually quite fine.</p>\r\n<p>Unfortunately there's a host of other issues with FULL ... specifically, it's too chatty on a corrupt PST.&nbsp; I end up not being able to open many PST's, and have trouble enumerating through them with FULL.&nbsp; It's just too many throws.&nbsp; Messages that I could mostly read, I now can't read at all ... property bags that had partial information now throw errors and I get nothing.&nbsp; I kindof want the accountability of FULL, with the recoverability of WEAK :)</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-07T22:11:03.613-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "453034",
+    "ThreadId": "215233",
+    "Html": "<p>What might be a cool option is if the validation level could be set at runtime rather than compile time.&nbsp; I could see a lot of practical uses for that, especially if it could be adjusted upwards right before a function call, and then adjusted back down afterwards ... giving you some finer grained control over just what throws an error.</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-08T08:22:40.363-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

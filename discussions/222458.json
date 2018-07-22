@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "476489",
+    "ThreadId": "222458",
+    "Html": "<p>Good morning! Here are two draft patches. These still need to be tested on multiple platforms, but I thought it would be good to ask for feedback now instead of later. :-) Once you've had a chance to suggest corrections, I'll send you a single big patch by email.</p>\r\n<p><span style=\"font-family:Consolas, 'Courier New', Courier, monospace;white-space:pre\"><a href=\"http://github.com/emk/pstsdk/commit/813aa1a2f72f8fb98e6df693c13328a8aa2e82c8\">Fix alignment of bth_nonleaf_entry under 32-bit Mac GCC</a></span></p>\r\n<p>This is a fairly simple build patch for 32-bit&nbsp;MacOS X. We'll test this on 32-bit and 64-bit Linux before I officially submit it.</p>\r\n<p><span style=\"font-family:Consolas, 'Courier New', Courier, monospace;white-space:pre\"><a href=\"http://github.com/emk/pstsdk/commit/fa6261d7078f0a938625b84ec7b2ff16733d0770\">Convert ANSI string to Unicode wstring by assuming code page 1252</a> </span></p>\r\n<p>This is a <em>much</em>&nbsp;more dubious and debatable patch. :-) Our application calls 'props-&gt;read_prop&lt;wstring&gt;' quite often, and this works fine for Unicode PSTs. It also works for ANSI PSTs that contain ASCII text. But at least on my version of GCC, it fails for all characters between 0x80 and 0xFF, inclusive. Specifically, a character like 0xA7 gets sign-extended to 0xFFA7, instead of being converted to 0x00A7.</p>\r\n<p>Since ANSI PSTs apparently don't contain reliable code page information, there's no way to make&nbsp;'props-&gt;read_prop&lt;wstring&gt;' do the right thing automatically. But the current code <em>appears</em>&nbsp;to try to support ANSI PSTs using code page 1252, which are the most common ANSI PSTs. So my patch adds an explicit conversion function and some unit tests. It also tries to do the right thing with the tricky characters between 0x80 and 0x9F, inclusive, using the conversion tables Microsoft submitted to the Unicode consortium. Using this patch, it's possible to access code page 1252 ANSI PSTs using&nbsp;'props-&gt;read_prop&lt;wstring&gt;'. Other code pages will still require calling&nbsp;'props-&gt;read_prop&lt;<strong>string</strong>&gt;' and converting strings using an external library.</p>\r\n<p>Obviously, this patch is still neither complete nor correct, but it <em>might</em>&nbsp;arguably be a step in the right direction. Please feel free to tell me that I'm nuts for even suggesting it. :-)</p>\r\n<p>As always, thank you for such an excellent library, and for all your feedback!</p>\r\n<p>Cheers, Eric</p>",
+    "PostedDate": "2010-08-04T08:41:48.87-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "476553",
+    "ThreadId": "222458",
+    "Html": "<p>The alignment change looks good. Could you add a comment to heap.h to explain why the intermediate variable is necessary?</p>\r\n<p>I actually don't have any objections to the approach the second patch takes as well. I have no useful feedback, other than&nbsp;maybe the &quot;specials&quot; array should be const. The string to wstring conversions were just for convenience. I seriously considered just not allowing it all together (and throwing a bad_cast or something) to sidestep these issues, but&nbsp;eventually&nbsp;I decided doing the naive conversion would be better than nothing. I didn't consider sign extension, obviously. Since I've already gone down the &quot;do something&quot; road, any change which makes the naive conversion slightly less naive is a good thing.</p>\r\n<p>As always, thank you for your contributions!</p>",
+    "PostedDate": "2010-08-04T11:17:56.873-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "477791",
+    "ThreadId": "222458",
+    "Html": "<p>No problem! I've made the updates you suggested, and I'm preparing a patch series for you here:</p>\r\n<p><a href=\"http://github.com/emk/pstsdk/commits/for_upstream_5\">http://github.com/emk/pstsdk/commits/for_upstream_5</a></p>\r\n<p>Once the PR_ENTRYID patch is ready, and I've tested everything on Windows and Linux, I'll submit a single, unified patch via email.</p>\r\n<p>Cheers, Eric</p>",
+    "PostedDate": "2010-08-08T10:39:41.37-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

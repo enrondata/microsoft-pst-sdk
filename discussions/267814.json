@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "652713",
+    "ThreadId": "267814",
+    "Html": "\r\n<p>Hi, I'm just getting back to this project after a break, and have another<br>\r\nquestion (and thank you ChazzImage for your suggestion).<br>\r\n<br>\r\nI'm a little unclear about get_property_bag() - will this give me access to<br>\r\nany property of an object?&nbsp; I ask because I am trying to retrieve PR_CONTAINER_CLASS<br>\r\nfrom a folder:<br>\r\n<br>\r\n<br>\r\nwstring container, fname;<br>\r\npstsdk::property_bag bag=folder.get_property_bag();<br>\r\n<br>\r\n&nbsp;&nbsp;&nbsp; fname = folder.get_name();<br>\r\n&nbsp;&nbsp;&nbsp; container = bag.read_prop&lt;wstring&gt;(0x3613);<br>\r\n<br>\r\n<br>\r\nIn this example, the call to folder.get_name works fine, so I presume the folder<br>\r\nobject is intact.&nbsp; Then the call to read property x3613 causes a runtime error.<br>\r\nIf I change the value to x3001 (PR_DISPLAY_NAME) it works fine.&nbsp; So it looks like<br>\r\npstsdk thinks that x3613 does not exist.&nbsp; But it does exist, when I check the<br>\r\n.pst file using Outlook Spy.&nbsp; What's going on?</p>\r\n",
+    "PostedDate": "2011-08-04T15:11:44.983-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "652716",
+    "ThreadId": "267814",
+    "Html": "<p>Never mind - to answer my own question, PR_CONTAINER_CLASS does in fact not exist in some folders,</p>\r\n<p>such as the message store name.</p>",
+    "PostedDate": "2011-08-04T15:19:08.433-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "652755",
+    "ThreadId": "267814",
+    "Html": "<p>I guess I do need to re-ask my original question - does the property_bag contain every possible property?&nbsp; Now</p>\r\n<p>I am looking to get, for example, property 0x3601 (PR_FOLDER_TYPE) from my folder object.&nbsp; pstsdk tells me</p>\r\n<p>that it does not exist for any folder, even though I see it with Outlook Spy.&nbsp; When I iterate all the possible properties,</p>\r\n<p>I do not get very many.&nbsp; I do have PR_DISPLAY_NAME and PR_CONTAINER_CLASS (for some), and also 0x3602 and</p>\r\n<p>0x3603 (PR_CONTENT_COUNT and PR_CONTENT_UNREAD).&nbsp;&nbsp; But where are the remaining properties?</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-08-04T16:37:14.627-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "853684",
+    "ThreadId": "360946",
+    "Html": "\r\n<p>Hi everyone. I only started use pst sdk and have some troubles.</p>\r\n<p>I use simple test project, and added the path to sdk and boots in property of project. And when i building the solution i had next problems.</p>\r\n<p>&lt;code&gt;</p>\r\n<p>#include &lt;pst.h&gt;<br>\r\n#include &lt;iostream&gt;<br>\r\n#include &lt;iterator&gt;<br>\r\n#include &lt;algorithm&gt;<br>\r\n<br>\r\nint main()<br>\r\n{<br>\r\n&nbsp;&nbsp;&nbsp; pst myfile(L&quot;mybackup.pst&quot;);<br>\r\n<br>\r\n&nbsp;&nbsp;&nbsp; return 1;<br>\r\n}</p>\r\n<p>&lt;/code&gt;</p>\r\n<p>&nbsp;</p>\r\n<p>&lt;troubles&gt;</p>\r\n<p>Error&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp; error C2065: 'pst' : undeclared identifier&nbsp;&nbsp;&nbsp; d:\\developer\\visual c&#43;&#43;\\test\\test\\test.cpp&nbsp;&nbsp;&nbsp; 8<br>\r\nError&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp; error C2146: syntax error : missing ';' before identifier 'myfile'&nbsp;&nbsp;&nbsp; d:\\developer\\visual c&#43;&#43;\\test\\test\\test.cpp&nbsp;&nbsp;&nbsp; 8<br>\r\nError&nbsp;&nbsp;&nbsp; 3&nbsp;&nbsp;&nbsp; error C3861: 'myfile': identifier not found&nbsp;&nbsp;&nbsp; d:\\developer\\visual c&#43;&#43;\\test\\test\\test.cpp&nbsp;&nbsp;&nbsp; 8<br>\r\n&nbsp;&nbsp;&nbsp; 4&nbsp;&nbsp;&nbsp; IntelliSense: static assertion failed with &quot;header&lt;ulonglong&gt; dwCRCFull at incorrect offset&quot;&nbsp;&nbsp;&nbsp; c:\\usr\\pst file format sdk\\pstsdk\\pstsdk\\disk\\disk.h&nbsp;&nbsp;&nbsp; 208<br>\r\n&nbsp;&nbsp;&nbsp; 5&nbsp;&nbsp;&nbsp; IntelliSense: identifier &quot;pst&quot; is undefined&nbsp;&nbsp;&nbsp; d:\\developer\\visual c&#43;&#43;\\test\\test\\test.cpp&nbsp;&nbsp;&nbsp; 8</p>\r\n<p>&lt;/troubles&gt;</p>\r\n<p>&nbsp;</p>\r\n<p>how can i resolve it?</p>\r\n",
+    "PostedDate": "2012-06-26T02:59:06.947-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "853777",
+    "ThreadId": "360946",
+    "Html": "<p><code>pst</code> is defined in namespace <code>pstsdk</code>:</p>\r\n<pre class=\"lang-c prettyprint\"><code><span class=\"kwd\">namespace</span><span class=\"pln\"> pstsdk<br /></span><span class=\"pun\">{</span><span class=\"pln\"><br /></span><span class=\"kwd\">class</span><span class=\"pln\"> pst </span><span class=\"pun\">:</span><span class=\"pln\"> </span><span class=\"kwd\">private</span><span class=\"pln\"> boost</span><span class=\"pun\">::</span><span class=\"pln\">noncopyable </span><span class=\"pun\">{...</span><span class=\"pln\"><br /></span></code></pre>\r\n<p>Change to:</p>\r\n<pre class=\"lang-c prettyprint\"><code><span class=\"pln\">pstsdk</span><span class=\"pun\">::</span><span class=\"pln\">pst myfile</span><span class=\"pun\">(</span><span class=\"pln\">L</span><span class=\"str\">\"mybackup.pst\"</span><span class=\"pun\">);</span><span class=\"pln\"><br /></span></code></pre>",
+    "PostedDate": "2012-06-26T06:03:11.307-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

@@ -1,0 +1,45 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "",
+    "ClosedDate": null,
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "every time i use the sdk to extract the body of contained messages in a PST file, it works fine until it reach the first ( ' ) in the body or subject .. \n\ni don't know if it is a bug in the SDK .. of a wrong definition of wide strings .. \nany help will be appreciated ,, \n\nthanks",
+    "LastUpdatedDate": "2014-01-14T22:32:38.517-08:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "Unassigned",
+      "Severity": 0,
+      "Id": 0
+    },
+    "ProjectName": "pstsdk",
+    "ReportedDate": "2014-01-05T05:24:01.59-08:00",
+    "Status": {
+      "Name": "Proposed",
+      "Id": 1
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "Problem with apostrophes in message body",
+    "Type": {
+      "Name": "Unassigned",
+      "Id": 5
+    },
+    "VoteCount": 1,
+    "Id": 10489
+  },
+  "FileAttachments": [],
+  "Comments": [
+    {
+      "Message": "what exactly happens when you encounter an ' in the message?",
+      "PostedDate": "2014-01-14T22:32:38.517-08:00",
+      "Id": -2147483648
+    }
+  ]
+}

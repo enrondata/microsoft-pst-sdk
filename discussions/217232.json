@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "459603",
+    "ThreadId": "217232",
+    "Html": "<p>I am experiencing strange behaviour of the message_iterator. The message count for the folder &quot;Top of Personal Folders&quot; is 33. When I open the PST in Outlook there are 33 messages in the root folder. When I am trying to iterate through the messages in the folder the loop is being executed only once with no exception thrown. I am wandering what may cause the iterator not to go through all 33 messages?</p>\r\n<p>wstring name = folder1.get_name(); // reports &quot;Top of Personal Folders&quot; <br>int count = folder1.get_message_count(); // reports 33<br> for(folder::message_iterator iter = folder1.message_begin(); iter != folder1.message_end(); ++iter)<br> {<br>&nbsp;&nbsp;&nbsp;&nbsp; // goes through this loop only once&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp; // do something here<br> }</p>",
+    "PostedDate": "2010-06-24T10:44:42.6-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "459609",
+    "ThreadId": "217232",
+    "Html": "<p>Dunno. Sounds like a bug; maybe fixed, maybe not.&nbsp;Check to see if&nbsp;it repos with the latest version of the sdk from the trunk, and if so I'd probably need a copy of the PST to investigate.</p>",
+    "PostedDate": "2010-06-24T10:48:39.437-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "459634",
+    "ThreadId": "217232",
+    "Html": "<p>Still loops only once with the latest version. How can I upload the PST (it is just over 48 meg) ?</p>",
+    "PostedDate": "2010-06-24T11:40:13.883-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "459670",
+    "ThreadId": "217232",
+    "Html": "<p>Are you using the latest download (0.2) or the latest package from trunk?</p>\r\n<p>If you create an Issue in Issue Tracker, you should be able to attach it.</p>",
+    "PostedDate": "2010-06-24T13:37:03.153-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "459944",
+    "ThreadId": "217232",
+    "Html": "<p>Did complete rebuild with the latest build from the thrunk and the issue is gone. Reverted back to the first release of the SDK and the issue is back. I guess it is the bug which was fixed.</p>",
+    "PostedDate": "2010-06-25T06:50:42.87-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "Id": "452079",
+    "ThreadId": "215073",
+    "Html": "<p>When dealing with attachments, what's the proper way to deal with the attach type ATTACH_OLE?</p>\r\n<p>Should I call get_bytes() on the attachment, then use CreateILockBytesOnHGlobal() and StgOpenStorageOnILockBytes()?&nbsp; The reason I ask is ... I have an e-mail with an attached OLE IStorage, and when I read the attachment with get_bytes() I am only getting 8 bytes out of it.</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-05T16:30:19.853-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452080",
+    "ThreadId": "215073",
+    "Html": "<p>8 bytes sounds like a disk::sub_object. The PST layer doesn't deal with OLE at all (and probably can't, since it needs to be cross platform), but take a look at how attachment::open_message works. Basically you parse the sub_object structure, which points to a subnode. You can then open the subnode and get the bytes from that.</p>",
+    "PostedDate": "2010-06-05T16:40:59.767-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452081",
+    "ThreadId": "215073",
+    "Html": "<p>You're right -- that's what it was.&nbsp; Does something like this do the trick?&nbsp; It seems to be working fine so far, but I just want to be sure I'm not missing something non-obvious:</p>\r\n<p><span style=\"font-family:Consolas;font-size:x-small\"><span style=\"font-family:Consolas;font-size:x-small\">\r\n<p>for(message::attachment_iterator it = m.attachment_begin(); it != m.attachment.end(); it++)<br>{<br>&nbsp; // nonrelevent code snipped<br>&nbsp; case ATTACH_OLE:<br>&nbsp; {<br>&nbsp;&nbsp;&nbsp; std::vector&lt;pstsdk::byte&gt; buffer = (*it).get_bytes();<br>&nbsp;&nbsp;&nbsp; disk::sub_object* psubo = (disk::sub_object*)&amp;buffer[0];<br>&nbsp;&nbsp;&nbsp; node pnode = (*it).get_property_bag().get_node().lookup(psubo-&gt;nid);<br>&nbsp;&nbsp;&nbsp; node_stream_device stream = pnode.open_as_stream();<br>&nbsp;&nbsp;&nbsp; //&nbsp;read the stream, and then open it later&nbsp;using&nbsp;CreateILockBytesOnHGlobal and StgOpenStorageOnILockBytes<br>&nbsp;&nbsp;}<br>&nbsp; break;<br>}</p>\r\n</span></span></p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-05T17:11:21.977-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "452143",
+    "ThreadId": "215073",
+    "Html": "<p>it++ sets off my pedantic C++ alarm, it's&nbsp;idiomatic&nbsp;to preincrement iterators (ie, ++it).</p>\r\n<p>You should probably save off the result of *it into it's own variable. Because it is a proxy iterator, each time you dereference it you're getting a new instance of the message/attachment/folder object, etc. It's not very efficient and can cause problems if you think *it always refers to the same object - like if you're creating and comparing iterators from *it for example.</p>\r\n<p>The only purpose of a node_stream_device is to be an&nbsp;argument&nbsp;to construct a node_stream; you shouldn't ever need to reference the variable directly. So you pretty much always want\r\n<pre>node_stream stream(pnode.open_as_stream());</pre>\r\n</p>",
+    "PostedDate": "2010-06-06T05:58:51.263-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

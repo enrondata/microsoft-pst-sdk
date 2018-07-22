@@ -1,0 +1,42 @@
+[
+  {
+    "Id": "542595",
+    "ThreadId": "240119",
+    "Html": "\r\n<p>I have a message with a subject that contains two Unicode characters above 65000.</p>\r\n<p>When I write these out to a disk file with</p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre>std::wofstream fCsvFile;\t\t<span style=\"color:green\">// Stream output: CSV file for import</span>\r\n\r\n...\r\n\r\n\tstd::wstring CsvFname = g_OutPath &#43; g_sPrefix &#43; L<span style=\"color:#a31515\">&quot;.txt&quot;</span>;\r\n\tfCsvFile.open(CsvFname.c_str(), std::ios::out);\r\n\r\n...\r\n\r\n\tfCsvFile &lt;&lt; nFileIndexNum &lt;&lt; L<span style=\"color:#a31515\">&quot;\\t&quot;</span>\t<span style=\"color:green\">// ITEMID is Index number</span>\r\n\t\t &lt;&lt; wSavedFile &lt;&lt; L<span style=\"color:#a31515\">&quot;\\t&quot;</span>\t\t<span style=\"color:green\">// FILEPATHNAME is Full path to output file</span>\r\n\t\t &lt;&lt; wStubFile &lt;&lt; L<span style=\"color:#a31515\">&quot;\\t&quot;</span>\t\t<span style=\"color:green\">// FILENAME is output file name without path</span>\r\n\t\t &lt;&lt; L<span style=\"color:#a31515\">&quot;error\\t&quot;</span>\t\t\t<span style=\"color:green\">// STATUS = Error to force MD5 recalculation</span>\r\n\t\t &lt;&lt; wSubject &lt;&lt; L<span style=\"color:#a31515\">&quot;\\t&quot;</span>\t\t<span style=\"color:green\">// Subject</span>\r\n\t\t &lt;&lt; moddate &lt;&lt; L<span style=\"color:#a31515\">&quot;\\t&quot;</span>\t\t<span style=\"color:green\">// MODIFYDATE</span>\r\n\t\t &lt;&lt; wEid &lt;&lt; L<span style=\"color:#a31515\">&quot;\\t&quot;</span>\t\t<span style=\"color:green\">// UserField1 is message EID</span>\r\n\t\t &lt;&lt; g_PstIndexNum &lt;&lt; L<span style=\"color:#a31515\">&quot;\\n&quot;</span>;\t/<span style=\"color:green\">/ UserField2 is parent (PST) ID</span>\r\n\r\n</pre>\r\n</div>\r\n<p>writing to the output stream simply stops with the first Unicode character, and nothing else gets written to the output stream ever. But there is no error generated, so I can't tell what's going wrong, and there doesn't seem to be anything I can catch to\r\n tell me it broke.</p>\r\n<p>This one I am sure is my fault somehow... does anyone have any suggestions as to what I am doing wrong here?</p>\r\n",
+    "PostedDate": "2010-12-31T16:28:03.717-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "542612",
+    "ThreadId": "240119",
+    "Html": "\r\n<p>I wouldn't be so sure it's your fault. Unicode in Windows is built around USC-2, and when most of this was built the UTF-16 wasn't officially around, or was very new. I wouldn't be surprised if someone along the path didn't handle these characters properly.</p>\r\n<p>You might want to look at the string to see if it's a properly encoded UTF-16 string (for these two specific characters). I'm guess it's not. Then it's a matter of finding out if it's encoded that way in the PST file, or got mangled somewhere up along the\r\n way. If it is properly encoded, then follow up with your compiler vendor.</p>\r\n",
+    "PostedDate": "2010-12-31T20:13:24.09-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "544540",
+    "ThreadId": "240119",
+    "Html": "\r\n<p>The actual string is:</p>\r\n<p>RE: Mr X\\xFFC2\\xFFB4s Situation</p>\r\n<p>According to my understanding, those are valid, albeit odd, Unicode 1.0 symbols. My compiler vendor is Microsoft (VS2008). Are you aware of any related issues with streams in that compiler? And this is a very large (800Mb) file; can you suggest how I might\r\n check the PST file content? The PST file does load correctly in Outlook, though it doesn't seem to display those characters...</p>\r\n<p>Edit: I have found at least one commentator who says that Microsoft Visual Studio 2005's implementation of wofstream does not actually handle UTF-16 / UCS-2; that only characters 0-255 are handled correctly. It would seem that this could be a problem in\r\n VS2008 as well. I do note that if I attempt to write the standard BOF mark 0xFEFF at the beginning of a stream opened with wofstream, that nothing ever gets into that stream - the file is created, but ends up 0 length.</p>\r\n",
+    "PostedDate": "2011-01-05T13:49:37.14-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "544661",
+    "ThreadId": "240119",
+    "Html": "\r\n<p>Hmm. It looks like creating a wide stream only means that it accepts wide strings as input, and that the output encoding is still ANSI. The characters aren't&nbsp;convertible&nbsp;in your current locale, so it fails. You'll need to imbue the proper locale,\r\n or a utf8 facet as the locale.</p>\r\n<p>See this <a href=\"http://developerquestion.com/wrote-to-a-file-using-stdwofstream-the-file-remained-empty/\">\r\nquestion</a>, which links to this <a href=\"http://www.boost.org/doc/libs/1_38_0/libs/serialization/doc/codecvt.html\">\r\nboost library</a>.</p>\r\n<p>Unicode is really really complicated, and iostreams are rocket science.</p>\r\n",
+    "PostedDate": "2011-01-05T22:32:16.03-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "545065",
+    "ThreadId": "240119",
+    "Html": "\r\n<p>In fact, in this case I don't want ANSI out at all; I really want the original Unicode. For the moment, I'm assuming that the data in the PST file is UTF-16, and will use the library contents untranslated -- I have no assurance that the PST file I'm working\r\n with can be translated into the code page of the machine I'm running on.</p>\r\n<p>The way I'm doing that is basically brain-dead:</p>\r\n<p></p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre>std::ofstream fCsvFile;\t\t<span style=\"color:green\">// Stream output: CSV file for import</span>\r\n\r\n...\r\n\r\n\tfCsvFile.open(CsvFname.c_str(), std::ios::out | std::ios::binary);\r\n\r\n\t<span style=\"color:blue\">wchar_t</span> wCsvLine[400];\r\n\t::StringCchPrintfW(wCsvLine, 400, L<span style=\"color:#a31515\">&quot;%s&quot;<span style=\"color:#000000\">, wSubject.c_str()</span></span>);\r\n\tfCsvFile.write( (<span style=\"color:blue\">char</span> *)wCsvLine, ::wcslen(wCsvLine) * <span style=\"color:blue\">sizeof</span>(<span style=\"color:blue\">wchar_t</span>));\r\n\r\n</pre>\r\n</div>\r\n<p></p>\r\n<p>I know it breaks&nbsp;the&nbsp;platform independence, and I'm not happy about that; I could use sprintf there instead, by including cstdio, and I may do that, or the equivalent later on, particularly if I can find a platform-independent formatting routine\r\n that doesn't suffer sprintf's potential buffer overrun issue. All I can say for it is, it works.</p>\r\n",
+    "PostedDate": "2011-01-06T13:14:54.143-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

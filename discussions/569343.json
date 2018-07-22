@@ -1,0 +1,34 @@
+[
+  {
+    "Id": "1311662",
+    "ThreadId": "569343",
+    "Html": "Hello,<br />\n<br />\nI'm using pstsdk into xcode for Mac and I'm facing problem with encoding while retrieving the folder names.<br />\nFor exemple if the folder name is: &quot;Réception&quot; the following code gives me: r\\303ception<br />\n<br />\nconst std::wstring sCpp = iter-&gt;get_name();<br />\nstd::wcout &lt;&lt; sCpp;<br />\n<br />\nSame issue with all é è à ..... which all give \\303<br />\n<br />\nWhat I'm doing wrong??<br />\n<br />\nThank you for your help<br />\n<br />\nWaca<br />\n",
+    "PostedDate": "2014-10-08T12:16:53.52-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "1318350",
+    "ThreadId": "569343",
+    "Html": "Hello,\r<br />\n<br />\nNo answer and no solution yet. Please help me.<br />\n",
+    "PostedDate": "2014-11-02T02:25:47.993-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "1330908",
+    "ThreadId": "569343",
+    "Html": "Hello,\r<br />\n<br />\nYou need to convert its locale beforehand. Example:<br />\n<pre><code>std::wostringstream ss;\nstd::locale const utf8_locale(std::locale(), new std::codecvt_utf8&lt;wchar_t&gt;());\n\nss.imbue(utf8_locale);\nss &lt;&lt; msg.get_body();\n\nstd::wstring s = ss.str();</code></pre>\n\nYou may need to use a different specialization of codecvt, UTF-16 for instance.\r<br />\nTry outputting to a file first, because outputting to the console may require additional steps.\r<br />\n<br />\n-T<br />\n",
+    "PostedDate": "2014-12-11T01:00:11.323-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "1330910",
+    "ThreadId": "569343",
+    "Html": "<a href=\"http://stackoverflow.com/questions/9859020/windows-unicode-c-stream-output-failure\" rel=\"nofollow\">http://stackoverflow.com/questions/9859020/windows-unicode-c-stream-output-failure</a><br />\n<br />\nPosted link because if not converting, you'll almost certainly get a character code that will break the stream output at some point.<br />\n<br />\n-T<br />\n",
+    "PostedDate": "2014-12-11T01:04:32.42-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

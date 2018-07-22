@@ -1,0 +1,13 @@
+<div class="wikidoc"><h1>Win32</h1><ol><li>Install Visual Studio 2010</li>
+<li>Install <a href="http://www.collab.net/downloads/subversion">SVN</a> to C:\svn, <a href="http://www.bing.com/search?q=svn+tutorial&amp;form=QBLH&amp;scope=web&amp;qs=n">learn how to use it</a></li>
+<li>Install <a href="http://www.mingw.org/">MinGW Make</a> to C:\mingw. I renamed C:\mingw\bin\mingw32-make.exe to just make.exe for sanity&#39;s sake</li>
+<li>Check out the current trunk to C:\libraries\fairport</li>
+<li>Install (unzip) <a href="http://www.boost.org">Boost</a> to C:\libraries\boost</li>
+<li>Create a batch file which:
+<ol><li>Executes the &quot;Visual Studio 2010 Command Prompt&quot; batch file</li>
+<li>Adds C:\svn to %PATH%</li>
+<li>Adds C:\mingw\bin to %PATH%</li>
+<li>Adds C:\libraries\fairport and C:\libraries\boost to %INCLUDE%</li>
+<li>Drops you into C:\libraries\fairport</li></ol></li>
+<li>Try getting the &quot;test suite&quot; to compile (C:\libraries\fairport\test) by running make</li></ol>
+<br />Once you&#39;re setup and building, you should take a look at the <a href="https://pstsdk.codeplex.com/wikipage?title=big_issues&referringTitle=quick_start_devs">Big Picture Issues</a> to see areas where you can help out.</div><div class="ClearBoth"></div>

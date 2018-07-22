@@ -1,0 +1,50 @@
+[
+  {
+    "Id": "454071",
+    "ThreadId": "215624",
+    "Html": "<p>I'd like to find out some information about the store I've opened ... Whether it's an OST or PST, if it's ANSI or UNICODE, etc.&nbsp; I know it's all in the m_header member in the db level, but can we have a public way to get access to it?</p>",
+    "PostedDate": "2010-06-10T09:27:59.417-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "454081",
+    "ThreadId": "215624",
+    "Html": "<p>Well, the entire point of the db_context class and implementors is to abstract away and hide this information - so I'm hesitant to put this type of information as part of the db_context interface (which is already threatening to grow to be too&nbsp;monolithic). Exposing m_header directly isn't possible, because the m_header type is a template type&nbsp;dependent&nbsp;on if the file is unicode or ANSI (where as db_context has no concept of unicode versus ansi).</p>\r\n<p>Why not drop down to the disk layer and read the disk header structures from the file yourself?</p>",
+    "PostedDate": "2010-06-10T09:38:00.013-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "454084",
+    "ThreadId": "215624",
+    "Html": "<p>I suppose I could do that ... I wasn't thinking of exposing m_header directly, merely exposing a few get_xx() props to find out some basic information about the file I've just opened.</p>\r\n<p>However, I think just accessing things from the disk level would give me more control and flexibility.</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-10T09:40:27.627-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "454099",
+    "ThreadId": "215624",
+    "Html": "<p>Which ones specifically are you interested in? Just OST vs. PST, ANSI vs. Unicode? My only concern is that the db_context interface is already huge.&nbsp;</p>",
+    "PostedDate": "2010-06-10T10:16:44.493-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "454106",
+    "ThreadId": "215624",
+    "Html": "<p>I don't think there's really&nbsp;anything interesting to know&nbsp;about the header other than wVerClient, wVer and bCryptMethod.&nbsp; Strictly for informational/metadata/categorization purposes in my line of work.</p>",
+    "PostedDate": "2010-06-10T10:26:22.967-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "454108",
+    "ThreadId": "215624",
+    "Html": "<p>I've already gone and collected that stuff at the disk level with a few lines of code:</p>\r\n<p>template&lt;typename T&gt;<br>class database_check : public database_impl&lt;T&gt;<br>{<br>public:<br>&nbsp; database_check(const wchar_t *filename) : database_impl&lt;T&gt;(filename)<br>&nbsp; {<br>&nbsp; }</p>\r\n<p>&nbsp; bool is_ost()<br>&nbsp; {<br>&nbsp;&nbsp;&nbsp; return (m_header.wVerClient == pstsdk::disk::database_ost);<br>&nbsp; }</p>\r\n<p>&nbsp; pstsdk::byte crypt_method()<br>&nbsp; {<br>&nbsp;&nbsp;&nbsp; return m_header.bCryptMethod;<br>&nbsp; }<br>};</p>\r\n<p>Then I just use some try/catch blocks, and instantiate the class either with &lt;ulong&gt; or &lt;ulonglong&gt;, catching the invalid_format exception, which tells me ANSI or UNICODE ... then the methods themselves tell me the rest.</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2010-06-10T10:29:52.287-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

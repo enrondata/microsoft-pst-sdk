@@ -1,0 +1,74 @@
+[
+  {
+    "Id": "509019",
+    "ThreadId": "231388",
+    "Html": "<p>Hi,</p>\r\n<p>Since I'm more of a .Net guy, I never used C++ before, I tried to wrap the pstsdk in a CLI/C++ DLL and use the result of a function in C#. Only when I run my app, it says something about error thrown by external component. When I step through my code, it throws here:</p>\r\n<p>\r\n<div style=\"color:black;background-color:white\">\r\n<pre>pst store(wpath);\r\n\r\n<span style=\"color:blue\">for</span>(pst::folder_iterator iter = store.folder_begin(); iter != store.folder_end(); ++iter) {\r\n\t\t\t\t\t<span style=\"color:blue\">for</span>(folder::message_iterator miter = (*iter).message_begin(); miter != (*iter).message_end(); ++miter) {\r\n\t\t\t\t\t\tmailList-&gt;Add(process_message(*miter)); <span style=\"color:green\">// Error here</span>\r\n\t\t\t\t\t}\r\n\t\t\t\t}\r\n</pre>\r\n</div>\r\n</p>\r\n<p>Since I am unfamiliar with pointers and VC++ (.Net 4.0) and just hacked something together, I don't know what's wrong. mailList is a List&lt;EmailMessage&gt; and process_message returns EmailMessage and accepts message&amp;. The execution never arrives at process_message though.</p>\r\n<p>&nbsp;</p>\r\n<p>Can somebody give me a hint?</p>",
+    "PostedDate": "2010-10-18T15:33:55.927-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "509022",
+    "ThreadId": "231388",
+    "Html": "<p>Hmm, my best guess is that right now it looks like you're comparing iterators from two different folder objects, since folder_iterator is a proxy iterator and a new folder object is created everytime it's deferenced.</p>\r\n<p>Basically, try creating a named folder object inside the first loop before you start the second loop. Call message_begin() and message_end() on that folder object, instead of on (*iter).</p>",
+    "PostedDate": "2010-10-18T15:46:21.63-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "509174",
+    "ThreadId": "231388",
+    "Html": "<p>Looks like that was it, thanks.</p>",
+    "PostedDate": "2010-10-19T00:29:36.193-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "511806",
+    "ThreadId": "231388",
+    "Html": "\r\n<p>nevermind what was here.</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2010-10-24T12:44:42.413-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "519315",
+    "ThreadId": "231388",
+    "Html": "\r\n<p>I downloaded the entry_id patch from github, but I want to convert the vector&lt;pstsdk::byte&gt; to a string. How do I do that?</p>\r\n",
+    "PostedDate": "2010-11-09T05:33:08.407-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "519364",
+    "ThreadId": "231388",
+    "Html": "\r\n<p>Look into Base64 Encoding.</p>\r\n",
+    "PostedDate": "2010-11-09T07:17:55.073-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "521695",
+    "ThreadId": "231388",
+    "Html": "\r\n<p>I have this, to create a (managed) hex string from a vector of bytes:</p>\r\n<p>&nbsp;</p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre><span style=\"color:green\">// EntryID</span>\r\n<span style=\"color:blue\">try</span> {\r\n\r\n\tstd::vector&lt;pstsdk::byte&gt; entry_id = m.get_entry_id();\r\n\r\n\tostringstream  s;\r\n\t<span style=\"color:blue\">for</span> (<span style=\"color:blue\">int</span> i = 0; i &lt; entry_id.size(); &#43;&#43;i) {\r\n\t\t\ts &lt;&lt; hex &lt;&lt; (<span style=\"color:blue\">int</span>)entry_id[i];\r\n\t}\r\n\r\n\tstring temp = s.str();\r\n\r\n\temsg-&gt;Id = <span style=\"color:blue\">gcnew</span> String(temp.c_str());\r\n}\r\n<span style=\"color:blue\">catch</span> (Exception ^ ex) {\r\n\t<span style=\"color:green\">// can't get EntryID: submessage or subnode?</span>\r\n}\r\n<br></pre>\r\n</div>\r\n<p>-first get the vector of bytes<br>\r\n-convert byte to int<br>\r\n-convert int to hex<br>\r\n-add hex to stringstream<br>\r\n-create string of stringstream<br>\r\n-(create a managed string of the string)</p>\r\n<p>Only my entry id is not the same as yours for sample1. I get '00006a552b813c43f94384f18b7da2393e95240200' and in the pstlevel-test patch it says it should be '000000006a552b813c43f94384f18b7da2393e9524002000'. I should double every zero, but how?</p>\r\n",
+    "PostedDate": "2010-11-14T04:04:14.523-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "521743",
+    "ThreadId": "231388",
+    "Html": "\r\n<p>Look at setw(2) as well as the other ostream formatting commands.</p>\r\n",
+    "PostedDate": "2010-11-14T08:06:07.977-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "521853",
+    "ThreadId": "231388",
+    "Html": "\r\n<p>Thanks for pointing in the right direction once again!</p>\r\n<p></p>\r\n<div style=\"color:black; background-color:white\">\r\n<pre>s &lt;&lt; setfill ('0') &lt;&lt; setw (2) &lt;&lt; hex &lt;&lt; (<span style=\"color:blue\">int</span>)entry_id[i];\r\n</pre>\r\n</div>\r\n<p></p>\r\n",
+    "PostedDate": "2010-11-14T13:34:05.053-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

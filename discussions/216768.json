@@ -1,0 +1,74 @@
+[
+  {
+    "Id": "458126",
+    "ThreadId": "216768",
+    "Html": "<p>In my code I am&nbsp;iterating through the messages in all PST folders an reading their properties (subjects, body, attachments dates etc). One of my test PSTs contains a journal entry message (of the type IPM.Activity). When I try to read the body of this message using get_body() throws &quot;key not found&quot; exception while trying to read PR_BODY tag. The&nbsp;PR_BODY does not exist for&nbsp; journal entry mesages, but I don't think throwing an exception is a right solution. Returning an empty string&nbsp; would be better</p>",
+    "PostedDate": "2010-06-21T10:04:39.59-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "458139",
+    "ThreadId": "216768",
+    "Html": "<p>Well, the problem is an empty body/string is different than a body not being there at all - so we can't just return an empty string. It's like if you were reading an integer property; we could just return 0 if the property doesn't exist, but 0 is also a perfectly valid value for an integer property.</p>\r\n<p>In general, as a modern C++ library the SDK is built around using exceptions as the primary error handling mechanism.</p>",
+    "PostedDate": "2010-06-21T10:23:55.27-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "458210",
+    "ThreadId": "216768",
+    "Html": "<p>I agree about using exceptions as error handing mechanism, but in this particular case &quot;key not found exception&quot; coming from read_prop(0x1000) while executing get_body() is not easily understandable. Besides the user has to know that 0x1000 is PR_BODY and check for its existance everytime the body is needed in order to avoid an exception. In&nbsp;this case why bothder using get_body(). If&nbsp;one needs to know that body is a property 0x1000&nbsp; read_prop() or open_prop_stream()&nbsp;can be used.</p>\r\n<p>&nbsp;if (props.prop_exists(0x1000)) {<br>&nbsp;&nbsp; wstring body= msg.get_body();<br>&nbsp;}</p>",
+    "PostedDate": "2010-06-21T13:00:28.633-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "458213",
+    "ThreadId": "216768",
+    "Html": "<p>Well, it's clear to me for the above reasons that when you call get_body and the item doesn't have a body property, an exception of some type must be thrown. However, I do think that key_not_found&lt;prop_id&gt; is a little esoteric - I might create a new exception type class prop_not_found : public key_not_found&lt;prop_id&gt; { ... }; just so the exception type is a little clearer.</p>\r\n<p>The idea that a bool body_exists() method, or more generally a bool XXX_exists(); method is added everywhere we have a get_XXX() property in the PST layer is interesting though, as this will (as you point out) allow users to not have to know the property id of the XXX property if they are just trying to do the basics. I'll think more about it.</p>",
+    "PostedDate": "2010-06-21T13:14:38.963-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "458723",
+    "ThreadId": "216768",
+    "Html": "<p>I'm using the following (rather ugly) function to read properties:</p>\r\n<pre>template &lt;typename R, typename T, typename D&gt;\r\nR prop_or(const T &amp;obj, R (T::*pmf)() const, D default_value) {\r\n    try {\r\n        return (obj.*pmf)();\r\n    } catch (key_not_found&lt;prop_id&gt; &amp;) {\r\n        return default_value;\r\n    }\r\n}\r\n</pre>\r\n<p>This can be called as follows:</p>\r\n<pre>prop_or(m, &amp;message::get_subject, L&quot;No subject&quot;)\r\n</pre>\r\n<p>Obviously, it would be better to rewrite this using boost::optional or something else that can represent a &quot;null&quot; value cleanly. But if this helps anybody as is, please feel free to use it!</p>",
+    "PostedDate": "2010-06-22T16:03:40.423-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "460225",
+    "ThreadId": "216768",
+    "Html": "<p>Here's a slightly cleaner variation of the idea:</p>\r\n<pre>    template &lt;typename R, typename T&gt;\r\n    bool has_prop(const pstsdk::message &amp;m, R (T::*pmf)() const) {\r\n        try {\r\n            (m.*pmf)();\r\n            return true;\r\n        } catch (key_not_found&lt;prop_id&gt; &amp;) {\r\n            return false;\r\n        }\r\n    }\r\n</pre>",
+    "PostedDate": "2010-06-26T07:29:40.72-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "509622",
+    "ThreadId": "216768",
+    "Html": "<p>Since I am looking for a nice way to get most properties of a message and I am not a C++ star, can somebody tell me if the this last function is handy and how I use it? Can I pass a property address to it or something?</p>",
+    "PostedDate": "2010-10-19T14:35:34.54-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "509640",
+    "ThreadId": "216768",
+    "Html": "<p>If you want to get most properties off of a message, I recommend you unwrap the message object to the underlying property_bag, which has methods to tell you exactly what properties are present.</p>",
+    "PostedDate": "2010-10-19T15:28:12.533-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "510150",
+    "ThreadId": "216768",
+    "Html": "<p>ok, thanks for your answer, but is this last function of ekidd usefull and how do I use it? is it something like has_prop(m, 0x0037) ? would be usefull I think?</p>",
+    "PostedDate": "2010-10-20T14:02:18.703-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

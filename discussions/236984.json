@@ -1,0 +1,18 @@
+[
+  {
+    "Id": "530526",
+    "ThreadId": "236984",
+    "Html": "\r\n<p>Is there any success building and running with pstsdk on cygwin?</p>\r\n<p>I successfully built with g&#43;&#43; 4.3.4 under cygwin and when I try the following simple program, I get a &quot;terminate called after throwing an instance of std::out_of_range'&quot; &quot;what (): fseek failed&quot; error message</p>\r\n<p><span style=\"white-space:pre\"></span>std::string &nbsp;s(argv[1]); &nbsp;<br>\r\n<span style=\"white-space:pre\"></span>std::wstring filename(s.begin(), s.end());</p>\r\n<p><br>\r\n<span style=\"white-space:pre\"></span>try { &nbsp; &nbsp;</p>\r\n<p><span style=\"white-space:pre\"></span>pst myfile(filename); &nbsp; &nbsp;<br>\r\n<span style=\"white-space:pre\"></span>folder fold = myfile.open_root_folder();</p>\r\n<p><span style=\"white-space:pre\"></span>} catch (char *s) { &nbsp;cerr &lt;&lt; &quot;Exception thrown: &quot; &lt;&lt; s &lt;&lt; endl;&nbsp;&nbsp;}</p>\r\n<p>The file is a legit PST file and exists.&nbsp;I am a bit confused about (a) why open_root_folder (or any other folder operation, for that matter) throws that exception, and (b) why the exception was not caught by my 'catch' block?</p>\r\n<p>I am a bit rusty with my C&#43;&#43;, so it is likely I am doing something very stupid here...</p>\r\n",
+    "PostedDate": "2010-12-03T00:56:22.89-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "530531",
+    "ThreadId": "236984",
+    "Html": "\r\n<p>Not a whole lot of information, but if I had to guess I'd say your PST file is over 4gb, and fseek on gcc only supports seeking to 32 byte offsets.&nbsp;</p>\r\n<p>You need to specify the exception type you wish to catch in your catch clause (here, std::out_of_range). catch (char* s) only catches when a char* is thrown, which is pretty much never.</p>\r\n",
+    "PostedDate": "2010-12-03T01:09:59.163-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

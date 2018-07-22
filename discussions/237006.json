@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "530594",
+    "ThreadId": "237006",
+    "Html": "\r\n<p>I read some discussions above ,a lot of people want to export &nbsp;PST file in other format, &nbsp;and so do I,hope some time there will be a latest version to save pst file as other format,</p>\r\n<p>for example : ofstream emlfile &lt;&lt; message msg ,it can include or not include the attachment. &nbsp; &nbsp;The same as the&nbsp;attachment.</p>\r\n",
+    "PostedDate": "2010-12-03T04:33:19-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "533237",
+    "ThreadId": "237006",
+    "Html": "\r\n<p>That is a common request. Unfortunately the .msg file format is itself pretty complex, worthy of an SDK in of itself. It's probably out of scope for PSTSDK.</p>\r\n",
+    "PostedDate": "2010-12-08T22:14:07.807-08:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "572219",
+    "ThreadId": "237006",
+    "Html": "<p>It's worth noting that in the .NET version of the SDK (see&nbsp;<a href=\"http://pstsdknet.codeplex.com/\">http://pstsdknet.codeplex.com</a>&nbsp;&nbsp;) we have a tool called PstExplorer, which is a simple example app to browse a PST, and it has rudamentary ability to save to EML format using a .NET MIME library.&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>You could extract that code out of that project and use it in your app if you were so inclined... and if .NET works for you. Or you could go grab one of the many popular c++ MIME libraries and re-write using that library in C++, using our code as a model.&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>We're eventually going to be implementing MSG, though as Terry says, it has it's complexities. We've started in on it though.&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>Thanks,</p>\r\n<p>Troy</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-02-25T09:06:37.42-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

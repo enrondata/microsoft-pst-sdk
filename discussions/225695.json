@@ -1,0 +1,58 @@
+[
+  {
+    "Id": "487846",
+    "ThreadId": "225695",
+    "Html": "<p>get_prop_type returned 'prop_type_systime' which is wrong&nbsp;for the property in question.</p>",
+    "PostedDate": "2010-09-01T13:50:01.28-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "487848",
+    "ThreadId": "225695",
+    "Html": "<p>The property you're trying to read probably isn't AddressBookPublicDelegates - that prop tag is in the named prop range, so 0x8015 (in general, properties above 0x8000) are different for each store and object type.</p>",
+    "PostedDate": "2010-09-01T13:53:34.397-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "488340",
+    "ThreadId": "225695",
+    "Html": "<p>thanks terrymach.&nbsp;</p>\r\n<p>So support it returned correct type, but the value I get is non-sense obviously. It's 8079/12/5 1:5:20. Let me get the named props to find out what this monster is.</p>",
+    "PostedDate": "2010-09-02T09:10:01.053-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "488350",
+    "ThreadId": "225695",
+    "Html": "<p>Ok. Also, what object type are you looking at (message, folder, attachment, etc)? It's also possible there is a bug in the time parsing code, maybe specific to your platform/compiler - can you read other time properties properly?</p>",
+    "PostedDate": "2010-09-02T09:17:21.253-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "488389",
+    "ThreadId": "225695",
+    "Html": "<p>I'm looking at message object. Time parsing code should be fine since other time properties were shown properly.&nbsp;</p>",
+    "PostedDate": "2010-09-02T10:35:42.95-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "488390",
+    "ThreadId": "225695",
+    "Html": "<p>And one question about named property.</p>\r\n<p>The reason I&nbsp;interpreted&nbsp;0x8015 to AddrerssBookPulicDelegates is that's what I found from MS-OXPROPS.pdf. Since you said value above 0x8000 could be named property, could the logic to read a property be sth like this:</p>\r\n<p>if id &gt;= 0x8000 then</p>\r\n<p><span style=\"white-space:pre\"> </span>lookup named properties</p>\r\n<p><span style=\"white-space:pre\"> </span>if lookup succeeded</p>\r\n<p><span style=\"white-space:pre\"> </span>Use the name found property.</p>\r\n<p><span style=\"white-space:pre\"> </span>else</p>\r\n<p><span style=\"white-space:pre\"> </span>Use&nbsp;what MS-OXPROPS.pfd says what it is</p>\r\n<p>else</p>\r\n<p><span style=\"white-space:pre\"> <span> </span>Use&nbsp;what MS-OXPROPS.pfd says what it is</span></p>",
+    "PostedDate": "2010-09-02T10:41:39.333-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "488478",
+    "ThreadId": "225695",
+    "Html": "<p>The named property of 0x8015 for my pst is below. So the type the SDK returned is correct, only thing is the value scared me. Thanks again!</p>\r\n<p>PidLidReminderSignal</p>\r\n<p>TimeCanonical name: PidLidReminderSignalTime</p>\r\n<p>Description: Specifies the point in time when a reminder transitions from pending to overdue.</p>\r\n<p>Property set: PSETID_Common {00062008-000-0000-C000-000000000046}</p>\r\n<p>Property long ID (LID): 0x00008560Data type:</p>\r\n<p>PtypTime, 0x0040</p>\r\n<p>WebDAV: http://schemas.microsoft.com/mapi/remindernexttime</p>",
+    "PostedDate": "2010-09-02T13:38:44.16-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

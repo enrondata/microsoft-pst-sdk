@@ -1,0 +1,61 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "",
+    "ClosedDate": null,
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "The message.get_html_body function returns property bag item 0x1013 as a std::wstring, according to the [MS-PST] format, the HTML body is not wide string.  so the HTML comes back completely garbled. \n \nwhen using message.open_html_body_stream() and reading as char*, it works 100%..",
+    "LastUpdatedDate": "2013-02-14T13:08:33.393-08:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "Low",
+      "Severity": 50,
+      "Id": 1
+    },
+    "ProjectName": "pstsdk",
+    "ReportedDate": "2011-02-09T10:37:35.587-08:00",
+    "Status": {
+      "Name": "Proposed",
+      "Id": 1
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "message.get_html_body is not a wide string..",
+    "Type": {
+      "Name": "Issue",
+      "Id": 3
+    },
+    "VoteCount": 2,
+    "Id": 7890
+  },
+  "FileAttachments": [
+    {
+      "FileId": 2478,
+      "FileName": "screenshot.jpg",
+      "DownloadUrl": ".\\2478"
+    }
+  ],
+  "Comments": [
+    {
+      "Message": "I've noticed this while working on our .net port of this SDK.  We thought it was a bug as well, until we did some more diffing.  It's not an issue with the pstsdk, it seems to be saved that way in the actual PST, likely by outlook.  If you open the file in a hex editor and go to the offset of the property, you can confirm the type the PST reports is a wide string, but, provided the PST isn't crypted or permuted, you can see the raw data stream, is in fact, not a wide string.",
+      "PostedDate": "2011-02-26T15:33:05.737-08:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2011-08-06T02:37:28.05-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-02-14T13:08:33.393-08:00",
+      "Id": -2147483648
+    }
+  ]
+}

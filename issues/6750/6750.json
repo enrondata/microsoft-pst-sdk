@@ -1,0 +1,96 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "Fixed in trunk, based on your patch. Dropped unique_ptr and lambdas all together. VC10 and GCC 4.5 with and without std&#61;c&#43;&#43;0x pass on Win32. Now I just need to find out why it&#39;s failing on other platforms..",
+    "ClosedDate": "2010-05-27T09:57:45.687-07:00",
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "pstsdk tests fail to compile with gcc 4.3 on Linux.\n \nThere are several issues:\n \n-namespace ambiguities: I qualify in some place with the right namespace because gcc complains about ambiguity.\n \n-tr1 support (that port is a real kludge): some headers are not included. unique_ptr<> is not supported\n \n-the integer types: uint & co. are defined in some standard header, and using \"integer\" on 64-bits isn't really working. Instead I typedef them with the boost stdint. Using stdint from the compiler would work, but I'm not sure how MSVC supports it (last time I looked, it didn't)\n \n-typename is required in a couple of places.\n \nAttaching a patch against the current subversion. The resulting code compiles but does not seem to pass the tests.\n \nI'm not sure if this breaks MSVC, I have no way to test. Let me know so I can revise the patch.\n \nI will also have a second round of fixes (later) for gcc 4.2.1 as found on MacOS X, that does not support c++0x\n \nThanks.",
+    "LastUpdatedDate": "2013-05-16T02:40:25.383-07:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "High",
+      "Severity": 150,
+      "Id": 3
+    },
+    "ProjectName": "pstsdk",
+    "ReportedDate": "2010-05-26T23:14:22.447-07:00",
+    "Status": {
+      "Name": "Closed",
+      "Id": 4
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "pstsdk test fail to compile with gcc 4.3 on Linux",
+    "Type": {
+      "Name": "Issue",
+      "Id": 3
+    },
+    "VoteCount": 1,
+    "Id": 6750
+  },
+  "FileAttachments": [
+    {
+      "FileId": 2208,
+      "FileName": "gcc-build-fixes.diff",
+      "DownloadUrl": ".\\2208"
+    },
+    {
+      "FileId": 2209,
+      "FileName": "gcc-build-fixes2.diff",
+      "DownloadUrl": ".\\2209"
+    }
+  ],
+  "Comments": [
+    {
+      "Message": "Thank you so much for taking the time to do this - as you can probably tell, support for non-C++0x compilers was very much a last second thing. I'm especially surprised to learn that gcc 4.3 supports rvalue references but not unique_ptr (I really should have double checked that). I might just remove pstsdk::uint et. al in favor of the boost types - they predated boost being adopted in the project. ",
+      "PostedDate": "2010-05-27T00:25:16.453-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "Thank you so much for taking the time to do this - as you can probably tell, support for non-C++0x compilers was very much a last second thing. I'm especially surprised to learn that gcc 4.3 supports rvalue references but not unique_ptr (I really should have double checked that). I might just remove pstsdk::uint et. al in favor of the boost types - they predated boost being adopted in the project. ",
+      "PostedDate": "2010-05-27T00:26:23.047-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "unique_ptr is new to gcc 4.4\r\n\r\nBOOST_NO_RVALUE_REFERENCES is in 4.2 (according to boost)",
+      "PostedDate": "2010-05-27T01:27:11.243-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "Here is the second version of the patch (that supercede the other one), that do support gcc 4.2.1 as found on MacOS X.\r\n\r\nAt the same time I moved unique_ptr<> to std::tr1 to be consistent with your recent change to use tr1.\r\n\r\n\"Fairport.exe\" fails differently on MacOS X 10.6 than on Linux Debian.",
+      "PostedDate": "2010-05-27T01:41:18.24-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2010-05-27T01:41:19.567-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "Thanks again. unique_ptr is not part of TR1, however, and should always be part of namespace std.",
+      "PostedDate": "2010-05-27T08:21:52.733-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2010-05-27T09:57:45.687-07:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-02-14T13:08:34.15-08:00",
+      "Id": -2147483648
+    },
+    {
+      "Message": "",
+      "PostedDate": "2013-05-16T02:40:25.383-07:00",
+      "Id": -2147483648
+    }
+  ]
+}

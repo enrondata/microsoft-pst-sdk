@@ -1,0 +1,10 @@
+[
+  {
+    "Id": "983258",
+    "ThreadId": "428569",
+    "Html": "\r\n<p>This is off topic, but I wonder if somebody can confirm what appears to be a documentation error in the MS-PST file format.&nbsp; In the description of the pst header (2.2.2.6) the fields bidNextP and bidNextB are defined as BID structures of 64 bits, but\r\n in my examination of a real Unicode .pst file, and in the example data given in the documentation, these are in fact 32 bit values.&nbsp; If you don't define them as 32 bit, the rest of the header does not parse out correctly.&nbsp; How would I inform Microsoft\r\n of this error?</p>\r\n<p>&nbsp;</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2013-01-04T20:25:16.93-08:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]

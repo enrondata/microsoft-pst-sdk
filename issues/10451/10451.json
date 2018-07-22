@@ -1,0 +1,39 @@
+{
+  "WorkItem": {
+    "AffectedComponent": {
+      "Name": "",
+      "DisplayName": ""
+    },
+    "ClosedComment": "",
+    "ClosedDate": null,
+    "CommentCount": 0,
+    "Custom": null,
+    "Description": "I found that it's not working when there're unicode in filepath. \n\nI think it can be solved by changing  \nstd::vector<byte> pstsdk::file::file(const std::wstring& filename) on \"util.h\"  as follow: \n     before => errno_t err = fopen_s(&m_pfile, std::string(filename.begin(), filename.end()).c_str(), mode);\n     after    =>   errno_t err = _wfopen_s(&m_pfile,filename.c_str(), L\"rb\");  \n\nI'm not sure on impact on other part but the change  looks harmless \nand as faras I tested it works fine after the change.",
+    "LastUpdatedDate": "2013-11-28T16:59:05.63-08:00",
+    "PlannedForRelease": "",
+    "ReleaseVisibleToPublic": false,
+    "Priority": {
+      "Name": "Unassigned",
+      "Severity": 0,
+      "Id": 0
+    },
+    "ProjectName": "pstsdk",
+    "ReportedDate": "2013-11-28T16:59:05.63-08:00",
+    "Status": {
+      "Name": "Proposed",
+      "Id": 1
+    },
+    "ReasonClosed": {
+      "Name": "Unassigned"
+    },
+    "Summary": "UNICODE in PST file path",
+    "Type": {
+      "Name": "Unassigned",
+      "Id": 5
+    },
+    "VoteCount": 1,
+    "Id": 10451
+  },
+  "FileAttachments": [],
+  "Comments": []
+}

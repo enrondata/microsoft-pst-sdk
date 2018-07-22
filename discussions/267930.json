@@ -1,0 +1,34 @@
+[
+  {
+    "Id": "653222",
+    "ThreadId": "267930",
+    "Html": "\r\n<p>I guess I do need to re-ask my original question - does the property_bag contain every possible property?&nbsp; Now</p>\r\n<p>I am looking to get, for example, property 0x3601 (PR_FOLDER_TYPE) from my folder object.&nbsp; pstsdk tells me</p>\r\n<p>that it does not exist for any folder, even though I see it with Outlook Spy.&nbsp; When I iterate all the possible properties,</p>\r\n<p>I do not get very many.&nbsp; I do have PR_DISPLAY_NAME and PR_CONTAINER_CLASS (for some), and also 0x3602 and</p>\r\n<p>0x3603 (PR_CONTENT_COUNT and PR_CONTENT_UNREAD).&nbsp;&nbsp; But where are the remaining properties?</p>\r\n<p>&nbsp;</p>\r\n",
+    "PostedDate": "2011-08-05T09:28:05.48-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "653246",
+    "ThreadId": "267930",
+    "Html": "<p>No, the property_bag contains only the properties which are <em>physically </em>stamped on the object.</p>\r\n<p>The \"real\" MAPI implementation is a lot more complex. Some properties are \"virtual\" properties; which are either calculated out of thin air or based on other properties. They show up like any other property in something like Outlook Spy, but they don't \"really exist\". Still other properties have default values; if they are stamped on the folder then that value is used, if they're not stamped then the default is used. Sometimes the default is to \"check parent folder\".</p>\r\n<p>PR_FOLDER_TYPE is an instance of the former. mspst32.dll proper calculates the folder type based on a special bit of the node id: if this bit is set, it's a search folder, otherwise, it's a normal folder. The root folder itself (FOLDER_ROOT) is special cased.</p>\r\n<p>The fact that pstsdk currently doesn't duplicate all of this logic is more or less a limitation of the SDK. This logic should map to one off helper functions on the appropriate pst layer object (folder, message, etc). property_bag is a generic lower level object which only reads/writes physical properties; if you unwrap to that you should know what you're getting into.</p>\r\n<p>Now, PR_FOLDER_TYPE is an interesting case: pstsdk is an object oriented library, MAPI (generally) is not. There are actually seperate object types for search folders and regular folders at the SDK level. So, the fact that you even have a \"folder\" object implies that that PR_FOLDER_TYPE is FOLDER_GENERIC. serach_folder objects are FOLDER_SEARCH. There are seperate iterators to get at each type at every level.</p>",
+    "PostedDate": "2011-08-05T09:48:05.54-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "653284",
+    "ThreadId": "267930",
+    "Html": "<p>Thank you for the explanation.&nbsp; I remember this issue from when I was working with libpff, and I noticed that it would not give me PR_BODY_HTML in some cases, even though MAPI does</p>\r\n<p>(since it just generates it on the fly from the text body).&nbsp; I assume pstsdk will have the same issue.&nbsp; I was hoping to use PR_FOLDER_TYPE to avoid picking up folders such as IPM_VIEWS but</p>\r\n<p>I can do it using the presence or absence of certain properties, or just by the folder name.</p>\r\n<p>&nbsp;</p>",
+    "PostedDate": "2011-08-05T10:21:24.99-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "653288",
+    "ThreadId": "267930",
+    "Html": "<p>Ah. Yeah, PR_BODY_* is an entire different complex mess, it'll dynamically generic RTF, HTML, or PlainText depending on what is asked for, and there are a series of flag properties to indicate what bodies are currently stamped and \"in sync\" on the message.</p>\r\n<p>The canonical example of these special properties is subject prefix on messages; obviously it'd be inefficent to store it twice, so the subject is just stored once and prefix/normalized/etc are generated on the fly. There is also some special bitmagic that goes on (it's documented, but weird), so subject prefix/etc is actaully one example of special properties that PSTSDK does generate for you (check message.h).</p>\r\n<p>Anyway in MAPI, PR_FOLDER_TYPE really only helps you distinguish between regular folders and search folders, not other \"special\" folders.</p>",
+    "PostedDate": "2011-08-05T10:26:01.073-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  }
+]

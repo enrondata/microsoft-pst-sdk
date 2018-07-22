@@ -1,0 +1,74 @@
+[
+  {
+    "Id": "489990",
+    "ThreadId": "226285",
+    "Html": "<p><span style=\"background-color:#e6ecf9;color:#000\">Time and the sender can not read and why?</span></p>\r\n<p><span style=\"background-color:#e6ecf9;color:#000\"><span style=\"background-color:#fff\">How to read?</span></span></p>\r\n<p><span style=\"background-color:#e6ecf9;color:#000\"><span style=\"background-color:#fff\">&nbsp;</span></span></p>\r\n<p><span style=\"background-color:#e6ecf9;color:#000\"><span style=\"background-color:#fff\">不知道我写得对不对。也不知道你们能不能听懂。。</span></span></p>",
+    "PostedDate": "2010-09-07T02:28:56.207-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "490253",
+    "ThreadId": "226285",
+    "Html": "<p>Perhaps the message you're trying to read doesn't have a sender or whatever time prop you're trying to read. For example,&nbsp;a draft message will not have a sender recipient yet associated with it, nor will appointment items, tasks, etc. These properties are not required and you should handle a not found exception being thrown when trying to read them.</p>",
+    "PostedDate": "2010-09-07T10:22:25.963-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "490800",
+    "ThreadId": "226285",
+    "Html": "<p>I think you are confused by the uncorrected comments in document, actually there's no 'sender' type.</p>\r\n<pre>recipient_type t = r.get_type(); // get the type of the recipient, sender, to, cc, etc.</pre>\r\n<pre><br></pre>\r\n<p>I'm confused at the beginning as well... I got sender like this:</p>\r\n<p><span style=\"white-space:pre\"> </span>if (m.get_property_bag().prop_exists(0x0c1a) // suppose m is a message.</p>\r\n<p><span style=\"white-space:pre\"> </span>sender = m.get_property_bag().read_prop&lt;std::string&gt;(0x0c1a);</p>\r\n<p>&nbsp;</p>\r\n<p>The key is finding the tagId(0x0c1a) for the field you want, refer this link&nbsp;http://msdn.microsoft.com/en-us/library/cc433490%28EXCHG.80%29.aspx</p>\r\n<p>&nbsp;</p>\r\n<p>Which time are you talking about?</p>",
+    "PostedDate": "2010-09-08T10:37:09.277-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "490814",
+    "ThreadId": "226285",
+    "Html": "<p>You are right; I fixed the comment. Perhaps the PST message object should have accessor methods specific to all of the various sender properties.</p>",
+    "PostedDate": "2010-09-08T11:05:43.023-07:00",
+    "UserRole": "Owner",
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "491621",
+    "ThreadId": "226285",
+    "Html": "<p>This time is s<span style=\"background-color:#fff\">end</span> mail time..</p>\r\n<p><span><span style=\"background-color:#e6ecf9;color:#000\">Thanks very much...</span></span></p>",
+    "PostedDate": "2010-09-09T23:24:00.313-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "492825",
+    "ThreadId": "226285",
+    "Html": "<p>Try this one.</p>\r\n<p>PidTagClientSubmitTime</p>\r\n<p>Canonical name: PidTagClientSubmitTime</p>\r\n<p>Description: Contains the current time (in UTC) when the e-mail message is submitted.</p>\r\n<p>Property ID: 0x0039</p>",
+    "PostedDate": "2010-09-13T08:24:28.78-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "493122",
+    "ThreadId": "226285",
+    "Html": "<p><span style=\"background-color:#fff\"><span>I think this is also OK.<br></span></span></p>\r\n<p><span style=\"background-color:#fff\">Property ID: 0x0e06<br></span></p>",
+    "PostedDate": "2010-09-13T20:05:07.203-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "493126",
+    "ThreadId": "226285",
+    "Html": "<p><span style=\"background-color:#e6ecf9;color:#000\">Reading body error.</span></p>\r\n<p>&nbsp;CString CBody(m.get_body().c_str());</p>\r\n<p><span>This message is only a picture attachment. No&nbsp;&nbsp;Body.</span></p>\r\n<p><span><span>My English is poor.</span></span></p>\r\n<p>&nbsp;error ：</p>\r\n<p>&nbsp;</p>\r\n<div style=\"color:black;background-color:white\">\r\n<pre>Test.exe 中的 0x755e9617 处有未经处理的异常: Microsoft C<span style=\"color:gray\">++</span> 异常: 内存位置 0x001894cc 处的 pstsdk::key_not_found&lt;unsigned short<span style=\"color:gray\">&gt;</span>。\r\n\r\n</pre>\r\n</div>",
+    "PostedDate": "2010-09-13T20:16:17.42-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  },
+  {
+    "Id": "493189",
+    "ThreadId": "226285",
+    "Html": "<p><span>Thanks. </span><span style=\"background-color:#e6ecf9;color:#000\">I know.</span></p>",
+    "PostedDate": "2010-09-14T00:51:33.033-07:00",
+    "UserRole": null,
+    "MarkedAsAnswerDate": null
+  }
+]
