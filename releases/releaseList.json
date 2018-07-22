@@ -1,0 +1,102 @@
+[
+  {
+    "Id": "0",
+    "Name": "PST File Format SDK v0.2.0",
+    "DevelopmentStatus": "Beta",
+    "Description": "Updated version of pstsdk with several bug fixes, including:\n* Improved compiler support (several changes, including two patches from hub)\n* Fixed Doxygen file to use relative paths (patch from bradhards)\n* Fixed bug where {\"table::size\"} gave incorrect results (bug report from rmsimpson)\n* Made {\"message::get_subject\"} handle empty subjects correctly (bug report from rmsimpson)\n* Fixed bug where {\"subnode_nonleaf_block\"} crashed (bug report from rmsimpson)\n* End message iterator for search folders wasn't being created correctly\n* Internal bit of a {\"block_id\"} wasn't being ignored during lookups as required (bug report from xenocloud)",
+    "ReleasedDatge": "0001-01-01T00:00:00",
+    "ModifiedDate": "2010-07-04T08:11:41.76-07:00",
+    "Files": [
+      {
+        "Id": "353ebb1d-c585-41e2-a5ed-f2ae4b45d31c",
+        "FileName": "pstsdk_0_2_0.zip",
+        "Url": "./0/353ebb1d-c585-41e2-a5ed-f2ae4b45d31c",
+        "Type": "Source Code",
+        "UploadDate": "2010-06-01T23:03:49.46-07:00"
+      },
+      {
+        "Id": "4996fdc3-4a0e-4d1e-9172-ac06fc8303a4",
+        "FileName": "pstsdk_0_2_0_nodoc.zip",
+        "Url": "./0/4996fdc3-4a0e-4d1e-9172-ac06fc8303a4",
+        "Type": "Source Code",
+        "UploadDate": "2010-06-01T23:03:50.007-07:00"
+      },
+      {
+        "Id": "a76d48d2-53c0-4a12-81bc-1e24b170418f",
+        "FileName": "pstsdk_0_2_0.7z",
+        "Url": "./0/a76d48d2-53c0-4a12-81bc-1e24b170418f",
+        "Type": "Source Code",
+        "UploadDate": "2010-06-01T23:03:50.07-07:00"
+      },
+      {
+        "Id": "2d359b23-f1a9-4bdf-8605-ee59cb404700",
+        "FileName": "pstsdk_0_2_0_nodoc.7z",
+        "Url": "./0/2d359b23-f1a9-4bdf-8605-ee59cb404700",
+        "Type": "Source Code",
+        "UploadDate": "2010-06-01T23:03:50.583-07:00"
+      }
+    ]
+  },
+  {
+    "Id": "1",
+    "Name": "PST File Format SDK v0.1.0",
+    "DevelopmentStatus": "Beta",
+    "Description": "Initial Beta release of the PST File Format SDK.",
+    "ReleasedDatge": "0001-01-01T00:00:00",
+    "ModifiedDate": "2010-06-01T23:04:11.853-07:00",
+    "Files": [
+      {
+        "Id": "a48cd1dc-55ce-4f05-9fbd-6829b4d6a8c4",
+        "FileName": "pstsdk_0_1.zip",
+        "Url": "./1/a48cd1dc-55ce-4f05-9fbd-6829b4d6a8c4",
+        "Type": "Source Code",
+        "UploadDate": "2010-04-08T15:22:43.01-07:00"
+      },
+      {
+        "Id": "a6cb55c6-d644-4559-9388-9953f8526238",
+        "FileName": "pstsdk_0_1_nodoc.zip",
+        "Url": "./1/a6cb55c6-d644-4559-9388-9953f8526238",
+        "Type": "Source Code",
+        "UploadDate": "2010-04-08T15:22:43.98-07:00"
+      }
+    ]
+  },
+  {
+    "Id": "2",
+    "Name": "PST File Format SDK v0.3.0",
+    "DevelopmentStatus": "Beta",
+    "Description": "Updated version with several bug fixes and a few new features, including:\n* Proper handling of a 0 hnid for variable length allocations in tables and property bags\n* read_prop didn't work for all types\n* Integrated portability work by emk\n* New sample application to read images out of a pst file\n* Added ability to quickly read the size of variable length props in the PST layer\n* Added ability to check to see if a property exists in the PST layer before reading it\n* Added the ability to open a folder, search folder, or message directly from a PST object via node_id based on a suggestion and patch by dblok\n* Updated MS-PST doc",
+    "ReleasedDatge": "0001-01-01T00:00:00",
+    "ModifiedDate": "2010-07-04T08:18:08.07-07:00",
+    "Files": [
+      {
+        "Id": "88d85626-ab03-4a42-90fd-c2ef74811e63",
+        "FileName": "pstsdk_0_3_0.zip",
+        "Url": "./2/88d85626-ab03-4a42-90fd-c2ef74811e63",
+        "Type": "Source Code",
+        "UploadDate": "2010-07-04T08:10:53.433-07:00"
+      },
+      {
+        "Id": "3d264d29-0ba6-4403-bdcb-a7578898e639",
+        "FileName": "pstsdk_0_3_0.7z",
+        "Url": "./2/3d264d29-0ba6-4403-bdcb-a7578898e639",
+        "Type": "Source Code",
+        "UploadDate": "2010-07-04T08:10:54.06-07:00"
+      },
+      {
+        "Id": "9d437236-d0b1-4626-875e-27a10f84852e",
+        "FileName": "pstsdk_0_3_0_nodoc.zip",
+        "Url": "./2/9d437236-d0b1-4626-875e-27a10f84852e",
+        "Type": "Source Code",
+        "UploadDate": "2010-07-04T08:10:54.48-07:00"
+      },
+      {
+        "Id": "512858c0-20c4-4228-af8e-8c841997f5ae",
+        "FileName": "pstsdk_0_3_0_nodoc.7z",
+        "Url": "./2/512858c0-20c4-4228-af8e-8c841997f5ae",
+        "Type": "Source Code",
+        "UploadDate": "2010-07-04T08:10:54.513-07:00"
+      }
+    ]
+  }
+]
